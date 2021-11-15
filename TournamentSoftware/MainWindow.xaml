@@ -1,0 +1,64 @@
+﻿<Window x:Name="mainWindow" x:Class="TournamentSoftware.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TournamentSoftware"
+        mc:Ignorable="d"
+        Title="Турнирный софт" Height="450" Width="1172.2">
+    <Grid>
+        <Button x:Name="goRegistrateButton" Content="Перейти к регистрации" HorizontalAlignment="Left" Margin="464,287,0,0" Padding="5" VerticalAlignment="Top" FontSize="14" Click="goRegistrate"/>
+        <Label x:Name="startWindowLabel" Content="Стартовая страница" HorizontalAlignment="Left" Margin="376,154,0,0" VerticalAlignment="Top" FontSize="35"/>
+        <Grid x:Name="appGrid" HorizontalAlignment="Left" Height="400" Margin="10,10,-0.4,0" VerticalAlignment="Top" Width="1156" ShowGridLines="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="991*"/>
+                <ColumnDefinition Width="165*"/>
+            </Grid.ColumnDefinitions>
+            <Grid x:Name="registrationTable" HorizontalAlignment="Left" Height="380" Margin="0,10,0,0" VerticalAlignment="Top" Width="992" ShowGridLines="True" Grid.ColumnSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition ToolTip="number" Width="38*"/>
+                    <ColumnDefinition Width="75*"/>
+                    <ColumnDefinition Width="54*"/>
+                    <ColumnDefinition Width="82*"/>
+                    <ColumnDefinition Width="70*"/>
+                    <ColumnDefinition Width="96*"/>
+                    <ColumnDefinition Width="54*"/>
+                    <ColumnDefinition Width="63*"/>
+                    <ColumnDefinition Width="76*"/>
+                    <ColumnDefinition Width="75*"/>
+                    <ColumnDefinition Width="47*"/>
+                    <ColumnDefinition Width="46*"/>
+                    <ColumnDefinition Width="54*"/>
+                    <ColumnDefinition Width="54*"/>
+                    <ColumnDefinition Width="106*"/>
+                    <ColumnDefinition Width="40*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50px"/>
+                </Grid.RowDefinitions>
+                <Label x:Name="numberLabel" Content="№" Grid.Column="0" Grid.Row="0" Margin="0,0,2.6,0.4"></Label>
+                <Label x:Name="lastNameLabel" Content="Фамилия" Grid.Row="0" Margin="2.4,0,0.8,0.4" RenderTransformOrigin="0.681,0.452" HorizontalAlignment="Center" Width="72" Grid.Column="1"/>
+                <Label x:Name="nameLabel" Content="Имя" Grid.Column="2" Grid.Row="0" Margin="0.2,0,0.2,0.4"/>
+                <Label x:Name="otchestvoLabel" Content="Отчество" Grid.Column="3" Grid.Row="0" Margin="0.8,0,1.6,0.4"/>
+                <Label x:Name="psevdonimLabel" Content="Псевдоним" Grid.Column="4" Grid.Row="0" Margin="0.4,0,0,0.4"/>
+                <Label x:Name="dateOfBirthLabel" Content="Год рождения" Grid.Column="4" Grid.Row="0" Margin="69.4,0,1,0.4" Grid.ColumnSpan="2"></Label>
+                <Label x:Name="sexLabel" Content="Пол" Grid.Column="6" Grid.Row="0" Margin="4,0,1.6,0.4"/>
+                <Label x:Name="posevnoyLabel" Content="Посевной" Grid.Column="7" Grid.Row="0" Margin="0.4,0,2.8,0.4"/>
+                <Label x:Name="clubLabel" Content="Клуб" Grid.Column="8" Grid.Row="0" Margin="2.2,0,2.8,0.4"/>
+                <Label x:Name="cityLabel" Content="Город" Grid.Column="9" Grid.Row="0" Margin="0.2,0,3,0.4"/>
+                <Label x:Name="heightLabel" Content="Рост" Grid.Column="10" Grid.Row="0" Margin="0,0,2.2,0.4"/>
+                <Label x:Name="weightLabel" Content="Вес" Grid.Column="11" Grid.Row="0" Margin="0.8,0,3.8,0.4"/>
+                <Label x:Name="commonRatingLabel" Content="Общий рейтинг" Grid.Column="12" Grid.Row="0" Margin="1.2,0,2.2,0.4"/>
+                <Label x:Name="clubRatingLabel" Content="Клубный рейтинг" Grid.Column="13" Grid.Row="0" Margin="2.8,0,3.6,0.4"/>
+                <Label x:Name="nominationLabel" Content="Номинации" Grid.Column="14" Grid.Row="0" Margin="0.4,0,-1,0.4"/>
+                <CheckBox x:Name="mainCheckBox" Grid.Column="15" Grid.Row="0" Height="50" Margin="0.4,0,0,0.4" HorizontalAlignment="Center" />
+                <Border BorderThickness="2px" Grid.Row="0" Grid.ColumnSpan="16" BorderBrush="Black" Padding="0"></Border>
+            </Grid>
+            <Button x:Name="goTournament" Content="К турнирной сетке" Grid.Column="1" HorizontalAlignment="Left" Margin="16.8,39,0,0" VerticalAlignment="Top" Padding="5" Height="27" Width="113"/>
+            <Button x:Name="loadFromFile" Content="Загрузить из файла" Grid.Column="1" HorizontalAlignment="Left" Margin="16.8,89,0,0" VerticalAlignment="Top" Padding="5" Height="27" Width="116"/>
+            <Button x:Name="add" Content="Добавить участника" Grid.Column="1" HorizontalAlignment="Left" Margin="16.8,137,0,0" VerticalAlignment="Top" Padding="5" Height="27" Width="122" Click="addParticipant"/>
+            <Button x:Name="delete" Content="Удалить участника" Grid.Column="1" HorizontalAlignment="Left" Margin="16.8,178,0,0" VerticalAlignment="Top" Padding="5" Height="27" Width="113" Click="deleteParticipant"/>
+        </Grid>
+
+    </Grid>
+</Window>
