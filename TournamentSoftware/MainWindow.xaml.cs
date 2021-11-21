@@ -1,6 +1,6 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows;
 using SQLite;
 
 namespace TournamentSoftware
@@ -17,7 +17,14 @@ namespace TournamentSoftware
             goTournament.IsEnabled = false;
         }
 
+        private void NumericOnly(System.Object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            if (!int.TryParse(e.Text, out _)) { e.Handled = false; }
+        }
+
         public static int participantCount = 0;
+        public static List<Participant> participantsList = new List<Participant>();
+        private BindingList<Participant> p_list = new BindingList<Participant>();
 
         /// <summary>
         /// Переход к модулю регистрации
@@ -34,55 +41,47 @@ namespace TournamentSoftware
         private void addParticipant(object sender, RoutedEventArgs e)
         {
             participantCount++;
-            Label id = new Label();
-            id.Content = participantCount;
-            id.SetValue(Grid.RowProperty, participantCount);
-            id.SetValue(Grid.ColumnProperty, 0);
-
-            TextBox name = new TextBox();
-            name.SetValue(Grid.RowProperty, participantCount);
-            name.SetValue(Grid.ColumnProperty, 1);
-
-
-            RowDefinition row = new RowDefinition();
-            row.Height = new GridLength(50, GridUnitType.Pixel);
-            Border border = new Border();
-            border.BorderBrush = Brushes.Black;
-            border.BorderThickness = new Thickness(1);
-            border.SetValue(Grid.RowProperty, participantCount);
-            border.SetValue(Grid.ColumnSpanProperty, 16);
-            registrationTable.RowDefinitions.Add(row);
-            registrationTable.Children.Add(id);
-            registrationTable.Children.Add(name);
-            registrationTable.Children.Add(border);
 
             Participant participant = new Participant()
             {
-                Id = participantCount,
-                Name = null,
-                Surname = null,
-                Otcestvo = null,
-                Psevdonim = null,
-                DateOfBirth = 0,
-                Sex = null,
+                Name = "",
+                Surname = "",
+                Otchestvo = "",
+                Psevdonim = "",
                 Posevnoy = false,
-                Club = null,
-                City = null,
-                Height = 0,
-                Weight = 0,
-                CommonRating = 0,
-                ClubRating = 0,
-                Nominations = "",
+                Club = "",
+                City = "",
+                DateOfBirth = -1,
+                Height = -1,
+                Weight = -1,
+                Kategory = "",
+                Sex = "",
+                CommonRating = -1,
+                ClubRating = -1,
+                AvailableSex = new string[2] { "М", "Ж" },
             };
 
-            DbConnection.connect<Participant>(participant as object);
+            p_list.Add(participant);
+
+            // participantsList.Add(participant);
+
+            registrationTable.ItemsSource = p_list;
+
+            // DbConnection.connect<Participant>(participant as object);
         }
 
         private void deleteParticipant(object sender, RoutedEventArgs e)
         {
-            if (registrationTable.RowDefinitions.Count != 1) { 
+        }
 
-            }
+        private void selectorAllForDelete_Unchecked(object sender, RoutedEventArgs e)
+        {
+            delete.IsEnabled = false;
+        }
+
+        private void selectorAllForDelete_Checked(object sender, RoutedEventArgs e)
+        {
+            delete.IsEnabled = true;
         }
     }
 
