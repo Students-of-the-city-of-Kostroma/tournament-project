@@ -58,3 +58,4 @@ D:\TournamentSoftware\tournament-project\TournamentSoftware\obj\Debug\Tournament
 D:\TournamentSoftware\tournament-project\TournamentSoftware\obj\Debug\TournamentSoftware.csproj.CopyComplete
 D:\TournamentSoftware\tournament-project\TournamentSoftware\obj\Debug\TournamentSoftware.exe
 D:\TournamentSoftware\tournament-project\TournamentSoftware\obj\Debug\TournamentSoftware.pdb
+D:\TournamentSoftware\tournament-project\TournamentSoftware\obj\Debug\GeneratedInternalTypeHelper.g.cs

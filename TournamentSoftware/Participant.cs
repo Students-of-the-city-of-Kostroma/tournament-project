@@ -1,6 +1,9 @@
-﻿namespace TournamentSoftware
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+namespace TournamentSoftware
 {
-    public class Participant
+    public class Participant : INotifyPropertyChanged
     {
         public Participant()
         {
@@ -20,109 +23,132 @@
         private int _Weight;
         private int _CommonRating;
         private int _ClubRating;
+        private bool _IsSelected;
+        private int _Id;
+
+        /// <summary>
+        /// id участника не отображается в таблице
+        /// </summary>
+        public int Id
+        {
+            get { return _Id; }
+            set { _Id = value; }
+        }
 
         public string[] availableSex = new string[2] { "М", "Ж"};
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+
+        public bool IsSelected {
+            get { return _IsSelected; }
+            set { _IsSelected = value; OnPropertyChanged("IsSelected"); }
+        }
+
         public string[] AvailableSex {
             get { return availableSex; }
-            set { availableSex = value; }
+            set { availableSex = value; OnPropertyChanged("AvailableSex"); }
         }
 
 
         public bool Posevnoy
         {
             get { return _Posevnoy; }
-            set { _Posevnoy = value; }
+            set { _Posevnoy = value; OnPropertyChanged("Posevnoy"); }
         }
 
         public string Name
         {
             get { return _Name; }
-            set { _Name = value; }
+            set { _Name = value; OnPropertyChanged("Name"); }
 
         }
 
         public string Surname
         {
             get { return _Surname; }
-            set { _Surname = value; }
+            set { _Surname = value; OnPropertyChanged("Surname"); }
 
         }
 
         public string Otchestvo
         {
             get { return _Otchestvo; }
-            set { _Otchestvo = value; }
+            set { _Otchestvo = value; OnPropertyChanged("Otchestvo"); }
 
         }
 
         public string Psevdonim
         {
             get { return _Psevdonim; }
-            set { _Psevdonim = value; }
+            set { _Psevdonim = value; OnPropertyChanged("Psevdonim"); }
 
         }
 
         public string Club
         {
             get { return _Club; }
-            set { _Club = value; }
+            set { _Club = value; OnPropertyChanged("Club"); }
 
         }
 
         public string City
         {
             get { return _City; }
-            set { _City = value; }
+            set { _City = value; OnPropertyChanged("City"); }
 
         }
 
         public string Kategory
         {
             get { return _Kategory; }
-            set { _Kategory = value; }
+            set { _Kategory = value; OnPropertyChanged("Kategory"); }
 
         }
 
         public string Sex
         {
             get { return _Sex; }
-            set { _Sex = value; }
+            set { _Sex = value; OnPropertyChanged("Sex"); }
 
         }
 
         public int DateOfBirth
         {
             get { return _DateOfBirth; }
-            set { _DateOfBirth = value; }
+            set { _DateOfBirth = value; OnPropertyChanged("DateOfBirth"); }
 
         }
 
         public int Height
         {
             get { return _Height; }
-            set { _Height = value; }
+            set { _Height = value; OnPropertyChanged("Height"); }
 
         }
 
         public int Weight
         {
             get { return _Weight; }
-            set { _Weight = value; }
+            set { _Weight = value; OnPropertyChanged("Weight"); }
 
         }
 
         public int CommonRating
         {
             get { return _CommonRating; }
-            set { _CommonRating = value; }
+            set { _CommonRating = value; OnPropertyChanged("CommonRating"); }
 
         }
 
         public int ClubRating
         {
             get { return _ClubRating; }
-            set { _ClubRating = value; }
+            set { _ClubRating = value; OnPropertyChanged("ClubRating"); }
 
         }
     }
