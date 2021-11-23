@@ -59,3 +59,5 @@ D:\TournamentSoftware\tournament-project\TournamentSoftware\obj\Debug\Tournament
 D:\TournamentSoftware\tournament-project\TournamentSoftware\obj\Debug\TournamentSoftware.exe
 D:\TournamentSoftware\tournament-project\TournamentSoftware\obj\Debug\TournamentSoftware.pdb
 D:\TournamentSoftware\tournament-project\TournamentSoftware\obj\Debug\GeneratedInternalTypeHelper.g.cs
+D:\TournamentSoftware\tournament-project\TournamentSoftware\obj\Debug\Window1.g.cs
+D:\TournamentSoftware\tournament-project\TournamentSoftware\obj\Debug\Window1.baml
