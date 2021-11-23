@@ -44,8 +44,6 @@ namespace TournamentSoftware
         }
 
         public static int participantCount = 0;
-        public static List<Participant> participantsList = new List<Participant>();
-
 
         /// <summary>
         /// Переход к модулю регистрации
@@ -260,17 +258,175 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void OpenExcel_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "EXCEL Files (*.xlsx)|*.xlsx|EXCEL Files 2003 (*.xls)|*.xls|All files (*.*)|*.*";
-            if (openFileDialog.ShowDialog() != true)
-                return;
-            // метод для проверки валидности таблицы
-            FileStream stream = File.Open(openFileDialog.FileName, FileMode.Open, FileAccess.Read);
-            var reader = ExcelDataReader.ExcelReaderFactory.CreateReader(stream);
-            var dt = new DataTable();
-            dt.Load(reader);
-            DataColumnCollection columns = dt.AsDataView().Table.Columns;
-            // DbGrig.ItemsSource = readFile(openFileDialog.FileName);
+            MessageBoxResult result = new MessageBoxResult();
+            if (participants_list.Count > 0) {
+                result = MessageBox.Show("Все предыдущие записи в таблице регистрации будут удалены. Вы хотите продолжить?", "Предупреждение",
+               MessageBoxButton.OKCancel,
+               MessageBoxImage.Warning, MessageBoxResult.Cancel);
+            }
+           
+            if (participants_list.Count == 0 || MessageBoxResult.OK == result)
+            {
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "EXCEL Files (*.xlsx)|*.xlsx|EXCEL Files 2003 (*.xls)|*.xls|All files (*.*)|*.*";
+                if (openFileDialog.ShowDialog() != true)
+                    return;
+
+                if (!checkTableHeadersValid(openFileDialog.FileName))
+                {
+                    MessageBox.Show("Не удалось прочитать таблицу! Попробуйте загрузить другой файл", "Ошибка");
+                }
+            }
+        }
+
+        private bool checkTableHeadersValid(string fileName)
+        {
+            FileStream stream = File.Open(fileName, FileMode.Open, FileAccess.Read);
+            var reader = ExcelReaderFactory.CreateReader(stream);
+            DataSet dataSet = reader.AsDataSet();
+            var dataTable = dataSet.Tables[0];
+            DataColumnCollection loadedColumns = dataTable.Columns;
+            int requredColumnExists = 0;
+            ObservableCollection<DataGridColumn> validationColumnsSet = registrationTable.Columns;
+            DataRowCollection rows = dataTable.Rows;
+            for (int i = 1; i < validationColumnsSet.Count; i++)
+            {
+                for (int j = 0; j < loadedColumns.Count; j++)
+                {
+                    if (rows[0].ItemArray[j].Equals(validationColumnsSet[i].Header))
+                    {
+                        requredColumnExists++;
+                        break;
+                    }
+                }
+            }
+
+            if (requredColumnExists == validationColumnsSet.Count - 1)
+            {
+                participants_list.Clear();
+                for (int i = 1; i < dataTable.Rows.Count; i++)
+                {
+                    DataRow row = dataTable.Rows[i];
+                    Participant newParticipant = new Participant();
+                    for (int j = 0; j < dataTable.Columns.Count; j++)
+                    {
+                        if (dataTable.Rows[0].ItemArray[j].Equals("Имя"))
+                        {
+                            newParticipant.Name = row.ItemArray[j].ToString();
+                        }
+
+                        if (dataTable.Rows[0].ItemArray[j].Equals("Фамилия"))
+                        {
+                            newParticipant.Surname = row.ItemArray[j].ToString();
+                        }
+
+                        if (dataTable.Rows[0].ItemArray[j].Equals("Отчество"))
+                        {
+                            newParticipant.Otchestvo = row.ItemArray[j].ToString();
+                        }
+
+                        if (dataTable.Rows[0].ItemArray[j].Equals("Псевдоним"))
+                        {
+                            newParticipant.Psevdonim = row.ItemArray[j].ToString();
+                        }
+
+                        if (dataTable.Rows[0].ItemArray[j].Equals("Клуб"))
+                        {
+                            newParticipant.Club = row.ItemArray[j].ToString();
+                        }
+
+                        if (dataTable.Rows[0].ItemArray[j].Equals("Город"))
+                        {
+                            newParticipant.City = row.ItemArray[j].ToString();
+                        }
+
+                        if (dataTable.Rows[0].ItemArray[j].Equals("Посевной"))
+                        {
+                            if (bool.TryParse(row.ItemArray[j].ToString(), out _))
+                            {
+                                newParticipant.Posevnoy = bool.Parse(row.ItemArray[j].ToString());
+                            }
+                            else
+                            {
+                                newParticipant.Posevnoy = false;
+                            }
+                        }
+
+                        if (dataTable.Rows[0].ItemArray[j].Equals("Пол"))
+                        {
+                            if (row.ItemArray[j].ToString().Equals("М") || row.ItemArray[j].ToString().Equals("Ж"))
+                            {
+                                newParticipant.Sex = row.ItemArray[j].ToString();
+                            }
+                        }
+
+                        if (dataTable.Rows[0].ItemArray[j].Equals("Год рождения"))
+                        {
+                            if (int.TryParse(row.ItemArray[j].ToString(), out _))
+                            {
+                                int year = int.Parse(row.ItemArray[j].ToString());
+                                if (year > 1900)
+                                {
+                                    newParticipant.DateOfBirth = year;
+                                }
+                            }
+                        }
+
+                        if (dataTable.Rows[0].ItemArray[j].Equals("Рост"))
+                        {
+                            if (int.TryParse(row.ItemArray[j].ToString(), out _))
+                            {
+                                int height = int.Parse(row.ItemArray[j].ToString());
+                                if (height > 100)
+                                {
+                                    newParticipant.Height = height;
+                                }
+                            }
+                        }
+
+                        if (dataTable.Rows[0].ItemArray[j].Equals("Вес"))
+                        {
+                            if (int.TryParse(row.ItemArray[j].ToString(), out _))
+                            {
+                                int weight = int.Parse(row.ItemArray[j].ToString());
+                                if (weight > 10)
+                                {
+                                    newParticipant.Weight = weight;
+                                }
+                            }
+                        }
+
+                        if (dataTable.Rows[0].ItemArray[j].Equals("Рейтинг (общий)"))
+                        {
+                            if (int.TryParse(row.ItemArray[j].ToString(), out _))
+                            {
+                                int raiting = int.Parse(row.ItemArray[j].ToString());
+                                newParticipant.CommonRating = raiting;
+                            }
+                        }
+
+                        if (dataTable.Rows[0].ItemArray[j].Equals("Рейтинг (клубный)"))
+                        {
+                            if (int.TryParse(row.ItemArray[j].ToString(), out _))
+                            {
+                                int raiting = int.Parse(row.ItemArray[j].ToString());
+                                newParticipant.ClubRating = raiting;
+                            }
+                        }
+                    }
+                    participants_list.Add(newParticipant);
+                    registrationTable.ItemsSource = participants_list;
+                }
+                stream.Close();
+                reader.Close();
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("not valid");
+            }
+
+            return false;
         }
     }
 
