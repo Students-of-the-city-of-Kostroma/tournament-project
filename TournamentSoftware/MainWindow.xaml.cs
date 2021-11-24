@@ -54,7 +54,7 @@ namespace TournamentSoftware
             {
                 e.Handled = true;
             }
-            else 
+            else
             {
                 Console.WriteLine(((TextBox)e.Source).Text);
                 if (((TextBox)e.Source).Text.Equals("0"))
@@ -114,6 +114,11 @@ namespace TournamentSoftware
             // DbConnection.connect<Participant>(participant as object);
         }
 
+        /// <summary>
+        /// Удаление отмеченных участников
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void deleteParticipant(object sender, RoutedEventArgs e)
         {
             Console.WriteLine("Вего участников " + participantsList.Count);
@@ -221,24 +226,6 @@ namespace TournamentSoftware
             }
         }
 
-        private void releaseObject(object obj)
-        {
-            try
-            {
-                System.Runtime.InteropServices.Marshal.ReleaseComObject(obj);
-                obj = null;
-            }
-            catch (Exception ex)
-            {
-                obj = null;
-                MessageBox.Show("Exception Occured while releasing object " + ex.ToString());
-            }
-            finally
-            {
-                GC.Collect();
-            }
-        }
-
 
         /// <summary>
         /// Экспортируем тиблицу регистрации в файл
@@ -280,17 +267,53 @@ namespace TournamentSoftware
             Excel.Worksheet worksheet = workbook.ActiveSheet;
 
 
-
+            registrationTable.Columns.RemoveAt(0);
             for (int i = 1; i < registrationTable.Items.Count + 1; i++)
             {
                 for (int j = 1; j < registrationTable.Columns.Count + 1; j++)
                 {
-                    // worksheet.Rows[i].Columns[j] = (DataGridView)registrationTable.Rows[i - 1].Cells[j - 1].Value;
-                    var rows = GetDataGridRows(registrationTable);
-                    Console.WriteLine(rows.ToString());
-                    // worksheet.Rows[i].Columns[j] = registrationTable.Columns[j-1].GetCellContent(registrationTable.Items[i-1]);
-
-                    // worksheet.Rows[i].Columns[j] = selectedRow.DataView.ToTable().Columns[j - 1].ToString();
+                    DataGridColumn col = registrationTable.Columns[j - 1];
+                    if (col.Header.Equals("Посевной"))
+                    {
+                        if (col.GetCellContent(registrationTable.Items[i - 1]) != null)
+                        {
+                            Console.WriteLine("Посевной " + (col.GetCellContent(registrationTable.Items[i - 1]) as ContentPresenter).Content);
+                            //bool? text = (col.GetCellContent(registrationTable.Items[i - 1]) as CheckBox).IsChecked;
+                            //worksheet.Rows[i].Columns[j] = text.ToString();
+                            //Console.WriteLine(text);
+                        }
+                        else
+                        {
+                            Console.WriteLine("cell content is null");
+                        }
+                    }
+                    else if (col.Header.Equals("Пол"))
+                    {
+                        if (col.GetCellContent(registrationTable.Items[i - 1]) != null)
+                        {
+                            string text = (col.GetCellContent(registrationTable.Items[i - 1]) as ComboBox).SelectedItem.ToString();
+                            worksheet.Rows[i].Columns[j] = text;
+                            Console.WriteLine(text);
+                        }
+                        else
+                        {
+                            Console.WriteLine("cell content is null");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("колонка " + (j - 1) + " " + col.Header);
+                        string text = "txt";
+                        if (col.GetCellContent(registrationTable.Items[i - 1]) != null)
+                        {
+                           text = (col.GetCellContent(registrationTable.Items[i - 1]) as TextBlock).Text;
+                            worksheet.Rows[i].Columns[j] = text;
+                        }
+                        else
+                        {
+                            Console.WriteLine("cell content is null");
+                        }
+                    }
                 }
             }
 
@@ -447,6 +470,11 @@ namespace TournamentSoftware
                             }
                         }
 
+                        if (dataTable.Rows[0].ItemArray[j].Equals("Категория"))
+                        {
+                            newParticipant.Kategory = row.ItemArray[j].ToString();
+                        }
+
                         if (dataTable.Rows[0].ItemArray[j].Equals("Рост"))
                         {
                             if (int.TryParse(row.ItemArray[j].ToString(), out _))
@@ -511,7 +539,8 @@ namespace TournamentSoftware
 
         private void ComboBox_Loaded(object sender, RoutedEventArgs e)
         {
-            if (((ComboBox)e.Source).SelectedItem != "M" && ((ComboBox)e.Source).SelectedItem != "Ж") {
+            if (((ComboBox)e.Source).SelectedItem != "M" && ((ComboBox)e.Source).SelectedItem != "Ж")
+            {
                 SolidColorBrush scb = new SolidColorBrush(Color.FromRgb(255, 221, 219));
                 Console.WriteLine("back");
                 ((ComboBox)e.Source).Background = scb;

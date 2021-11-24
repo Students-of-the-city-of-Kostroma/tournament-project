@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TournamentSoftware"
         mc:Ignorable="d"
-        Title="Настройки" MaxHeight="450" MinHeight="450" MaxWidth="800" MinWidth="800" Width="800" Height="458.8" Loaded="settingsWindow_Loaded">
+        Title="Настройки" MaxHeight="460" MinHeight="460" MaxWidth="800" MinWidth="800" Width="800" Height="458.8" Loaded="settingsWindow_Loaded">
     <Grid Margin="0,0,-0.4,-12">
         <Grid.RowDefinitions>
             <RowDefinition Height="175*"/>

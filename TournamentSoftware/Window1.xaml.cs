@@ -30,8 +30,8 @@ namespace TournamentSoftware
         private ObservableCollection<Nomination> nominationsList = new ObservableCollection<Nomination>();
         private ObservableCollection<Nomination> deletedNominations = new ObservableCollection<Nomination>();
         private List<CheckBox> checkBoxes = new List<CheckBox>();
-        ObservableCollection<DataGridColumn> mainWindowColumns = ((MainWindow)System.Windows.Application.Current.MainWindow).registrationTable.Columns;
-        ObservableCollection<DataGridCheckBoxColumn> mainNominationsColumns = ((MainWindow)System.Windows.Application.Current.MainWindow).nominationsColumn;
+        ObservableCollection<DataGridColumn> mainWindowColumns = ((MainWindow)Application.Current.MainWindow).registrationTable.Columns;
+        ObservableCollection<DataGridCheckBoxColumn> mainNominationsColumns = ((MainWindow)Application.Current.MainWindow).nominationsColumn;
 
         /// <summary>
         /// Закрываем окно настроек
@@ -88,12 +88,15 @@ namespace TournamentSoftware
             for (int i = 0; i < nominationsList.Count; i++)
             {
                 DataGridCheckBoxColumn dataGridCheckBoxColumn = new DataGridCheckBoxColumn();
-                if (checkNominationNameValid(nominationsList[i].NominationName))
+                string nominationName = nominationsList[i].NominationName;
+                // nominationsList.Remove(nominationsList[i]);
+                if (checkNominationNameValid(nominationName))
                 {
-                    if (!checkNominationAlreadyExists(nominationsList[i].NominationName))
+                    if (!checkNominationAlreadyExists(nominationName))
                     {
-                        dataGridCheckBoxColumn.Header = nominationsList[i].NominationName;
+                        dataGridCheckBoxColumn.Header = nominationName;
                         dataGridCheckBoxColumn.CanUserResize = false;
+                        dataGridCheckBoxColumn.Width = new DataGridLength(1,DataGridLengthUnitType.Star);
                         mainNominationsColumns.Add(dataGridCheckBoxColumn);
                         mainWindowColumns.Add(dataGridCheckBoxColumn);
                     }
@@ -101,8 +104,8 @@ namespace TournamentSoftware
                 }
                 else
                 {
-                    MessageBox.Show("Недопустимое название номинации " + nominationsList[i].NominationName +
-                        "!\nТакое название уже имеет существующий столбец, номинация " + nominationsList[i].NominationName +
+                    MessageBox.Show("Недопустимое название номинации " + nominationName +
+                        "!\nТакое название уже имеет существующий столбец, номинация " + nominationName +
                         " не будет добавлена в таблицу", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
@@ -114,17 +117,42 @@ namespace TournamentSoftware
                 {
                     if (deletedNominations[i].NominationName.Equals(mainNominationsColumns[j].Header))
                     {
+                        Console.WriteLine("delete " + deletedNominations[i].NominationName);
                         mainWindowColumns.Remove(mainNominationsColumns[j]);
+                        // mainNominationsColumns.Remove(mainNominationsColumns[j]);
+                    }
+                }
+            }
+
+            for (int i = 0; i < deletedNominations.Count; i++)
+            {
+                for (int j = 0; j < mainNominationsColumns.Count; j++)
+                {
+                    if (deletedNominations[i].NominationName.Equals(mainNominationsColumns[j].Header))
+                    {
                         mainNominationsColumns.Remove(mainNominationsColumns[j]);
                     }
                 }
             }
 
+            deletedNominations.Clear();
+
             this.Close();
         }
 
+        /// <summary>
+        /// Проверка что такой номинации еще не существует
+        /// </summary>
+        /// <param name="nominationName"></param>
+        /// <returns></returns>
         private bool checkNominationAlreadyExists(string nominationName)
         {
+            //for (int i = 0; i < nominationsList.Count; i++) 
+            //{
+            //    if (nominationsList[i].NominationName.Equals(nominationName)) {
+            //        return true;
+            //    }
+            //}
 
             for (int i = 0; i < mainNominationsColumns.Count; i++)
             {
@@ -136,6 +164,11 @@ namespace TournamentSoftware
             return false;
         }
 
+        /// <summary>
+        /// Проверка что название номинации не совпадает с названием обязательных столбцов
+        /// </summary>
+        /// <param name="nominationName"></param>
+        /// <returns></returns>
         private bool checkNominationNameValid(string nominationName)
         {
             if (nominationName.Equals("Имя") ||
@@ -188,8 +221,10 @@ namespace TournamentSoftware
             {
                 if (nominationsList[i].IsSelected)
                 {
-                    nominationsList.Remove(nominationsList[i]);
+                    Console.WriteLine("name = 6" + nominationsList[i].NominationName);
                     deletedNominations.Add(nominationsList[i]);
+                    nominationsList.Remove(nominationsList[i]);
+                    
                 }
                 else
                 {

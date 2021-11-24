@@ -177,7 +177,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTemplateColumn Header="Рейтинг (общий)">
+                    <DataGridTemplateColumn Header="Рейтинг (общий)" Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBox Text="{Binding CommonRating}" 
@@ -189,7 +189,7 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="Рейтинг (клубный)">
+                    <DataGridTemplateColumn Header="Рейтинг (клубный)" Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBox Text="{Binding ClubRating}" PreviewTextInput="NumericOnly" MaxLength="4">
