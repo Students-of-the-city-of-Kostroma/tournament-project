@@ -12,6 +12,7 @@ using ExcelDataReader;
 using System.IO;
 using System.Windows.Input;
 using System.Collections;
+using System.Windows.Media;
 
 namespace TournamentSoftware
 {
@@ -20,19 +21,26 @@ namespace TournamentSoftware
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ObservableCollection<Participant> participants_list = new ObservableCollection<Participant>();
+        private ObservableCollection<Participant> participantsList = new ObservableCollection<Participant>();
         public ObservableCollection<Participant> ParticipantsCollection
         {
-            get { return this.participants_list; }
+            get { return this.participantsList; }
         }
+        public ObservableCollection<Nomination> nominationsList = new ObservableCollection<Nomination>();
+        public ObservableCollection<DataGridCheckBoxColumn> nominationsColumn = new ObservableCollection<DataGridCheckBoxColumn>();
         public MainWindow()
         {
             InitializeComponent();
             appGrid.Visibility = Visibility.Hidden;
-            // goTournament.IsEnabled = false;
-            participants_list = new ObservableCollection<Participant>();
-            registrationTable.DataContext = participants_list;
+            participantsList = new ObservableCollection<Participant>();
+            registrationTable.DataContext = participantsList;
             registrationTable.CellEditEnding += RegistrationTable_CellEditEnding;
+
+        }
+
+        private void ParticipantsList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            Console.WriteLine("информация об участниках изменена");
         }
 
         private void RegistrationTable_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
@@ -40,9 +48,21 @@ namespace TournamentSoftware
             Console.WriteLine(e.Row.GetIndex());
         }
 
-        private void NumericOnly(System.Object sender, System.Windows.Input.TextCompositionEventArgs e)
+        private void NumericOnly(object sender, TextCompositionEventArgs e)
         {
-            if (!int.TryParse(e.Text, out _)) { e.Handled = false; }
+            if (!int.TryParse(e.Text, out _))
+            {
+                e.Handled = true;
+            }
+            else 
+            {
+                Console.WriteLine(((TextBox)e.Source).Text);
+                if (((TextBox)e.Source).Text.Equals("0"))
+                {
+                    Console.WriteLine("0");
+                    ((TextBox)e.Source).Text = "";
+                }
+            }
         }
 
         public static int participantCount = 0;
@@ -77,33 +97,33 @@ namespace TournamentSoftware
                 Posevnoy = false,
                 Club = "",
                 City = "",
-                DateOfBirth = -1,
-                Height = -1,
-                Weight = -1,
+                DateOfBirth = 0,
+                Height = 0,
+                Weight = 0,
                 Kategory = "",
                 Sex = "",
-                CommonRating = -1,
-                ClubRating = -1,
+                CommonRating = 0,
+                ClubRating = 0,
                 AvailableSex = new string[2] { "М", "Ж" },
                 IsSelected = false,
             };
 
-            participants_list.Add(participant);
-            registrationTable.ItemsSource = participants_list;
+            participantsList.Add(participant);
+            registrationTable.ItemsSource = participantsList;
             exportButton.IsEnabled = true;
             // DbConnection.connect<Participant>(participant as object);
         }
 
         private void deleteParticipant(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Вего участников " + participants_list.Count);
-            for (int i = 0; i < participants_list.Count;)
+            Console.WriteLine("Вего участников " + participantsList.Count);
+            for (int i = 0; i < participantsList.Count;)
             {
-                Console.WriteLine(participants_list[i].IsSelected);
-                if (participants_list[i].IsSelected)
+                Console.WriteLine(participantsList[i].IsSelected);
+                if (participantsList[i].IsSelected)
                 {
-                    Console.WriteLine(participants_list[i].Name);
-                    participants_list.Remove(participants_list[i]);
+                    Console.WriteLine(participantsList[i].Name);
+                    participantsList.Remove(participantsList[i]);
                 }
                 else
                 {
@@ -114,21 +134,26 @@ namespace TournamentSoftware
             selectorAllForDelete_Unchecked(sender, e);
             CheckBox newCheckBox = new CheckBox();
             newCheckBox.IsChecked = false;
-            if (participants_list.Count == 0)
+            if (participantsList.Count == 0)
             {
                 exportButton.IsEnabled = false;
             }
         }
 
+        /// <summary>
+        /// снятие галочек со всех участников
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void selectorAllForDelete_Unchecked(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < participants_list.Count; i++)
+            for (int i = 0; i < participantsList.Count; i++)
             {
-                participants_list[i].IsSelected = false;
+                participantsList[i].IsSelected = false;
             }
-            for (int i = 0; i < participants_list.Count; i++)
+            for (int i = 0; i < participantsList.Count; i++)
             {
-                Console.WriteLine(participants_list[i].IsSelected);
+                Console.WriteLine(participantsList[i].IsSelected);
             }
             delete.IsEnabled = false;
             DataGridColumn newCol = checkboxCol;
@@ -137,23 +162,29 @@ namespace TournamentSoftware
 
         }
 
+        /// <summary>
+        /// выделение всех участников для удаления
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void selectorAllForDelete_Checked(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < participants_list.Count; i++)
+            for (int i = 0; i < participantsList.Count; i++)
             {
-                participants_list[i].IsSelected = true;
+                participantsList[i].IsSelected = true;
             }
-            for (int i = 0; i < participants_list.Count; i++)
+            for (int i = 0; i < participantsList.Count; i++)
             {
-                Console.WriteLine(participants_list[i].IsSelected);
+                Console.WriteLine(participantsList[i].IsSelected);
             }
             delete.IsEnabled = true;
         }
 
         private void mainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            participants_list = new ObservableCollection<Participant>();
-            registrationTable.DataContext = participants_list;
+            participantsList = new ObservableCollection<Participant>();
+            registrationTable.DataContext = participantsList;
+            participantsList.CollectionChanged += ParticipantsList_CollectionChanged;
         }
 
         /// <summary>
@@ -176,9 +207,9 @@ namespace TournamentSoftware
         private void participantUnchecked(object sender, RoutedEventArgs e)
         {
             int selectedCount = 0;
-            for (int i = 0; i < participants_list.Count; i++)
+            for (int i = 0; i < participantsList.Count; i++)
             {
-                if (participants_list[i].IsSelected)
+                if (participantsList[i].IsSelected)
                 {
                     selectedCount++;
                 }
@@ -220,9 +251,10 @@ namespace TournamentSoftware
 
             SaveFileDialog.Filter = "Файлы Excel (*.xls; *.xlsx) | *.xls; *.xlsx";
             // SaveFileDialog.FileOk += SaveFileDialog_FileOk;
-           
+
             bool? result = SaveFileDialog.ShowDialog();
-            if (result == true) {
+            if (result == true)
+            {
                 string path = Path.GetFullPath(SaveFileDialog.FileName);
                 SaveFileDialog_FileOk(path);
             }
@@ -256,9 +288,9 @@ namespace TournamentSoftware
                     // worksheet.Rows[i].Columns[j] = (DataGridView)registrationTable.Rows[i - 1].Cells[j - 1].Value;
                     var rows = GetDataGridRows(registrationTable);
                     Console.WriteLine(rows.ToString());
-                   // worksheet.Rows[i].Columns[j] = registrationTable.Columns[j-1].GetCellContent(registrationTable.Items[i-1]);
-                    
-                   // worksheet.Rows[i].Columns[j] = selectedRow.DataView.ToTable().Columns[j - 1].ToString();
+                    // worksheet.Rows[i].Columns[j] = registrationTable.Columns[j-1].GetCellContent(registrationTable.Items[i-1]);
+
+                    // worksheet.Rows[i].Columns[j] = selectedRow.DataView.ToTable().Columns[j - 1].ToString();
                 }
             }
 
@@ -301,14 +333,14 @@ namespace TournamentSoftware
         private void OpenExcel_Click(object sender, RoutedEventArgs e)
         {
             MessageBoxResult result = new MessageBoxResult();
-            if (participants_list.Count > 0)
+            if (participantsList.Count > 0)
             {
                 result = MessageBox.Show("Все предыдущие записи в таблице регистрации будут удалены. Вы хотите продолжить?", "Предупреждение",
                MessageBoxButton.OKCancel,
                MessageBoxImage.Warning, MessageBoxResult.Cancel);
             }
 
-            if (participants_list.Count == 0 || MessageBoxResult.OK == result)
+            if (participantsList.Count == 0 || MessageBoxResult.OK == result)
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog();
                 openFileDialog.Filter = "EXCEL Files (*.xlsx)|*.xlsx|EXCEL Files 2003 (*.xls)|*.xls|All files (*.*)|*.*";
@@ -346,7 +378,7 @@ namespace TournamentSoftware
 
             if (requredColumnExists == validationColumnsSet.Count - 1)
             {
-                participants_list.Clear();
+                participantsList.Clear();
                 for (int i = 1; i < dataTable.Rows.Count; i++)
                 {
                     DataRow row = dataTable.Rows[i];
@@ -457,8 +489,8 @@ namespace TournamentSoftware
                             }
                         }
                     }
-                    participants_list.Add(newParticipant);
-                    registrationTable.ItemsSource = participants_list;
+                    participantsList.Add(newParticipant);
+                    registrationTable.ItemsSource = participantsList;
                 }
                 stream.Close();
                 reader.Close();
@@ -470,6 +502,20 @@ namespace TournamentSoftware
             }
 
             return false;
+        }
+
+        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("in focus Рейтинг (общий) " + ((TextBox)e.Source).Text);
+        }
+
+        private void ComboBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (((ComboBox)e.Source).SelectedItem != "M" && ((ComboBox)e.Source).SelectedItem != "Ж") {
+                SolidColorBrush scb = new SolidColorBrush(Color.FromRgb(255, 221, 219));
+                Console.WriteLine("back");
+                ((ComboBox)e.Source).Background = scb;
+            }
         }
     }
 

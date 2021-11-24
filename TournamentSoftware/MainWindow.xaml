@@ -27,26 +27,22 @@
             <Button x:Name="loadFromFile" Content="Загрузить из файла" Grid.Column="1" HorizontalAlignment="Left" Margin="17.4,217,0,0" VerticalAlignment="Top" Padding="5" Height="27" Width="116" Click="OpenExcel_Click"/>
             <Button x:Name="add" Content="Добавить участника" Grid.Column="1" HorizontalAlignment="Left" Margin="17.4,270,0,0" VerticalAlignment="Top" Padding="5" Height="27" Width="122" Click="addParticipant"/>
             <Button x:Name="delete" Content="Удалить участника" Grid.Column="1" HorizontalAlignment="Left" Margin="17.4,320,0,0" VerticalAlignment="Top" Padding="5" Height="27" Width="113" Click="deleteParticipant" IsEnabled="False"/>
-            <DataGrid x:Name="registrationTable" x:FieldModifier="public" ItemsSource="{Binding ParticipantsCollection, Mode=OneWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0.6,0" GridLinesVisibility="All" HeadersVisibility="All" 
-                      VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" SelectionMode="Extended" IsReadOnly="False" AutoGenerateColumns="False" CanUserAddRows="False" IsSynchronizedWithCurrentItem="False">
+            <DataGrid x:Name="registrationTable" 
+                      x:FieldModifier="public" 
+                      ItemsSource="{Binding ParticipantsCollection, Mode=OneWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
+                      HorizontalAlignment="Stretch" 
+                      VerticalAlignment="Stretch" Margin="0,0,0.6,0" 
+                      GridLinesVisibility="All" 
+                      HeadersVisibility="All" 
+                      VerticalScrollBarVisibility="Auto" 
+                      HorizontalScrollBarVisibility="Auto" 
+                      SelectionMode="Extended" IsReadOnly="False" 
+                      AutoGenerateColumns="False" 
+                      CanUserAddRows="False" 
+                      IsSynchronizedWithCurrentItem="False">
                 <DataGrid.DataContext>
                     <local:Participant/>
                 </DataGrid.DataContext>
-
-                <!--<DataGrid.RowStyle>
-                    <Style TargetType="{x:Type TextBlock}">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Name}" Value="">
-                                <Setter Property="Background" Value="#FFFFDDDB" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Surname}" Value="">
-                                <Setter Property="Background" Value="#FFFFDDDB" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </DataGrid.RowStyle>-->
-
-
 
                 <DataGrid.Columns>
                     <DataGridTemplateColumn x:Name="checkboxCol">
@@ -97,13 +93,22 @@
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding Path=Posevnoy, UpdateSourceTrigger = PropertyChanged}" />
                             </DataTemplate>
+                            
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
                     <DataGridTemplateColumn Header="Пол">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <ComboBox ItemsSource="{Binding AvailableSex}" SelectedItem="{Binding Path=Sex, Mode=TwoWay}">
+                                <ComboBox ItemsSource="{Binding AvailableSex}" SelectedItem="{Binding Path=Sex, Mode=TwoWay}"
+                                          Loaded="ComboBox_Loaded" 
+                                         >
+                                    <ComboBox.Background>
+                                        <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                                            <GradientStop Color="#FFF71414" Offset="0"/>
+                                            <GradientStop Color="#FFFF1609" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </ComboBox.Background>
                                 </ComboBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -119,25 +124,79 @@
                     </DataGridTemplateColumn>
 
                     <DataGridTextColumn Header="Клуб" Binding="{Binding Club}" Width="80">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Style.Triggers>
+                                    <Trigger Property="Text" Value="">
+                                        <Setter Property="Background" Value="#FFFFDDDB"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
                     <DataGridTextColumn Header="Город" Binding="{Binding City}" Width="80">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Style.Triggers>
+                                    <Trigger Property="Text" Value="">
+                                        <Setter Property="Background" Value="#FFFFDDDB"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Рост" Binding="{Binding Height}">
-                    </DataGridTextColumn>
+                    <DataGridTemplateColumn Header="Рост">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding Height}" PreviewTextInput="NumericOnly" MaxLength="4">
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="Вес" Binding="{Binding Weight}">
-                    </DataGridTextColumn>
+                    <DataGridTemplateColumn Header="Вес">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding Weight}" PreviewTextInput="NumericOnly" MaxLength="4">
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
                     <DataGridTextColumn Header="Категория" Binding="{Binding Kategory}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Style.Triggers>
+                                    <Trigger Property="Text" Value="">
+                                        <Setter Property="Background" Value="#FFFFDDDB"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Рейтинг (общий)" Binding="{Binding CommonRating}">
-                    </DataGridTextColumn>
+                    <DataGridTemplateColumn Header="Рейтинг (общий)">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding CommonRating}" 
+                                         PreviewTextInput="NumericOnly" 
+                                         MaxLength="4" 
+                                         GotFocus="TextBox_GotFocus" >
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="Рейтинг (клубный)" Binding="{Binding ClubRating}">
-                    </DataGridTextColumn>
+                    <DataGridTemplateColumn Header="Рейтинг (клубный)">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding ClubRating}" PreviewTextInput="NumericOnly" MaxLength="4">
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
                 <DataGrid.Resources>
                     <Style TargetType="DataGridCell">
