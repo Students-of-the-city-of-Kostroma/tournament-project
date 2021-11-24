@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TournamentSoftware"
         mc:Ignorable="d"
-        Title="Настройки" MaxHeight="450" MinHeight="450" MaxWidth="800" MinWidth="800" Width="800" Height="458.8">
+        Title="Настройки" MaxHeight="450" MinHeight="450" MaxWidth="800" MinWidth="800" Width="800" Height="458.8" Loaded="settingsWindow_Loaded">
     <Grid Margin="0,0,-0.4,-12">
         <Grid.RowDefinitions>
             <RowDefinition Height="175*"/>
@@ -19,18 +19,6 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Label Content="Скрытые столбцы таблицы:" HorizontalAlignment="Left" Margin="387,15,0,0" VerticalAlignment="Top" Height="35" Width="387" FontSize="20" Grid.ColumnSpan="2"/>
-            <CheckBox x:Name="hideName" Content="Имя" Grid.Column="1" HorizontalAlignment="Left" Margin="42.8,89,0,0" VerticalAlignment="Top"/>
-            <CheckBox Content="Фамилия" Grid.Column="1" HorizontalAlignment="Left" Margin="42.8,109,0,0" VerticalAlignment="Top"/>
-            <CheckBox Content="Отчество" Grid.Column="1" HorizontalAlignment="Left" Margin="42.8,129,0,0" VerticalAlignment="Top"/>
-            <CheckBox Content="Псевдоним" Grid.Column="1" HorizontalAlignment="Left" Margin="42.8,149,0,0" VerticalAlignment="Top"/>
-            <CheckBox Content="Посевной" Grid.Column="1" HorizontalAlignment="Left" Margin="42.8,169,0,0" VerticalAlignment="Top"/>
-            <CheckBox Content="Год Рождения" Grid.Column="1" HorizontalAlignment="Left" Margin="42.8,189,0,0" VerticalAlignment="Top"/>
-            <CheckBox Content="Клуб" Grid.Column="1" HorizontalAlignment="Left" Margin="42.8,209,0,0" VerticalAlignment="Top"/>
-            <CheckBox Content="Город" Grid.Column="1" HorizontalAlignment="Left" Margin="42.8,229,0,0" VerticalAlignment="Top"/>
-            <CheckBox Content="Пол" Grid.Column="1" HorizontalAlignment="Left" Margin="42.8,249,0,0" VerticalAlignment="Top"/>
-            <CheckBox Content="Рост" Grid.Column="1" HorizontalAlignment="Left" Margin="42.8,269,0,0" VerticalAlignment="Top"/>
-            <CheckBox Content="Вес" Grid.Column="1" HorizontalAlignment="Left" Margin="42.8,289,0,0" VerticalAlignment="Top"/>
-            <CheckBox Content="Категории" Grid.Column="1" HorizontalAlignment="Left" Margin="42.8,309,0,0" VerticalAlignment="Top"/>
             <Label Content="Номинации:" HorizontalAlignment="Left" Margin="31,15,0,0" VerticalAlignment="Top" Width="132" FontSize="20"/>
             <Button Content="+" HorizontalAlignment="Left" Margin="179,25,0,0" VerticalAlignment="Top" Width="21" Height="22" RenderTransformOrigin="0.524,-1.464" Click="addNomination"/>
             <Button Content="-" HorizontalAlignment="Left" Margin="209,25,0,0" VerticalAlignment="Top" Width="21" Height="22" RenderTransformOrigin="0.524,-1.464" Click="deleteSelectedNominations"/>
@@ -58,6 +46,13 @@
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
+            <ListView x:Name="columnsNames" Grid.Column="1" HorizontalAlignment="Left" Height="287" Margin="35.8,57,0,0" VerticalAlignment="Top" Width="310">
+                <!--<ListView.View>
+                    <GridView >
+                        <GridViewColumn Header="Столбцы" Width="270"/>
+                    </GridView>
+                </ListView.View>-->
+            </ListView>
         </Grid>
 
     </Grid>

@@ -29,6 +29,8 @@ namespace TournamentSoftware
 
         private int nominationCount = 0;
         private ObservableCollection<Nomination> nominationsList = new ObservableCollection<Nomination>();
+        private List<CheckBox> checkBoxes = new List<CheckBox>();
+        ObservableCollection<DataGridColumn> mainWindowColumns = ((MainWindow)System.Windows.Application.Current.MainWindow).registrationTable.Columns;
 
         /// <summary>
         /// Закрываем окно настроек
@@ -47,7 +49,36 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void setNewSettings(object sender, RoutedEventArgs e)
         {
+            for (int i = 0; i < checkBoxes.Count; i++) {
 
+                for (int j = 1; j < mainWindowColumns.Count; j++)
+                {
+                    if (mainWindowColumns[j].Header.Equals(checkBoxes[i].Content))
+                    {
+                        if (checkBoxes[i].IsChecked == true) {
+                            mainWindowColumns[j].Visibility = Visibility.Hidden;
+                            break;
+                        }
+                        else
+                        {
+                            mainWindowColumns[j].Visibility = Visibility.Visible;
+                            break;
+                        }
+                    }
+                }
+
+                if (checkBoxes[i].IsChecked == true) 
+                {
+                    for (int j = 1; j < mainWindowColumns.Count; j++) {
+                        if (mainWindowColumns[j].Header.Equals(checkBoxes[i].Content)) {
+                            mainWindowColumns[j].Visibility = Visibility.Hidden;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            this.Close();
         }
 
         /// <summary>
@@ -120,6 +151,27 @@ namespace TournamentSoftware
         private void nominationChecked(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void settingsWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            for (int i = 1; i < mainWindowColumns.Count; i++){
+                CheckBox checkBox = new CheckBox();
+                checkBox.IsChecked = false;
+                checkBox.Content = mainWindowColumns[i].Header;
+                if (mainWindowColumns[i].Visibility == Visibility.Hidden)
+                {
+                    checkBox.IsChecked = true;
+                }
+                checkBox.Checked += CheckBox_Checked;
+                checkBoxes.Add(checkBox);
+                columnsNames.Items.Add(checkBox);
+            }
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            
         }
     }
 

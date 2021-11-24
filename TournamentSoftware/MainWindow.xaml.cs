@@ -10,6 +10,8 @@ using SQLite;
 using Excel = Microsoft.Office.Interop.Excel;
 using ExcelDataReader;
 using System.IO;
+using System.Windows.Input;
+using System.Collections;
 
 namespace TournamentSoftware
 {
@@ -112,6 +114,10 @@ namespace TournamentSoftware
             selectorAllForDelete_Unchecked(sender, e);
             CheckBox newCheckBox = new CheckBox();
             newCheckBox.IsChecked = false;
+            if (participants_list.Count == 0)
+            {
+                exportButton.IsEnabled = false;
+            }
         }
 
         private void selectorAllForDelete_Unchecked(object sender, RoutedEventArgs e)
@@ -208,36 +214,72 @@ namespace TournamentSoftware
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void exportRegistrationTable(object sender, RoutedEventArgs e)
+        private void saveFile(object sender, RoutedEventArgs e)
         {
-            Excel.Application xlApp;
-            Excel.Workbook xlWorkBook;
-            Excel.Worksheet xlWorkSheet;
-            object misValue = System.Reflection.Missing.Value;
+            SaveFileDialog SaveFileDialog = new SaveFileDialog();
 
-            xlApp = new Excel.Application();
-            xlWorkBook = xlApp.Workbooks.Add(misValue);
-            xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
-            int i = 0;
-            int j = 0;
+            SaveFileDialog.Filter = "Файлы Excel (*.xls; *.xlsx) | *.xls; *.xlsx";
+            // SaveFileDialog.FileOk += SaveFileDialog_FileOk;
+           
+            bool? result = SaveFileDialog.ShowDialog();
+            if (result == true) {
+                string path = Path.GetFullPath(SaveFileDialog.FileName);
+                SaveFileDialog_FileOk(path);
+            }
+        }
 
-            // registrationTable.Items.Count - количество строк
-            for (i = 0; i <= registrationTable.Items.Count - 1; i++)
+        private void SaveFileDialog_FileOk(string path)
+        {
+
+            //string Destination = path;
+            //registrationTable.ClipboardCopyMode = DataGridClipboardCopyMode.IncludeHeader;
+            //registrationTable.SelectAllCells();
+
+
+            //ApplicationCommands.Copy.Execute(null, registrationTable);
+            //String resultat = (string)Clipboard.GetData(DataFormats.CommaSeparatedValue);
+            //String result = (string)Clipboard.GetData(DataFormats.Text);
+            //System.IO.StreamWriter file1 = new System.IO.StreamWriter(Destination);
+            //file1.WriteLine(result.Replace(',', ' '));
+            //file1.Close();
+
+            Excel.Application excelapp = new Excel.Application();
+            Excel.Workbook workbook = excelapp.Workbooks.Add();
+            Excel.Worksheet worksheet = workbook.ActiveSheet;
+
+
+
+            for (int i = 1; i < registrationTable.Items.Count + 1; i++)
             {
-                for (j = 0; j <= registrationTable.Columns.Count - 1; j++)
+                for (int j = 1; j < registrationTable.Columns.Count + 1; j++)
                 {
-                    DataGridCell cell = (DataGridCell)registrationTable.Columns[i].GetCellContent(j);
-                    xlWorkSheet.Cells[i + 1, j + 1] = cell;
+                    // worksheet.Rows[i].Columns[j] = (DataGridView)registrationTable.Rows[i - 1].Cells[j - 1].Value;
+                    var rows = GetDataGridRows(registrationTable);
+                    Console.WriteLine(rows.ToString());
+                   // worksheet.Rows[i].Columns[j] = registrationTable.Columns[j-1].GetCellContent(registrationTable.Items[i-1]);
+                    
+                   // worksheet.Rows[i].Columns[j] = selectedRow.DataView.ToTable().Columns[j - 1].ToString();
                 }
             }
 
-            xlWorkBook.SaveAs("D:\\csharp.net-informations.xls", Excel.XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
-            xlWorkBook.Close(true, misValue, misValue);
-            xlApp.Quit();
+            excelapp.AlertBeforeOverwriting = false;
+            workbook.SaveAs(path);
+            excelapp.Quit();
+        }
 
-            releaseObject(xlWorkSheet);
-            releaseObject(xlWorkBook);
-            releaseObject(xlApp);
+        public IEnumerable<DataGridRow> GetDataGridRows(DataGrid grid)
+        {
+            var itemsSource = grid.ItemsSource as IEnumerable;
+            if (null == itemsSource) yield return null;
+            foreach (var item in itemsSource)
+            {
+                var row = grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+                if (null != row) yield return row;
+            }
+        }
+
+        private void exportRegistrationTable()
+        {
         }
 
         /// <summary>
@@ -259,12 +301,13 @@ namespace TournamentSoftware
         private void OpenExcel_Click(object sender, RoutedEventArgs e)
         {
             MessageBoxResult result = new MessageBoxResult();
-            if (participants_list.Count > 0) {
+            if (participants_list.Count > 0)
+            {
                 result = MessageBox.Show("Все предыдущие записи в таблице регистрации будут удалены. Вы хотите продолжить?", "Предупреждение",
                MessageBoxButton.OKCancel,
                MessageBoxImage.Warning, MessageBoxResult.Cancel);
             }
-           
+
             if (participants_list.Count == 0 || MessageBoxResult.OK == result)
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog();
