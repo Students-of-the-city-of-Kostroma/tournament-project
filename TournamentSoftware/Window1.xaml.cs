@@ -31,7 +31,8 @@ namespace TournamentSoftware
         private ObservableCollection<Nomination> deletedNominations = new ObservableCollection<Nomination>();
         private List<CheckBox> checkBoxes = new List<CheckBox>();
         ObservableCollection<DataGridColumn> mainWindowColumns = ((MainWindow)Application.Current.MainWindow).registrationTable.Columns;
-        ObservableCollection<DataGridCheckBoxColumn> mainNominationsColumns = ((MainWindow)Application.Current.MainWindow).nominationsColumn;
+        ObservableCollection<DataGridTemplateColumn> mainNominationsColumns = ((MainWindow)Application.Current.MainWindow).nominationsColumn;
+        ObservableCollection<Participant> participants = ((MainWindow)Application.Current.MainWindow).participantsList;
 
         /// <summary>
         /// Закрываем окно настроек
@@ -87,18 +88,34 @@ namespace TournamentSoftware
             // добавляем новые номинации в таблицу регистрации
             for (int i = 0; i < nominationsList.Count; i++)
             {
-                DataGridCheckBoxColumn dataGridCheckBoxColumn = new DataGridCheckBoxColumn();
+                DataGridTemplateColumn nominationColumn = new DataGridTemplateColumn();
                 string nominationName = nominationsList[i].NominationName;
                 // nominationsList.Remove(nominationsList[i]);
                 if (checkNominationNameValid(nominationName))
                 {
                     if (!checkNominationAlreadyExists(nominationName))
                     {
-                        dataGridCheckBoxColumn.Header = nominationName;
-                        dataGridCheckBoxColumn.CanUserResize = false;
-                        dataGridCheckBoxColumn.Width = new DataGridLength(1,DataGridLengthUnitType.Star);
-                        mainNominationsColumns.Add(dataGridCheckBoxColumn);
-                        mainWindowColumns.Add(dataGridCheckBoxColumn);
+                        nominationColumn.Header = nominationName;
+                        nominationColumn.CanUserResize = false;
+                        nominationColumn.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
+
+                        Binding bind = new Binding("Nominations[" + nominationName + "]");
+                        bind.Mode = BindingMode.TwoWay;
+
+                        FrameworkElementFactory checkBox = new FrameworkElementFactory(typeof(CheckBox));
+                        checkBox.SetBinding(CheckBox.IsCheckedProperty, bind);
+                        DataTemplate checkBoxTemplate = new DataTemplate();
+                        checkBoxTemplate.VisualTree = checkBox;
+
+                        nominationColumn.CellTemplate = checkBoxTemplate;
+
+                        foreach (Participant p in participants)
+                        {
+                            p.Nominations.Add(nominationName, false);
+                        }
+
+                        mainNominationsColumns.Add(nominationColumn);
+                        mainWindowColumns.Add(nominationColumn);
                     }
 
                 }
@@ -115,10 +132,16 @@ namespace TournamentSoftware
             {
                 for (int j = 0; j < mainNominationsColumns.Count; j++)
                 {
+                    // находим удаляемую колонку и удаляем из таблицы
                     if (deletedNominations[i].NominationName.Equals(mainNominationsColumns[j].Header))
                     {
                         Console.WriteLine("delete " + deletedNominations[i].NominationName);
                         mainWindowColumns.Remove(mainNominationsColumns[j]);
+                        // удаляем номинации у участников
+                        foreach (Participant p in participants)
+                        {
+                            p.Nominations.Remove(deletedNominations[i].NominationName);
+                        }
                         // mainNominationsColumns.Remove(mainNominationsColumns[j]);
                     }
                 }
@@ -135,6 +158,7 @@ namespace TournamentSoftware
                 }
             }
 
+            nominationsList.Clear();
             deletedNominations.Clear();
 
             this.Close();
@@ -221,10 +245,9 @@ namespace TournamentSoftware
             {
                 if (nominationsList[i].IsSelected)
                 {
-                    Console.WriteLine("name = 6" + nominationsList[i].NominationName);
                     deletedNominations.Add(nominationsList[i]);
                     nominationsList.Remove(nominationsList[i]);
-                    
+
                 }
                 else
                 {
