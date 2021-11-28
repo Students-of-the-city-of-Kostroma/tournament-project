@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace TournamentSoftware
@@ -25,6 +27,7 @@ namespace TournamentSoftware
         private int _ClubRating;
         private bool _IsSelected;
         private int _Id;
+        private Dictionary<string, bool> _Nominations = new Dictionary<string, bool>();
 
         /// <summary>
         /// id участника не отображается в таблице
@@ -35,7 +38,7 @@ namespace TournamentSoftware
             set { _Id = value; }
         }
 
-        public string[] availableSex = new string[2] { "М", "Ж"};
+        public string[] availableSex = new string[2] { "М", "Ж" };
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
@@ -44,12 +47,20 @@ namespace TournamentSoftware
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
 
-        public bool IsSelected {
+        public Dictionary<string, bool> Nominations
+        {
+            get { return _Nominations; }
+            set { _Nominations = value; OnPropertyChanged("Nominations"); }
+        }
+
+        public bool IsSelected
+        {
             get { return _IsSelected; }
             set { _IsSelected = value; OnPropertyChanged("IsSelected"); }
         }
 
-        public string[] AvailableSex {
+        public string[] AvailableSex
+        {
             get { return availableSex; }
             set { availableSex = value; OnPropertyChanged("AvailableSex"); }
         }
