@@ -26,6 +26,8 @@ namespace TournamentSoftware
 
         public ObservableCollection<Nomination> nominationsList = new ObservableCollection<Nomination>();
         public ObservableCollection<DataGridTemplateColumn> nominationsColumn = new ObservableCollection<DataGridTemplateColumn>();
+        public string appStateJsonPath = "..\\..\\app.json";
+        public string registrationBackupPath = "..\\..\\registrationBackup.json";
         public ApplicationState appState = new ApplicationState();
         public MainWindow()
         {
@@ -72,6 +74,10 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void goRegistrate(object sender, RoutedEventArgs e)
         {
+            openRegistration();
+        }
+
+        private void openRegistration() {
             startWindowLabel.Visibility = Visibility.Hidden;
             goRegistrateButton.Visibility = Visibility.Hidden;
             appGrid.Visibility = Visibility.Visible;
@@ -189,39 +195,72 @@ namespace TournamentSoftware
         }
 
         /// <summary>
+        /// Записываем информацию о всех участнниках в файл
+        /// </summary>
+        private void backupRegistrationTable() {
+            List<Participant> participantsArray = new List<Participant>();
+            foreach (Participant participant in participantsList) 
+            {
+                participantsArray.Add(participant);
+            }
+            string participantsArrayJson = JsonConvert.SerializeObject(participantsArray);
+            File.WriteAllText(registrationBackupPath, participantsArrayJson);
+        }
+
+        /// <summary>
         /// При закрытии приложения - запись в промежуточный файл
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void mainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            StreamReader r = new StreamReader("..\\..\\app.json");
+            // если были участники и не перешли к турниру
+            if (participantsList.Count > 0 && !appState.IsTournamentComplited)
+            {
+                appState.isRegistrationComplited = false;
+                backupRegistrationTable();
+            }
+            // если нет участников
+            else 
+            {
+                appState.isRegistrationComplited = true;
+            }
             string json = JsonConvert.SerializeObject(appState);
-            File.WriteAllText("..\\..\\app.json", json);
-            r.Close();
+            File.WriteAllText(appStateJsonPath, json);
+        }
+
+        private void readRegistrationFromBackup() 
+        {
+            StreamReader reader = new StreamReader(registrationBackupPath);
+            string json = reader.ReadToEnd();
+            var participants = JsonConvert.DeserializeObject<List<Participant>>(json);
+            foreach (Participant participant in participants)
+            {
+                participantsList.Add(participant);
+            }
         }
 
         private void mainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             participantsList = new ObservableCollection<Participant>();
-            registrationTable.DataContext = participantsList;
             participantsList.CollectionChanged += ParticipantsList_CollectionChanged;
 
             // проверяем на каком этапе закрылось приложение в прошлый раз
-            StreamReader r = new StreamReader("..\\..\\app.json");
+            StreamReader r = new StreamReader(appStateJsonPath);
             string json = r.ReadToEnd();
-            ApplicationState applicationState = JsonConvert.DeserializeObject<ApplicationState>(json);
+            appState = JsonConvert.DeserializeObject<ApplicationState>(json);
             // если закончили на этапе регистрации
-            if (!applicationState.isRegistrationComplited)
+            if (!appState.isRegistrationComplited)
             {
-
+                openRegistration();
+                readRegistrationFromBackup();
+                registrationTable.ItemsSource = participantsList;
             }
             // если остановились на турнирной сетке
-            else if (!applicationState.IsTournamentComplited)
+            else if (!appState.IsTournamentComplited)
             {
 
             }
-            r.Dispose();
             r.Close();
 
         }
@@ -362,10 +401,7 @@ namespace TournamentSoftware
 
         private void SaveFileDialog_FileOk(string path)
         {
-
-
             Excel.Application excelapp = new Excel.Application();
-
 
             Excel.Workbook workbook = excelapp.Workbooks.Add(Type.Missing);
 
@@ -689,6 +725,7 @@ namespace TournamentSoftware
         {
             appState.isRegistrationComplited = true;
         }
+
     }
 
     public class DbConnection : Window
