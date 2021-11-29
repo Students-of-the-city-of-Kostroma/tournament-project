@@ -717,13 +717,76 @@ namespace TournamentSoftware
         }
 
         /// <summary>
+        /// Проверка заполнения всех обязательных полей у участников
+        /// </summary>
+        /// <returns></returns>
+        private bool isRegistrationTableValid() 
+        {
+            List<string> errors = new List<string>();
+            int count = 1;
+            foreach (Participant participant in participantsList)
+            {
+                if (participant.Name.Equals(""))
+                {
+                    errors.Add("Заполните имя участника на строке " + count);
+                }
+
+                if (participant.Surname.Equals(""))
+                {
+                    errors.Add("Заполните фамилию участника на строке " + count);
+                }
+
+                if (participant.Club.Equals(""))
+                {
+                    errors.Add("Заполните клуб участника на строке " + count);
+                }
+
+                if (participant.City.Equals(""))
+                {
+                    errors.Add("Заполните город участника на строке " + count);
+                }
+
+                if (participant.DateOfBirth < 1900 || participant.DateOfBirth > DateTime.Now.Year - 13)
+                {
+                    errors.Add("Некорректно заполнена дата рождения участника на строке " + count);
+                }
+
+                if (!participant.Sex.Equals("М") || !participant.Sex.Equals("Ж"))
+                {
+                    errors.Add("Заполните пол участника на строке " + count);
+                }
+
+                if (participant.Kategory.Equals(""))
+                {
+                    errors.Add("Заполните категорию участника на строке " + count);
+                }
+
+                count++;
+            }
+            if (errors.Count > 0)
+            {
+                ErrorListWindow errorListWindow = new ErrorListWindow();
+                errorListWindow.ShowErrors(errors);
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
         /// Переходим к турнирной сетке
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void goTournament_Click(object sender, RoutedEventArgs e)
         {
-            appState.isRegistrationComplited = true;
+            if (isRegistrationTableValid())
+            {
+                appState.isRegistrationComplited = true;
+            }
+            else 
+            {
+                appState.isRegistrationComplited = false;
+            }
         }
 
     }
