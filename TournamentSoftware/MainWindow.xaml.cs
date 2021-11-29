@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,6 +13,7 @@ using System.Windows.Input;
 using System.Collections;
 using System.Windows.Media;
 using System.Windows.Data;
+using Newtonsoft.Json;
 
 namespace TournamentSoftware
 {
@@ -26,6 +26,7 @@ namespace TournamentSoftware
 
         public ObservableCollection<Nomination> nominationsList = new ObservableCollection<Nomination>();
         public ObservableCollection<DataGridTemplateColumn> nominationsColumn = new ObservableCollection<DataGridTemplateColumn>();
+        public ApplicationState appState = new ApplicationState();
         public MainWindow()
         {
             InitializeComponent();
@@ -187,11 +188,42 @@ namespace TournamentSoftware
             delete.IsEnabled = true;
         }
 
+        /// <summary>
+        /// При закрытии приложения - запись в промежуточный файл
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void mainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            StreamReader r = new StreamReader("..\\..\\app.json");
+            string json = JsonConvert.SerializeObject(appState);
+            File.WriteAllText("..\\..\\app.json", json);
+            r.Close();
+        }
+
         private void mainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             participantsList = new ObservableCollection<Participant>();
             registrationTable.DataContext = participantsList;
             participantsList.CollectionChanged += ParticipantsList_CollectionChanged;
+
+            // проверяем на каком этапе закрылось приложение в прошлый раз
+            StreamReader r = new StreamReader("..\\..\\app.json");
+            string json = r.ReadToEnd();
+            ApplicationState applicationState = JsonConvert.DeserializeObject<ApplicationState>(json);
+            // если закончили на этапе регистрации
+            if (!applicationState.isRegistrationComplited)
+            {
+
+            }
+            // если остановились на турнирной сетке
+            else if (!applicationState.IsTournamentComplited)
+            {
+
+            }
+            r.Dispose();
+            r.Close();
+
         }
 
         /// <summary>
@@ -238,7 +270,7 @@ namespace TournamentSoftware
         {
             SaveFileDialog SaveFileDialog = new SaveFileDialog();
 
-            SaveFileDialog.Filter = "Файлы Excel (*.xls; *.xlsx) | *.xls; *.xlsx";
+            SaveFileDialog.Filter = "Файлы Excel (*.xlsx) | *.xlsx";
 
             bool? result = SaveFileDialog.ShowDialog();
             if (result == true)
@@ -646,6 +678,16 @@ namespace TournamentSoftware
                 SolidColorBrush scb = new SolidColorBrush(Color.FromRgb(255, 221, 219));
                 ((ComboBox)e.Source).Background = scb;
             }
+        }
+
+        /// <summary>
+        /// Переходим к турнирной сетке
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void goTournament_Click(object sender, RoutedEventArgs e)
+        {
+            appState.isRegistrationComplited = true;
         }
     }
 
