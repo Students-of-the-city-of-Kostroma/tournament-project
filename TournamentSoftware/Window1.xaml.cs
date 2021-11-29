@@ -51,7 +51,7 @@ namespace TournamentSoftware
                 {
                     if (mainWindowColumns[j].Header.Equals(checkBoxes[i].Content))
                     {
-                        if (checkBoxes[i].IsChecked == true)
+                        if (checkBoxes[i].IsChecked == false)
                         {
                             mainWindowColumns[j].Visibility = Visibility.Hidden;
                             break;
@@ -63,18 +63,6 @@ namespace TournamentSoftware
                         }
                     }
                 }
-
-                if (checkBoxes[i].IsChecked == true)
-                {
-                    for (int j = 1; j < mainWindowColumns.Count; j++)
-                    {
-                        if (mainWindowColumns[j].Header.Equals(checkBoxes[i].Content))
-                        {
-                            mainWindowColumns[j].Visibility = Visibility.Hidden;
-                            break;
-                        }
-                    }
-                }
             }
 
             // добавляем новые номинации в таблицу регистрации
@@ -82,7 +70,6 @@ namespace TournamentSoftware
             {
                 DataGridTemplateColumn nominationColumn = new DataGridTemplateColumn();
                 string nominationName = nominationsList[i].NominationName;
-                // nominationsList.Remove(nominationsList[i]);
                 if (checkNominationNameValid(nominationName))
                 {
                     if (!checkNominationAlreadyExists(nominationName))
@@ -163,13 +150,6 @@ namespace TournamentSoftware
         /// <returns></returns>
         private bool checkNominationAlreadyExists(string nominationName)
         {
-            //for (int i = 0; i < nominationsList.Count; i++) 
-            //{
-            //    if (nominationsList[i].NominationName.Equals(nominationName)) {
-            //        return true;
-            //    }
-            //}
-
             for (int i = 0; i < mainNominationsColumns.Count; i++)
             {
                 if (mainNominationsColumns[i].Header.Equals(nominationName))
@@ -274,16 +254,6 @@ namespace TournamentSoftware
             }
         }
 
-        private void nominationUnchecked(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void nominationChecked(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void settingsWindow_Loaded(object sender, RoutedEventArgs e)
         {
             // загружаем чекбоксы для скрытия столбцов
@@ -292,15 +262,15 @@ namespace TournamentSoftware
                 CheckBox checkBox = new CheckBox();
                 checkBox.IsChecked = false;
                 checkBox.Content = mainWindowColumns[i].Header;
-                if (mainWindowColumns[i].Visibility == Visibility.Hidden)
+                if (mainWindowColumns[i].Visibility == Visibility.Visible)
                 {
                     checkBox.IsChecked = true;
                 }
-                checkBox.Checked += CheckBox_Checked;
                 checkBoxes.Add(checkBox);
                 columnsNames.Items.Add(checkBox);
             }
 
+            // загружаем столбцы номинаций
             for (int i = 0; i < mainNominationsColumns.Count; i++)
             {
                 Nomination nomination = new Nomination()
@@ -312,11 +282,6 @@ namespace TournamentSoftware
                 nominationsList.Add(nomination);
                 nominationsGrid.ItemsSource = nominationsList;
             }
-        }
-
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 
