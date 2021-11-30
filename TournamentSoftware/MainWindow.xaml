@@ -58,7 +58,11 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="Имя" Binding="{Binding Participant.Name}" Width="70">
+                    <DataGridTextColumn Header="Имя" 
+                                        Binding="{Binding Participant.Name, 
+                        UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
+                                        Width="70" 
+                                        PastingCellClipboardContent="DataGridTextColumn_PastingCellClipboardContent">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
                                 <Style.Triggers>
@@ -70,7 +74,8 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Фамилия" Binding="{Binding Participant.Surname}">
+                    <DataGridTextColumn Header="Фамилия" Binding="{Binding Participant.Surname, 
+                        UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
                                 <Style.Triggers>
@@ -82,16 +87,18 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Отчество" Binding="{Binding Participant.Patronymic}">
+                    <DataGridTextColumn Header="Отчество" Binding="{Binding Participant.Patronymic,
+                         UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}">
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Псевдоним" Binding="{Binding Participant.Pseudonym}">
+                    <DataGridTextColumn Header="Псевдоним" Binding="{Binding Participant.Pseudonym,  
+                        UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}">
                     </DataGridTextColumn>
 
                     <DataGridTemplateColumn Header="Посевной">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding Participant.Leader, UpdateSourceTrigger = PropertyChanged}" />
+                                <CheckBox IsChecked="{Binding Participant.Leader, UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" />
                             </DataTemplate>
                             
                         </DataGridTemplateColumn.CellTemplate>
@@ -101,7 +108,8 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <ComboBox ItemsSource="{Binding AvailableSex}" 
-                                          SelectedItem="{Binding Participant.Sex, Mode=TwoWay}"
+                                          SelectedItem="{Binding Participant.Sex, 
+                                    UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"
                                           Loaded="ComboBox_Loaded" 
                                          >
                                     <ComboBox.Background>
@@ -118,14 +126,16 @@
                     <DataGridTemplateColumn Header="Год рождения" MaxWidth="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding Participant.DateOfBirth}" 
+                                <TextBox Text="{Binding Participant.DateOfBirth,
+                                     UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
                                          PreviewTextInput="NumericOnly" MaxLength="4">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="Клуб" Binding="{Binding Club}" Width="80">
+                    <DataGridTextColumn Header="Клуб" Binding="{Binding Club,
+                        UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" Width="80">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
                                 <Style.Triggers>
@@ -137,7 +147,8 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Город" Binding="{Binding City}" Width="80">
+                    <DataGridTextColumn Header="Город" Binding="{Binding City,
+                        UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" Width="80">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
                                 <Style.Triggers>
@@ -152,7 +163,8 @@
                     <DataGridTemplateColumn Header="Рост">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding Participant.Height}" 
+                                <TextBox Text="{Binding Participant.Height,
+                                     UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
                                          PreviewTextInput="NumericOnly" 
                                          MaxLength="4">
                                 </TextBox>
@@ -163,7 +175,8 @@
                     <DataGridTemplateColumn Header="Вес">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding Participant.Weight}" 
+                                <TextBox Text="{Binding Participant.Weight,
+                                     UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
                                          PreviewTextInput="NumericOnly" 
                                          MaxLength="4">
                                 </TextBox>
@@ -171,7 +184,8 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="Категория" Binding="{Binding Kategory}">
+                    <DataGridTextColumn Header="Категория" Binding="{Binding Kategory,
+                         UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
                                 <Style.Triggers>
@@ -186,7 +200,8 @@
                     <DataGridTemplateColumn Header="Рейтинг (общий)" Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding Participant.CommonRating}" 
+                                <TextBox Text="{Binding Participant.CommonRating,
+                                     UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
                                          PreviewTextInput="NumericOnly" 
                                          MaxLength="4" 
                                          GotFocus="TextBox_GotFocus" >
@@ -198,7 +213,8 @@
                     <DataGridTemplateColumn Header="Рейтинг (клубный)" Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding Participant.ClubRating}" PreviewTextInput="NumericOnly" MaxLength="4">
+                                <TextBox Text="{Binding Participant.ClubRating,
+                                     UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" PreviewTextInput="NumericOnly" MaxLength="4">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>

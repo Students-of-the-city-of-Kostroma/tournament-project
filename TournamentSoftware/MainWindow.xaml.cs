@@ -282,17 +282,21 @@ namespace TournamentSoftware
             StreamReader reader = new StreamReader(registrationBackupPath);
             string json = reader.ReadToEnd();
             var participants = JsonConvert.DeserializeObject<List<ParticipantFormModel>>(json);
-            foreach (ParticipantFormModel participant in participants)
+            if (participants != null && participants.Count > 0)
             {
-                participantsList.Add(participant);
-                if (participant.Nominations.Count > 0)
+                foreach (ParticipantFormModel participant in participants)
                 {
-                    foreach (string nomination in participant.Nominations.Keys)
+                    participantsList.Add(participant);
+                    if (participant.Nominations.Count > 0)
                     {
-                        addNominationsColumns(nomination);
+                        foreach (string nomination in participant.Nominations.Keys)
+                        {
+                            addNominationsColumns(nomination);
+                        }
                     }
                 }
             }
+            reader.Close();
         }
 
         private void readNominationsFromBackup()
@@ -863,6 +867,11 @@ namespace TournamentSoftware
             {
                 appState.isRegistrationComplited = false;
             }
+        }
+
+        private void DataGridTextColumn_PastingCellClipboardContent(object sender, DataGridCellClipboardEventArgs e)
+        {
+            Console.WriteLine(e.Content);
         }
     }
 
