@@ -20,11 +20,11 @@ namespace TournamentSoftware
         }
 
         private ObservableCollection<Nomination> nominationsList = new ObservableCollection<Nomination>();
-        private ObservableCollection<Nomination> deletedNominations = new ObservableCollection<Nomination>();
         private List<CheckBox> checkBoxes = new List<CheckBox>();
         ObservableCollection<DataGridColumn> mainWindowColumns = ((MainWindow)Application.Current.MainWindow).registrationTable.Columns;
         ObservableCollection<DataGridTemplateColumn> mainNominationsColumns = ((MainWindow)Application.Current.MainWindow).nominationsColumn;
-        ObservableCollection<Participant> participants = ((MainWindow)Application.Current.MainWindow).participantsList;
+        ObservableCollection<ParticipantFormModel> participants = ((MainWindow)Application.Current.MainWindow).participantsList;
+        private List<Nomination> nominationsForDelete = new List<Nomination>();
 
         /// <summary>
         /// Закрываем окно настроек
@@ -69,7 +69,7 @@ namespace TournamentSoftware
             for (int i = 0; i < nominationsList.Count; i++)
             {
                 DataGridTemplateColumn nominationColumn = new DataGridTemplateColumn();
-                string nominationName = nominationsList[i].NominationName;
+                string nominationName = nominationsList[i].Name;
                 if (checkNominationNameValid(nominationName))
                 {
                     if (!checkNominationAlreadyExists(nominationName))
@@ -88,7 +88,7 @@ namespace TournamentSoftware
 
                         nominationColumn.CellTemplate = checkBoxTemplate;
 
-                        foreach (Participant p in participants)
+                        foreach (ParticipantFormModel p in participants)
                         {
                             p.Nominations.Add(nominationName, false);
                         }
@@ -107,30 +107,29 @@ namespace TournamentSoftware
             }
 
             // удаляем номинации из таблицы регистрации
-            for (int i = 0; i < deletedNominations.Count; i++)
+            for (int i = 0; i < nominationsForDelete.Count; i++)
             {
                 for (int j = 0; j < mainNominationsColumns.Count; j++)
                 {
                     // находим удаляемую колонку и удаляем из таблицы
-                    if (deletedNominations[i].NominationName.Equals(mainNominationsColumns[j].Header))
+                    if (nominationsForDelete[i].Name.Equals(mainNominationsColumns[j].Header))
                     {
-                        Console.WriteLine("delete " + deletedNominations[i].NominationName);
+                        Console.WriteLine("delete " + nominationsForDelete[i].Name);
                         mainWindowColumns.Remove(mainNominationsColumns[j]);
                         // удаляем номинации у участников
-                        foreach (Participant p in participants)
+                        foreach (ParticipantFormModel p in participants)
                         {
-                            p.Nominations.Remove(deletedNominations[i].NominationName);
+                            p.Nominations.Remove(nominationsForDelete[i].Name);
                         }
-                        // mainNominationsColumns.Remove(mainNominationsColumns[j]);
                     }
                 }
             }
 
-            for (int i = 0; i < deletedNominations.Count; i++)
+            for (int i = 0; i < nominationsForDelete.Count; i++)
             {
                 for (int j = 0; j < mainNominationsColumns.Count; j++)
                 {
-                    if (deletedNominations[i].NominationName.Equals(mainNominationsColumns[j].Header))
+                    if (nominationsForDelete[i].Name.Equals(mainNominationsColumns[j].Header))
                     {
                         mainNominationsColumns.Remove(mainNominationsColumns[j]);
                     }
@@ -138,7 +137,7 @@ namespace TournamentSoftware
             }
 
             nominationsList.Clear();
-            deletedNominations.Clear();
+            nominationsForDelete.Clear();
 
             this.Close();
         }
@@ -198,8 +197,7 @@ namespace TournamentSoftware
         {
             Nomination nomination = new Nomination()
             {
-                NominationName = "",
-                IsSelected = false,
+                Name = "",
             };
 
             nominationsList.Add(nomination);
@@ -213,18 +211,23 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void deleteSelectedNominations(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < nominationsList.Count;)
-            {
-                if (nominationsList[i].IsSelected)
-                {
-                    deletedNominations.Add(nominationsList[i]);
-                    nominationsList.Remove(nominationsList[i]);
+            //for (int i = 0; i < nominationsList.Count;)
+            //{
+            //    if (nominationsList[i].IsSelected)
+            //    {
+            //        deletedNominations.Add(nominationsList[i]);
+            //        nominationsList.Remove(nominationsList[i]);
 
-                }
-                else
-                {
-                    i++;
-                }
+            //    }
+            //    else
+            //    {
+            //        i++;
+            //    }
+            //}
+
+            foreach (Nomination nomination in nominationsForDelete)
+            {
+                nominationsList.Remove(nomination);
             }
         }
 
@@ -237,7 +240,7 @@ namespace TournamentSoftware
         {
             for (int i = 0; i < nominationsList.Count; i++)
             {
-                nominationsList[i].IsSelected = true;
+                // nominationsList[i].IsSelected = true;
             }
         }
 
@@ -250,7 +253,7 @@ namespace TournamentSoftware
         {
             for (int i = 0; i < nominationsList.Count; i++)
             {
-                nominationsList[i].IsSelected = false;
+                // nominationsList[i].IsSelected = false;
             }
         }
 
@@ -275,38 +278,74 @@ namespace TournamentSoftware
             {
                 Nomination nomination = new Nomination()
                 {
-                    NominationName = mainNominationsColumns[i].Header.ToString(),
-                    IsSelected = false,
+                    Name = mainNominationsColumns[i].Header.ToString(),
                 };
 
                 nominationsList.Add(nomination);
                 nominationsGrid.ItemsSource = nominationsList;
             }
         }
+
+        private void nominationSelected(object sender, RoutedEventArgs e)
+        {
+            CheckBox cbx = sender as CheckBox;
+            if (cbx != null)
+            {
+                string index = cbx.Tag.ToString();
+                // добавляем номинацию в лист для удаления
+                foreach (Nomination nomination in nominationsList)
+                {
+                    if (nomination.Name.Equals(index))
+                    {
+                        nominationsForDelete.Add(nomination);
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void nominationUnselected(object sender, RoutedEventArgs e)
+        {
+            CheckBox cbx = sender as CheckBox;
+            if (cbx != null)
+            {
+                string index = cbx.Tag.ToString();
+                MessageBox.Show("Unelect: " + index);
+                // добавляем номинацию в лист для удаления
+                foreach (Nomination nomination in nominationsList)
+                {
+                    if (nomination.Name.Equals(index))
+                    {
+                        nominationsForDelete.Remove(nomination);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
-    public class Nomination : INotifyPropertyChanged
-    {
-        private string _nominationName;
-        private bool _isSelected;
+    //public class Nomination : INotifyPropertyChanged
+    //{
+    //    private string _nominationName;
+    //    private bool _isSelected;
 
-        public string NominationName
-        {
-            get { return _nominationName; }
-            set { _nominationName = value; OnPropertyChanged("NominationName"); }
-        }
+    //    public string NominationName
+    //    {
+    //        get { return _nominationName; }
+    //        set { _nominationName = value; OnPropertyChanged("NominationName"); }
+    //    }
 
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set { _isSelected = value; OnPropertyChanged("IsSelected"); }
-        }
+    //    public bool IsSelected
+    //    {
+    //        get { return _isSelected; }
+    //        set { _isSelected = value; OnPropertyChanged("IsSelected"); }
+    //    }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
-        }
-    }
+    //    public event PropertyChangedEventHandler PropertyChanged;
+    //    public void OnPropertyChanged([CallerMemberName] string prop = "")
+    //    {
+    //        if (PropertyChanged != null)
+    //            PropertyChanged(this, new PropertyChangedEventArgs(prop));
+    //    }
+    //}
 }

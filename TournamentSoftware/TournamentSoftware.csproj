@@ -89,9 +89,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ApplicationState.cs" />
+    <Compile Include="Club.cs" />
+    <Compile Include="DatabaseHandler.cs" />
     <Compile Include="ErrorListWindow.xaml.cs">
       <DependentUpon>ErrorListWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Nomination.cs" />
+    <Compile Include="ParticipantFormModel.cs" />
+    <Compile Include="TournamentGrid.cs" />
     <Compile Include="Window1.xaml.cs">
       <DependentUpon>Window1.xaml</DependentUpon>
     </Compile>

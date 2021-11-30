@@ -30,7 +30,7 @@
                       IsReadOnly="False" 
                       AutoGenerateColumns="False" CanUserAddRows="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Номинация" Width="*" Binding="{Binding NominationName}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Номинация" Width="*" Binding="{Binding Name}"></DataGridTextColumn>
 
                     <DataGridTemplateColumn x:Name="deletionCol" Width="30">
                         <DataGridTemplateColumn.HeaderTemplate>
@@ -40,7 +40,9 @@
                         </DataGridTemplateColumn.HeaderTemplate>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger = PropertyChanged}"/>
+                                <CheckBox Tag="{Binding Name}" 
+                                          Unchecked="nominationUnselected"
+                                          Checked="nominationSelected"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

@@ -22,23 +22,67 @@ namespace TournamentSoftware
     /// </summary>
     public partial class MainWindow : Window
     {
-        public ObservableCollection<Participant> participantsList = new ObservableCollection<Participant>();
+        public ObservableCollection<ParticipantFormModel> participantsList = new ObservableCollection<ParticipantFormModel>();
 
         public ObservableCollection<Nomination> nominationsList = new ObservableCollection<Nomination>();
         public ObservableCollection<DataGridTemplateColumn> nominationsColumn = new ObservableCollection<DataGridTemplateColumn>();
         public string appStateJsonPath = "..\\..\\app.json";
+        public static string dataBasePath = "..\\..\\db.db";
         public string registrationBackupPath = "..\\..\\registrationBackup.json";
         public ApplicationState appState = new ApplicationState();
+        DataBaseHandler databaseHandler;
+
         public MainWindow()
         {
             InitializeComponent();
             appGrid.Visibility = Visibility.Hidden;
-            participantsList = new ObservableCollection<Participant>();
+            participantsList = new ObservableCollection<ParticipantFormModel>();
             registrationTable.DataContext = participantsList;
             registrationTable.CellEditEnding += RegistrationTable_CellEditEnding;
-            Console.WriteLine("dgah");
 
+            //databaseHandler = new DataBaseHandler();
+            //Club club = new Club
+            //{
+            //    Name = "Lol",
+            //    City = "Moscow",
+            //    ContactInformation = "wdwd"
+            //};
+            //Participant participant = new Participant
+            //{
+            //    //Name = "Andrey",
+            //    //Surname = "Tyurin",
+            //    //Age = 19,
+            //    //ClubId = 4,
+            //    //ClubRating = 5,
+            //    //CommonRating = 6,
+            //    //Height = 174,
+            //    //Leader = true,
+            //    //Patronymic = "wad",
+            //    //Pseudonym = "dwada",
+            //    //Sex = "m",
+            //    //Weight = 69
+            //};
+            //Nomination nomination = new Nomination
+            //{
+            //    ParticipantId = 1,
+            //    TournamentGridId = 1,
+            //    Name = "fight",
+            //};
 
+            //TournamentGrid tournament = new TournamentGrid
+            //{
+            //    Name = "123",
+            //    Date = new DateTime()
+            //};
+
+            //databaseHandler.AddClub(club);
+            //databaseHandler.AddParticipant(participant);
+            //databaseHandler.AddTournamentGrid(tournament);
+            //databaseHandler.AddNomination(nomination);
+            //databaseHandler.GetClubs();
+            //databaseHandler.GetNominations();
+            //databaseHandler.GetParticipants();
+            //databaseHandler.GetTournamentGrids();
         }
 
         private void ParticipantsList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -96,23 +140,27 @@ namespace TournamentSoftware
             {
                 Name = "",
                 Surname = "",
-                Otchestvo = "",
-                Psevdonim = "",
-                Posevnoy = false,
-                Club = "",
-                City = "",
+                Patronymic = "",
+                Pseudonym = "",
+                Leader = false,
                 DateOfBirth = 0,
                 Height = 0,
                 Weight = 0,
-                Kategory = "",
-                Sex = "",
                 CommonRating = 0,
                 ClubRating = 0,
+                ClubId = 0,
+            };
+
+            ParticipantFormModel participantFormModel = new ParticipantFormModel()
+            {
+                Participant = participant,
+                Club = "",
+                City = "",
                 AvailableSex = new string[2] { "М", "Ж" },
                 IsSelected = false,
             };
 
-            participantsList.Add(participant);
+            participantsList.Add(participantFormModel);
             registrationTable.ItemsSource = participantsList;
             exportButton.IsEnabled = true;
         }
@@ -198,8 +246,8 @@ namespace TournamentSoftware
         /// Записываем информацию о всех участнниках в файл
         /// </summary>
         private void backupRegistrationTable() {
-            List<Participant> participantsArray = new List<Participant>();
-            foreach (Participant participant in participantsList) 
+            List<ParticipantFormModel> participantsArray = new List<ParticipantFormModel>();
+            foreach (ParticipantFormModel participant in participantsList) 
             {
                 participantsArray.Add(participant);
             }
@@ -233,16 +281,28 @@ namespace TournamentSoftware
         {
             StreamReader reader = new StreamReader(registrationBackupPath);
             string json = reader.ReadToEnd();
-            var participants = JsonConvert.DeserializeObject<List<Participant>>(json);
-            foreach (Participant participant in participants)
+            var participants = JsonConvert.DeserializeObject<List<ParticipantFormModel>>(json);
+            foreach (ParticipantFormModel participant in participants)
             {
                 participantsList.Add(participant);
+                if (participant.Nominations.Count > 0)
+                {
+                    foreach (string nomination in participant.Nominations.Keys)
+                    {
+                        addNominationsColumns(nomination);
+                    }
+                }
             }
+        }
+
+        private void readNominationsFromBackup()
+        {
+            
         }
 
         private void mainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            participantsList = new ObservableCollection<Participant>();
+            participantsList = new ObservableCollection<ParticipantFormModel>();
             participantsList.CollectionChanged += ParticipantsList_CollectionChanged;
 
             // проверяем на каком этапе закрылось приложение в прошлый раз
@@ -319,7 +379,7 @@ namespace TournamentSoftware
             }
         }
 
-        private DataTable ToDataTable(ObservableCollection<Participant> participants)
+        private DataTable ToDataTable(ObservableCollection<ParticipantFormModel> participants)
         {
             DataTable dataTable = new DataTable();
             List<string> nominationsArray = new List<string>();
@@ -335,7 +395,7 @@ namespace TournamentSoftware
                 Console.WriteLine(registrationTable.Columns[i].Header.ToString());
                 dataTable.Columns[i - 1].Caption = header;
             }
-            foreach (Participant participant in participants)
+            foreach (ParticipantFormModel participant in participants)
             {
                 DataRow row = dataTable.NewRow();
                 for (int i = 0; i < dataTable.Columns.Count; i++)
@@ -350,25 +410,25 @@ namespace TournamentSoftware
                         switch (columnHeader)
                         {
                             case "Имя":
-                                row[i] = participant.Name;
+                                row[i] = participant.Participant.Name;
                                 break;
                             case "Фамилия":
-                                row[i] = participant.Surname;
+                                row[i] = participant.Participant.Surname;
                                 break;
                             case "Отчество":
-                                row[i] = participant.Otchestvo;
+                                row[i] = participant.Participant.Patronymic;
                                 break;
                             case "Псевдоним":
-                                row[i] = participant.Psevdonim;
+                                row[i] = participant.Participant.Pseudonym;
                                 break;
                             case "Посевной":
-                                row[i] = participant.Posevnoy;
+                                row[i] = participant.Participant.Leader;
                                 break;
                             case "Пол":
-                                row[i] = participant.Sex;
+                                row[i] = participant.Participant.Sex;
                                 break;
                             case "Год рождения":
-                                row[i] = participant.DateOfBirth.ToString();
+                                row[i] = participant.Participant.DateOfBirth.ToString();
                                 break;
                             case "Клуб":
                                 row[i] = participant.Club;
@@ -377,19 +437,19 @@ namespace TournamentSoftware
                                 row[i] = participant.City;
                                 break;
                             case "Рост":
-                                row[i] = participant.Height;
+                                row[i] = participant.Participant.Height;
                                 break;
                             case "Вес":
-                                row[i] = participant.Weight;
+                                row[i] = participant.Participant.Weight;
                                 break;
                             case "Категория":
                                 row[i] = participant.Kategory;
                                 break;
                             case "Рейтинг (общий)":
-                                row[i] = participant.CommonRating;
+                                row[i] = participant.Participant.CommonRating;
                                 break;
                             case "Рейтинг (клубный)":
-                                row[i] = participant.ClubRating;
+                                row[i] = participant.Participant.ClubRating;
                                 break;
                         }
                     }
@@ -418,7 +478,6 @@ namespace TournamentSoftware
             // Data Rows
             for (int Idx = 0; Idx < table.Rows.Count; Idx++)
             {
-                // Console.WriteLine("Row " + Idx);
                 for (int i = 0; i < table.Rows[Idx].ItemArray.Length; i++)
                 {
                     Console.WriteLine(i + " " + table.Rows[Idx].ItemArray[i]);
@@ -524,7 +583,6 @@ namespace TournamentSoftware
                     }
                 }
             }
-            Console.WriteLine(loadedNominationsIndexes.Count);
             // если нашлись все обязательные столбцы
             if (requredColumnExists == validationColumnsSet.Count - 1)
             {
@@ -533,25 +591,14 @@ namespace TournamentSoftware
                 foreach (int i in loadedNominationsIndexes)
                 {
                     string nominationName = loadedRows[0].ItemArray[i].ToString();
-                    Binding bind = new Binding("Nominations[" + nominationName + "]");
-                    bind.Mode = BindingMode.TwoWay;
-                    DataGridTemplateColumn n = new DataGridTemplateColumn();
-                    n.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
-                    n.Header = nominationName;
-                    FrameworkElementFactory checkBox = new FrameworkElementFactory(typeof(CheckBox));
-                    checkBox.SetBinding(CheckBox.IsCheckedProperty, bind);
-                    DataTemplate checkBoxTemplate = new DataTemplate();
-                    checkBoxTemplate.VisualTree = checkBox;
-                    n.CellTemplate = checkBoxTemplate;
-                    registrationTable.Columns.Add(n);
-                    nominationsColumn.Add(n);
+                    addNominationsColumns(nominationName);
                 }
 
                 // идем по строкам
                 for (int i = 1; i < loadedRows.Count; i++)
                 {
                     DataRow row = dataTable.Rows[i];
-                    Participant newParticipant = new Participant();
+                    ParticipantFormModel newParticipant = new ParticipantFormModel();
 
                     // идем по столбцам
                     for (int j = 0; j < loadedColumns.Count; j++)
@@ -577,22 +624,22 @@ namespace TournamentSoftware
                         {
                             if (loadedRows[0].ItemArray[j].Equals("Имя"))
                             {
-                                newParticipant.Name = row.ItemArray[j].ToString();
+                                newParticipant.Participant.Name = row.ItemArray[j].ToString();
                             }
 
                             if (loadedRows[0].ItemArray[j].Equals("Фамилия"))
                             {
-                                newParticipant.Surname = row.ItemArray[j].ToString();
+                                newParticipant.Participant.Surname = row.ItemArray[j].ToString();
                             }
 
                             if (dataTable.Rows[0].ItemArray[j].Equals("Отчество"))
                             {
-                                newParticipant.Otchestvo = row.ItemArray[j].ToString();
+                                newParticipant.Participant.Patronymic = row.ItemArray[j].ToString();
                             }
 
                             if (dataTable.Rows[0].ItemArray[j].Equals("Псевдоним"))
                             {
-                                newParticipant.Psevdonim = row.ItemArray[j].ToString();
+                                newParticipant.Participant.Pseudonym = row.ItemArray[j].ToString();
                             }
 
                             if (dataTable.Rows[0].ItemArray[j].Equals("Клуб"))
@@ -609,11 +656,11 @@ namespace TournamentSoftware
                             {
                                 if (bool.TryParse(row.ItemArray[j].ToString(), out _))
                                 {
-                                    newParticipant.Posevnoy = bool.Parse(row.ItemArray[j].ToString());
+                                    newParticipant.Participant.Leader = bool.Parse(row.ItemArray[j].ToString());
                                 }
                                 else
                                 {
-                                    newParticipant.Posevnoy = false;
+                                    newParticipant.Participant.Leader = false;
                                 }
                             }
 
@@ -621,7 +668,7 @@ namespace TournamentSoftware
                             {
                                 if (row.ItemArray[j].ToString().Equals("М") || row.ItemArray[j].ToString().Equals("Ж"))
                                 {
-                                    newParticipant.Sex = row.ItemArray[j].ToString();
+                                    newParticipant.Participant.Sex = row.ItemArray[j].ToString();
                                 }
                             }
 
@@ -632,7 +679,7 @@ namespace TournamentSoftware
                                     int year = int.Parse(row.ItemArray[j].ToString());
                                     if (year > 1900)
                                     {
-                                        newParticipant.DateOfBirth = year;
+                                        newParticipant.Participant.DateOfBirth = year;
                                     }
                                 }
                             }
@@ -649,7 +696,7 @@ namespace TournamentSoftware
                                     int height = int.Parse(row.ItemArray[j].ToString());
                                     if (height > 100)
                                     {
-                                        newParticipant.Height = height;
+                                        newParticipant.Participant.Height = height;
                                     }
                                 }
                             }
@@ -661,7 +708,7 @@ namespace TournamentSoftware
                                     int weight = int.Parse(row.ItemArray[j].ToString());
                                     if (weight > 10)
                                     {
-                                        newParticipant.Weight = weight;
+                                        newParticipant.Participant.Weight = weight;
                                     }
                                 }
                             }
@@ -671,7 +718,7 @@ namespace TournamentSoftware
                                 if (int.TryParse(row.ItemArray[j].ToString(), out _))
                                 {
                                     int raiting = int.Parse(row.ItemArray[j].ToString());
-                                    newParticipant.CommonRating = raiting;
+                                    newParticipant.Participant.CommonRating = raiting;
                                 }
                             }
 
@@ -680,7 +727,7 @@ namespace TournamentSoftware
                                 if (int.TryParse(row.ItemArray[j].ToString(), out _))
                                 {
                                     int raiting = int.Parse(row.ItemArray[j].ToString());
-                                    newParticipant.ClubRating = raiting;
+                                    newParticipant.Participant.ClubRating = raiting;
                                 }
                             }
                         }
@@ -700,6 +747,35 @@ namespace TournamentSoftware
             }
 
             return false;
+        }
+
+        private bool checkNominationExists(string nominationName)
+        {
+            foreach (DataGridTemplateColumn column in nominationsColumn) 
+            {
+                if (column.Header.Equals(nominationName)) return true;
+                
+            }
+            return false;
+        }
+
+        private void addNominationsColumns(string nominationName)
+        {
+            if (!checkNominationExists(nominationName))
+            {
+                Binding bind = new Binding("Nominations[" + nominationName + "]");
+                bind.Mode = BindingMode.TwoWay;
+                DataGridTemplateColumn n = new DataGridTemplateColumn();
+                n.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
+                n.Header = nominationName;
+                FrameworkElementFactory checkBox = new FrameworkElementFactory(typeof(CheckBox));
+                checkBox.SetBinding(CheckBox.IsCheckedProperty, bind);
+                DataTemplate checkBoxTemplate = new DataTemplate();
+                checkBoxTemplate.VisualTree = checkBox;
+                n.CellTemplate = checkBoxTemplate;
+                registrationTable.Columns.Add(n);
+                nominationsColumn.Add(n);
+            }
         }
 
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)
@@ -724,14 +800,14 @@ namespace TournamentSoftware
         {
             List<string> errors = new List<string>();
             int count = 1;
-            foreach (Participant participant in participantsList)
+            foreach (ParticipantFormModel participant in participantsList)
             {
-                if (participant.Name.Equals(""))
+                if (participant.Participant.Name.Equals(""))
                 {
                     errors.Add("Заполните имя участника на строке " + count);
                 }
 
-                if (participant.Surname.Equals(""))
+                if (participant.Participant.Surname.Equals(""))
                 {
                     errors.Add("Заполните фамилию участника на строке " + count);
                 }
@@ -746,14 +822,14 @@ namespace TournamentSoftware
                     errors.Add("Заполните город участника на строке " + count);
                 }
 
-                if (participant.DateOfBirth < 1900 || participant.DateOfBirth > DateTime.Now.Year - 13)
+                if (participant.Participant.DateOfBirth < 1900 || participant.Participant.DateOfBirth > DateTime.Now.Year - 13)
                 {
                     errors.Add("Некорректно заполнена дата рождения участника на строке " + count);
                 }
 
-                if (!participant.Sex.Equals("М") || !participant.Sex.Equals("Ж"))
+                if (!participant.Participant.Sex.Equals("М") && !participant.Participant.Sex.Equals("Ж"))
                 {
-                    errors.Add("Заполните пол участника на строке " + count);
+                    errors.Add("Заполните пол участника на строке " + count + " " + participant.Participant.Sex);
                 }
 
                 if (participant.Kategory.Equals(""))
@@ -788,7 +864,6 @@ namespace TournamentSoftware
                 appState.isRegistrationComplited = false;
             }
         }
-
     }
 
     public class DbConnection : Window

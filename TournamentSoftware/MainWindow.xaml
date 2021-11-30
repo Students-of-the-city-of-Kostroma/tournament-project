@@ -58,7 +58,7 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="70">
+                    <DataGridTextColumn Header="Имя" Binding="{Binding Participant.Name}" Width="70">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
                                 <Style.Triggers>
@@ -70,7 +70,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}">
+                    <DataGridTextColumn Header="Фамилия" Binding="{Binding Participant.Surname}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
                                 <Style.Triggers>
@@ -82,16 +82,16 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Отчество" Binding="{Binding Otchestvo}">
+                    <DataGridTextColumn Header="Отчество" Binding="{Binding Participant.Patronymic}">
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Псевдоним" Binding="{Binding Psevdonim}">
+                    <DataGridTextColumn Header="Псевдоним" Binding="{Binding Participant.Pseudonym}">
                     </DataGridTextColumn>
 
                     <DataGridTemplateColumn Header="Посевной">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding Path=Posevnoy, UpdateSourceTrigger = PropertyChanged}" />
+                                <CheckBox IsChecked="{Binding Participant.Leader, UpdateSourceTrigger = PropertyChanged}" />
                             </DataTemplate>
                             
                         </DataGridTemplateColumn.CellTemplate>
@@ -100,7 +100,8 @@
                     <DataGridTemplateColumn Header="Пол">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <ComboBox ItemsSource="{Binding AvailableSex}" SelectedItem="{Binding Path=Sex, Mode=TwoWay}"
+                                <ComboBox ItemsSource="{Binding AvailableSex}" 
+                                          SelectedItem="{Binding Participant.Sex, Mode=TwoWay}"
                                           Loaded="ComboBox_Loaded" 
                                          >
                                     <ComboBox.Background>
@@ -117,7 +118,8 @@
                     <DataGridTemplateColumn Header="Год рождения" MaxWidth="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding Path=DateOfBirth}" PreviewTextInput="NumericOnly" MaxLength="4">
+                                <TextBox Text="{Binding Participant.DateOfBirth}" 
+                                         PreviewTextInput="NumericOnly" MaxLength="4">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -150,7 +152,9 @@
                     <DataGridTemplateColumn Header="Рост">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding Height}" PreviewTextInput="NumericOnly" MaxLength="4">
+                                <TextBox Text="{Binding Participant.Height}" 
+                                         PreviewTextInput="NumericOnly" 
+                                         MaxLength="4">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -159,7 +163,9 @@
                     <DataGridTemplateColumn Header="Вес">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding Weight}" PreviewTextInput="NumericOnly" MaxLength="4">
+                                <TextBox Text="{Binding Participant.Weight}" 
+                                         PreviewTextInput="NumericOnly" 
+                                         MaxLength="4">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -180,7 +186,7 @@
                     <DataGridTemplateColumn Header="Рейтинг (общий)" Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding CommonRating}" 
+                                <TextBox Text="{Binding Participant.CommonRating}" 
                                          PreviewTextInput="NumericOnly" 
                                          MaxLength="4" 
                                          GotFocus="TextBox_GotFocus" >
@@ -192,7 +198,7 @@
                     <DataGridTemplateColumn Header="Рейтинг (клубный)" Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding ClubRating}" PreviewTextInput="NumericOnly" MaxLength="4">
+                                <TextBox Text="{Binding Participant.ClubRating}" PreviewTextInput="NumericOnly" MaxLength="4">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
