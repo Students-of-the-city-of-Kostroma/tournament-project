@@ -546,6 +546,12 @@ namespace TournamentSoftware
                 ((ComboBox)e.Source).Background = scb;
             }
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            appGrid.ColumnDefinitions[1].Width = new GridLength(50);
+
+        }
     }
 
     public class DbConnection : Window
