@@ -19,12 +19,12 @@ namespace TournamentSoftware
             InitializeComponent();
         }
 
-        private ObservableCollection<Nomination> nominationsList = new ObservableCollection<Nomination>();
+        private ObservableCollection<NominationFormModel> nominationsList = new ObservableCollection<NominationFormModel>();
         private List<CheckBox> checkBoxes = new List<CheckBox>();
         ObservableCollection<DataGridColumn> mainWindowColumns = ((MainWindow)Application.Current.MainWindow).registrationTable.Columns;
         ObservableCollection<DataGridTemplateColumn> mainNominationsColumns = ((MainWindow)Application.Current.MainWindow).nominationsColumn;
         ObservableCollection<ParticipantFormModel> participants = ((MainWindow)Application.Current.MainWindow).participantsList;
-        private List<Nomination> nominationsForDelete = new List<Nomination>();
+        private List<NominationFormModel> nominationsForDelete = new List<NominationFormModel>();
 
         /// <summary>
         /// Закрываем окно настроек
@@ -69,7 +69,7 @@ namespace TournamentSoftware
             for (int i = 0; i < nominationsList.Count; i++)
             {
                 DataGridTemplateColumn nominationColumn = new DataGridTemplateColumn();
-                string nominationName = nominationsList[i].Name;
+                string nominationName = nominationsList[i].Nomination.Name;
                 if (checkNominationNameValid(nominationName))
                 {
                     if (!checkNominationAlreadyExists(nominationName))
@@ -112,14 +112,14 @@ namespace TournamentSoftware
                 for (int j = 0; j < mainNominationsColumns.Count; j++)
                 {
                     // находим удаляемую колонку и удаляем из таблицы
-                    if (nominationsForDelete[i].Name.Equals(mainNominationsColumns[j].Header))
+                    if (nominationsForDelete[i].Nomination.Name.Equals(mainNominationsColumns[j].Header))
                     {
-                        Console.WriteLine("delete " + nominationsForDelete[i].Name);
+                        Console.WriteLine("delete " + nominationsForDelete[i].Nomination.Name);
                         mainWindowColumns.Remove(mainNominationsColumns[j]);
                         // удаляем номинации у участников
                         foreach (ParticipantFormModel p in participants)
                         {
-                            p.Nominations.Remove(nominationsForDelete[i].Name);
+                            p.Nominations.Remove(nominationsForDelete[i].Nomination.Name);
                         }
                     }
                 }
@@ -129,7 +129,7 @@ namespace TournamentSoftware
             {
                 for (int j = 0; j < mainNominationsColumns.Count; j++)
                 {
-                    if (nominationsForDelete[i].Name.Equals(mainNominationsColumns[j].Header))
+                    if (nominationsForDelete[i].Nomination.Name.Equals(mainNominationsColumns[j].Header))
                     {
                         mainNominationsColumns.Remove(mainNominationsColumns[j]);
                     }
@@ -195,9 +195,9 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void addNomination(object sender, RoutedEventArgs e)
         {
-            Nomination nomination = new Nomination()
+            NominationFormModel nomination = new NominationFormModel()
             {
-                Name = "",
+               IsSelected = false,
             };
 
             nominationsList.Add(nomination);
@@ -211,24 +211,27 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void deleteSelectedNominations(object sender, RoutedEventArgs e)
         {
-            //for (int i = 0; i < nominationsList.Count;)
-            //{
-            //    if (nominationsList[i].IsSelected)
-            //    {
-            //        deletedNominations.Add(nominationsList[i]);
-            //        nominationsList.Remove(nominationsList[i]);
-
-            //    }
-            //    else
-            //    {
-            //        i++;
-            //    }
-            //}
-
-            foreach (Nomination nomination in nominationsForDelete)
+            for (int i = 0; i < nominationsList.Count;)
             {
-                nominationsList.Remove(nomination);
+                if (nominationsList[i].IsSelected)
+                {
+                    Console.WriteLine(nominationsList[i] + " - delete");
+                    nominationsForDelete.Add(nominationsList[i]);
+                    nominationsList.Remove(nominationsList[i]);
+
+                }
+                else
+                {
+                    i++;
+                }
             }
+            nominationsGrid.ItemsSource = nominationsList;
+
+            //foreach (NominationFormModel nomination in nominationsForDelete)
+            //{
+            //    nominationsList.Remove(nomination);
+            //}
+            //nominationsGrid.ItemsSource = nominationsList;
         }
 
         /// <summary>
@@ -240,7 +243,7 @@ namespace TournamentSoftware
         {
             for (int i = 0; i < nominationsList.Count; i++)
             {
-                // nominationsList[i].IsSelected = true;
+                nominationsList[i].IsSelected = true;
             }
         }
 
@@ -253,7 +256,7 @@ namespace TournamentSoftware
         {
             for (int i = 0; i < nominationsList.Count; i++)
             {
-                // nominationsList[i].IsSelected = false;
+                nominationsList[i].IsSelected = false;
             }
         }
 
@@ -281,71 +284,91 @@ namespace TournamentSoftware
                     Name = mainNominationsColumns[i].Header.ToString(),
                 };
 
-                nominationsList.Add(nomination);
+                NominationFormModel nominationFormModel = new NominationFormModel()
+                {
+                    IsSelected = false,
+                    Nomination = nomination,
+                };
+
+                nominationsList.Add(nominationFormModel);
                 nominationsGrid.ItemsSource = nominationsList;
             }
         }
 
+        /// <summary>
+        /// Чекбокс у номинации установлен
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void nominationSelected(object sender, RoutedEventArgs e)
         {
-            CheckBox cbx = sender as CheckBox;
-            if (cbx != null)
-            {
-                string index = cbx.Tag.ToString();
-                // добавляем номинацию в лист для удаления
-                foreach (Nomination nomination in nominationsList)
-                {
-                    if (nomination.Name.Equals(index))
-                    {
-                        nominationsForDelete.Add(nomination);
-                        break;
-                    }
-                }
-            }
+            //CheckBox cbx = sender as CheckBox;
+            //if (cbx != null)
+            //{
+            //    string index = cbx.Tag.ToString();
+            //    // добавляем номинацию в лист для удаления
+            //    foreach (NominationFormModel nomination in nominationsList)
+            //    {
+            //        if (nomination.Nomination.Name.Equals(index))
+            //        {
+            //            nominationsForDelete.Add(nomination);
+            //            break;
+            //        }
+            //    }
+            //}
         }
 
+        /// <summary>
+        /// Чекбокс у номинации убран
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void nominationUnselected(object sender, RoutedEventArgs e)
         {
-            CheckBox cbx = sender as CheckBox;
-            if (cbx != null)
-            {
-                string index = cbx.Tag.ToString();
-                MessageBox.Show("Unelect: " + index);
-                // добавляем номинацию в лист для удаления
-                foreach (Nomination nomination in nominationsList)
-                {
-                    if (nomination.Name.Equals(index))
-                    {
-                        nominationsForDelete.Remove(nomination);
-                        break;
-                    }
-                }
-            }
+            //CheckBox cbx = sender as CheckBox;
+            //if (cbx != null)
+            //{
+            //    string index = cbx.Tag.ToString();
+            //    MessageBox.Show("Unelect: " + index);
+            //    // добавляем номинацию в лист для удаления
+            //    foreach (NominationFormModel nomination in nominationsList)
+            //    {
+            //        if (nomination.Nomination.Name.Equals(index))
+            //        {
+            //            nominationsForDelete.Remove(nomination);
+            //            break;
+            //        }
+            //    }
+            //}
         }
     }
 
-    //public class Nomination : INotifyPropertyChanged
-    //{
-    //    private string _nominationName;
-    //    private bool _isSelected;
+    public class NominationFormModel : INotifyPropertyChanged
+    {
+        private Nomination _nomination = new Nomination() {
+        Name = "",
+        Id = 0,
+        ParticipantId = 0,
+        };
+        private bool _isSelected;
 
-    //    public string NominationName
-    //    {
-    //        get { return _nominationName; }
-    //        set { _nominationName = value; OnPropertyChanged("NominationName"); }
-    //    }
+        public Nomination Nomination
+        {
+            get { return _nomination; }
+            set { _nomination = value; OnPropertyChanged("Nomination"); }
+        }
 
-    //    public bool IsSelected
-    //    {
-    //        get { return _isSelected; }
-    //        set { _isSelected = value; OnPropertyChanged("IsSelected"); }
-    //    }
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set { _isSelected = value; OnPropertyChanged("IsSelected"); }
+        }
 
-    //    public event PropertyChangedEventHandler PropertyChanged;
-    //    public void OnPropertyChanged([CallerMemberName] string prop = "")
-    //    {
-    //        if (PropertyChanged != null)
-    //            PropertyChanged(this, new PropertyChangedEventArgs(prop));
-    //    }
-    //}
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+    }
 }
