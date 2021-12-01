@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TournamentSoftware"
         mc:Ignorable="d"
-        Title="Турнирный софт" Height="513.9" Width="1209.4" Loaded="mainWindow_Loaded">
+        Title="Турнирный софт" Height="513.9" Width="1209.4" Loaded="mainWindow_Loaded" Closing="mainWindow_Closing">
     <Grid>
         <Button x:Name="goRegistrateButton" Content="Перейти к регистрации" HorizontalAlignment="Left" Margin="464,287,0,0" Padding="5" VerticalAlignment="Top" FontSize="14" Click="goRegistrate"/>
         <Label x:Name="startWindowLabel" Content="Стартовая страница" HorizontalAlignment="Left" Margin="376,154,0,0" VerticalAlignment="Top" FontSize="35"/>
@@ -68,7 +68,11 @@
                         </DataGridTemplateColumn.CellStyle>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="70">
+                    <DataGridTextColumn Header="Имя" 
+                                        Binding="{Binding Participant.Name, 
+                        UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
+                                        Width="70" 
+                                        PastingCellClipboardContent="DataGridTextColumn_PastingCellClipboardContent">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
                                 <Setter Property="Background" Value="#F5F1DA"/>
@@ -87,7 +91,8 @@
                         </DataGridTextColumn.HeaderStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}">
+                    <DataGridTextColumn Header="Фамилия" Binding="{Binding Participant.Surname, 
+                        UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
                                 <Setter Property="Background" Value="#F5F1DA"/>
@@ -137,7 +142,7 @@
                     <DataGridTemplateColumn Header="Посевной">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding Path=Posevnoy, UpdateSourceTrigger = PropertyChanged}" />
+                                <CheckBox IsChecked="{Binding Participant.Leader, UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderStyle>
@@ -189,7 +194,8 @@
                         </DataGridTemplateColumn.HeaderStyle>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="Клуб" Binding="{Binding Club}" Width="80">
+                    <DataGridTextColumn Header="Клуб" Binding="{Binding Club,
+                        UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" Width="80">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
                                 <Setter Property="Background" Value="#F5F1DA"/>
@@ -208,7 +214,8 @@
                         </DataGridTextColumn.HeaderStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Город" Binding="{Binding City}" Width="80">
+                    <DataGridTextColumn Header="Город" Binding="{Binding City,
+                        UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" Width="80">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
                                 <Setter Property="Background" Value="#F5F1DA"/>
@@ -257,7 +264,8 @@
                         </DataGridTemplateColumn.HeaderStyle>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="Категория" Binding="{Binding Kategory}">
+                    <DataGridTextColumn Header="Категория" Binding="{Binding Kategory,
+                         UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
                                 <Setter Property="Background" Value="#F5F1DA"/>
@@ -279,7 +287,8 @@
                     <DataGridTemplateColumn Header="Рейтинг (общий)" Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding CommonRating}" 
+                                <TextBox Text="{Binding Participant.CommonRating,
+                                     UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
                                          PreviewTextInput="NumericOnly" 
                                          MaxLength="4" 
                                          GotFocus="TextBox_GotFocus" Background="#FFF5F1DA" >
