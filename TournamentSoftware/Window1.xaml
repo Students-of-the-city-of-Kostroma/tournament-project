@@ -18,7 +18,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Label Content="Скрытые столбцы таблицы:" HorizontalAlignment="Left" Margin="387,15,0,0" VerticalAlignment="Top" Height="35" Width="387" FontSize="20" Grid.ColumnSpan="2"/>
+            <Label Content="Видимые столбцы таблицы:" HorizontalAlignment="Left" Margin="387,15,0,0" VerticalAlignment="Top" Height="35" Width="387" FontSize="20" Grid.ColumnSpan="2"/>
             <Label Content="Номинации:" HorizontalAlignment="Left" Margin="31,15,0,0" VerticalAlignment="Top" Width="132" FontSize="20"/>
             <Button Content="+" HorizontalAlignment="Left" Margin="179,25,0,0" VerticalAlignment="Top" Width="21" Height="22" RenderTransformOrigin="0.524,-1.464" Click="addNomination"/>
             <Button Content="-" HorizontalAlignment="Left" Margin="209,25,0,0" VerticalAlignment="Top" Width="21" Height="22" RenderTransformOrigin="0.524,-1.464" Click="deleteSelectedNominations"/>
@@ -30,7 +30,9 @@
                       IsReadOnly="False" 
                       AutoGenerateColumns="False" CanUserAddRows="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Номинация" Width="*" Binding="{Binding NominationName}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Номинация" Width="*" Binding="{Binding Nomination.Name, 
+                        UpdateSourceTrigger=PropertyChanged, 
+                        Mode=TwoWay}"></DataGridTextColumn>
 
                     <DataGridTemplateColumn x:Name="deletionCol" Width="30">
                         <DataGridTemplateColumn.HeaderTemplate>
@@ -40,18 +42,22 @@
                         </DataGridTemplateColumn.HeaderTemplate>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger = PropertyChanged}" Checked="nominationChecked" Unchecked="nominationUnchecked"></CheckBox>
+                                <CheckBox IsChecked="{Binding IsSelected,UpdateSourceTrigger=PropertyChanged, 
+                        Mode=TwoWay}" 
+                                          Unchecked="nominationUnselected"
+                                          Checked="nominationSelected"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
-            <ListView x:Name="columnsNames" Grid.Column="1" HorizontalAlignment="Left" Height="287" Margin="35.8,57,0,0" VerticalAlignment="Top" Width="310">
-                <!--<ListView.View>
-                    <GridView >
-                        <GridViewColumn Header="Столбцы" Width="270"/>
-                    </GridView>
-                </ListView.View>-->
+            <ListView x:Name="columnsNames" 
+                      Grid.Column="1" 
+                      HorizontalAlignment="Left" 
+                      Height="287" 
+                      Margin="9.8,57,0,0" 
+                      VerticalAlignment="Top" 
+                      Width="336">
             </ListView>
         </Grid>
 
