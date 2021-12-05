@@ -7,8 +7,6 @@ using Microsoft.Win32;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Data;
 using ExcelDataReader;
-using System.Collections.ObjectModel;
-using System.Windows.Controls;
 
 namespace TournamentSoftware
 {

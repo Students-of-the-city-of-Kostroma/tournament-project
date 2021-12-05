@@ -4,14 +4,8 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.Win32;
-using SQLite;
-using Excel = Microsoft.Office.Interop.Excel;
-using ExcelDataReader;
 using System.IO;
 using System.Windows.Input;
-using System.Collections;
-using System.Windows.Media;
 using System.Windows.Data;
 using Newtonsoft.Json;
 
@@ -29,7 +23,7 @@ namespace TournamentSoftware
         public static string appStateJsonPath = "..\\..\\app.json";
         public static string dataBasePath = "..\\..\\db.db";
         public static string registrationBackupPath = "..\\..\\registrationBackup.json";
-
+        private SubgroupsFormation subgroupsFormation = new SubgroupsFormation();
         private ParticipantsReagistrator registrator = new ParticipantsReagistrator();
         public ApplicationState appState = new ApplicationState();
 
@@ -517,13 +511,18 @@ namespace TournamentSoftware
             if (isRegistrationTableValid())
             {
                 appState.isRegistrationComplited = true;
+                appGrid.Visibility = Visibility.Hidden;
+                SubgroupsFormationGrid.Visibility = Visibility.Visible;
+                UIElement grid = subgroupsFormation.kategoryList();
+                SubgroupsFormationGrid.Children.Add(grid);
+                Grid.SetRow(grid, 0);
+                Grid.SetColumn(grid, 1);
             }
             else
             {
                 appState.isRegistrationComplited = false;
             }
         }
-
 
         /// <summary>
         /// Скрытие панели инструментов
@@ -533,7 +532,6 @@ namespace TournamentSoftware
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             appGrid.ColumnDefinitions[1].Width = new GridLength(50);
-
         }
     }
 }
