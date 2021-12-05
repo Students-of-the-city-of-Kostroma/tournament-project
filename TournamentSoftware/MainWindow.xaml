@@ -7,9 +7,13 @@
         mc:Ignorable="d"
         Title="Турнирный софт" Height="513.9" Width="1209.4" Loaded="mainWindow_Loaded" Closing="mainWindow_Closing">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="692*"/>
+            <ColumnDefinition Width="511*"/>
+        </Grid.ColumnDefinitions>
         <Button x:Name="goRegistrateButton" Content="Перейти к регистрации" HorizontalAlignment="Left" Margin="464,287,0,0" Padding="5" VerticalAlignment="Top" FontSize="14" Click="goRegistrate"/>
-        <Label x:Name="startWindowLabel" Content="Стартовая страница" HorizontalAlignment="Left" Margin="376,154,0,0" VerticalAlignment="Top" FontSize="35"/>
-        <Grid x:Name="appGrid" HorizontalAlignment="Stretch" Margin="3,3,-0.4,3" VerticalAlignment="Stretch"  ShowGridLines="True" Grid.ColumnSpan="3">
+        <Label x:Name="startWindowLabel" Content="Стартовая страница" HorizontalAlignment="Left" Margin="376,154,0,0" VerticalAlignment="Top" FontSize="35" Grid.ColumnSpan="2"/>
+        <Grid x:Name="appGrid" HorizontalAlignment="Stretch" Margin="3,3,-0.8,3" VerticalAlignment="Stretch"  ShowGridLines="True" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1030*"/>
                 <ColumnDefinition Width="167*"/>
@@ -18,7 +22,7 @@
             <Button x:Name="goTournament" Content="" 
                     Grid.Column="1" 
                     Margin="0,366,0,0" VerticalAlignment="Top" Padding="5" Height="30" 
-                    IsEnabled="true" Width="120">
+                    IsEnabled="true" Width="120" Click="goTournament_Click">
                 <Button.Background>
                     <ImageBrush ImageSource="Arrow 3.png" Stretch="Uniform"/>
                 </Button.Background>
@@ -71,8 +75,7 @@
                     <DataGridTextColumn Header="Имя" 
                                         Binding="{Binding Participant.Name, 
                         UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
-                                        Width="70" 
-                                        PastingCellClipboardContent="DataGridTextColumn_PastingCellClipboardContent">
+                                        Width="70" >
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
                                 <Setter Property="Background" Value="#F5F1DA"/>
@@ -111,7 +114,7 @@
                         </DataGridTextColumn.HeaderStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Отчество" Binding="{Binding Otchestvo}">
+                    <DataGridTextColumn Header="Отчество" Binding="{Binding Participant.Patronymic, UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}">
                         <DataGridTextColumn.HeaderStyle>
                             <Style TargetType="{x:Type DataGridColumnHeader}">
                                 <Setter Property="Background" Value="#808C6C"/>
@@ -125,7 +128,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Псевдоним" Binding="{Binding Psevdonim}">
+                    <DataGridTextColumn Header="Псевдоним" Binding="{Binding Participant.Pseudonym, UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}">
                         <DataGridTextColumn.HeaderStyle>
                             <Style TargetType="{x:Type DataGridColumnHeader}">
                                 <Setter Property="Background" Value="#808C6C"/>
@@ -161,8 +164,9 @@
                     <DataGridTemplateColumn Header="Пол">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <ComboBox ItemsSource="{Binding AvailableSex}" SelectedItem="{Binding Path=Sex, Mode=TwoWay}"
-                                          Loaded="ComboBox_Loaded" Background="#FFF5F1DA" 
+                                <ComboBox ItemsSource="{Binding AvailableSex}" SelectedItem="{Binding Participant.Sex, 
+                                    UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"
+                                         Background="#FFF5F1DA" 
                                          />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -182,7 +186,8 @@
                     <DataGridTemplateColumn Header="Год рождения" MaxWidth="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding Path=DateOfBirth}" PreviewTextInput="NumericOnly" MaxLength="4" Background="#FFF5F1DA">
+                                <TextBox Text="{Binding Participant.DateOfBirth, 
+                                    UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" PreviewTextInput="NumericOnly" MaxLength="4" Background="#FFF5F1DA">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -237,7 +242,8 @@
                     <DataGridTemplateColumn Header="Рост">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding Height}" PreviewTextInput="NumericOnly" MaxLength="4" Background="#FFF5F1DA">
+                                <TextBox Text="{Binding Participant.Height, 
+                                    UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" PreviewTextInput="NumericOnly" MaxLength="4" Background="#FFF5F1DA">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -252,7 +258,8 @@
                     <DataGridTemplateColumn Header="Вес">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding Weight}" PreviewTextInput="NumericOnly" MaxLength="3" Background="#FFF5F1DA">
+                                <TextBox Text="{Binding Participant.Weight, 
+                                    UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" PreviewTextInput="NumericOnly" MaxLength="3" Background="#FFF5F1DA">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -290,8 +297,7 @@
                                 <TextBox Text="{Binding Participant.CommonRating,
                                      UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
                                          PreviewTextInput="NumericOnly" 
-                                         MaxLength="4" 
-                                         GotFocus="TextBox_GotFocus" Background="#FFF5F1DA" >
+                                         MaxLength="4" Background="#FFF5F1DA" >
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -306,7 +312,9 @@
                     <DataGridTemplateColumn Header="Рейтинг (клубный)" Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding ClubRating}" PreviewTextInput="NumericOnly" MaxLength="4" Background="#FFF5F1DA">
+                                <TextBox Text="{Binding Participant.ClubRating,
+                                    UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
+                                         PreviewTextInput="NumericOnly" MaxLength="4" Background="#FFF5F1DA">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -335,6 +343,15 @@
             <Button x:Name="add_Copy" Content="Настроить вид" Grid.Column="1" HorizontalAlignment="Center" Margin="0,296,0,0" VerticalAlignment="Top" Padding="5" Height="30" Width="120" Click="showRegistrationModuleSettings"/>
             <Button x:Name="HideInstrumentPanelButton" Grid.Column="1" Content="" Margin="128,10,10,0" VerticalAlignment="Top" Height="30" RenderTransformOrigin="-0.337,0.468" Click="Button_Click"/>
             <TextBox x:Name="TornnamentNameTextBox" Grid.Column="1" HorizontalAlignment="Center" Margin="0,110,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Height="25" FontSize="16"/>
+
+            <Grid x:Name="SubgroupsFormationGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="2" Margin="0,0,-0.2,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+            </Grid>
+            
         </Grid>
 
     </Grid>

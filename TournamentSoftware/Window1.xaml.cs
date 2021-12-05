@@ -23,7 +23,7 @@ namespace TournamentSoftware
         private List<CheckBox> checkBoxes = new List<CheckBox>();
         ObservableCollection<DataGridColumn> mainWindowColumns = ((MainWindow)Application.Current.MainWindow).registrationTable.Columns;
         ObservableCollection<DataGridTemplateColumn> mainNominationsColumns = ((MainWindow)Application.Current.MainWindow).nominationsColumn;
-        ObservableCollection<ParticipantFormModel> participants = ((MainWindow)Application.Current.MainWindow).participantsList;
+        ObservableCollection<ParticipantFormModel> participants = MainWindow.participantsList;
         private List<NominationFormModel> nominationsForDelete = new List<NominationFormModel>();
 
         /// <summary>
@@ -302,20 +302,7 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void nominationSelected(object sender, RoutedEventArgs e)
         {
-            //CheckBox cbx = sender as CheckBox;
-            //if (cbx != null)
-            //{
-            //    string index = cbx.Tag.ToString();
-            //    // добавляем номинацию в лист для удаления
-            //    foreach (NominationFormModel nomination in nominationsList)
-            //    {
-            //        if (nomination.Nomination.Name.Equals(index))
-            //        {
-            //            nominationsForDelete.Add(nomination);
-            //            break;
-            //        }
-            //    }
-            //}
+            
         }
 
         /// <summary>
@@ -325,21 +312,7 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void nominationUnselected(object sender, RoutedEventArgs e)
         {
-            //CheckBox cbx = sender as CheckBox;
-            //if (cbx != null)
-            //{
-            //    string index = cbx.Tag.ToString();
-            //    MessageBox.Show("Unelect: " + index);
-            //    // добавляем номинацию в лист для удаления
-            //    foreach (NominationFormModel nomination in nominationsList)
-            //    {
-            //        if (nomination.Nomination.Name.Equals(index))
-            //        {
-            //            nominationsForDelete.Remove(nomination);
-            //            break;
-            //        }
-            //    }
-            //}
+            
         }
     }
 
