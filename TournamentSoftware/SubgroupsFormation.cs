@@ -11,6 +11,7 @@ namespace TournamentSoftware
         // хранит участников в категории
         private Dictionary<string, List<Participant>> kategoryGroups = new Dictionary<string, List<Participant>>();
         private Grid kategorySettingsGrid = new Grid();
+        private Label countInKategory = new Label();
 
         // получаем список катерогий
         private Dictionary<string, List<Participant>> getKategories(ObservableCollection<ParticipantFormModel> participants)
@@ -71,6 +72,8 @@ namespace TournamentSoftware
                 kategoryButton.Height = 50;
                 kategoryButton.FontSize = 15;
                 kategoryButton.Content = kategory;
+                kategoryButton.Tag = kategory;
+                kategoryButton.Click += KategoryButton_Click;
                 listBox.Items.Add(kategoryButton);
             }
             grid.Children.Add(label);
@@ -80,12 +83,52 @@ namespace TournamentSoftware
             return grid;
         }
 
+        private void KategoryButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            string kategory = button.Tag.ToString();
+            countInKategory.Content = kategoryGroups[kategory].Count;
+        }
+
         public UIElement kategorySettingsPanel()
         {
             kategorySettingsGrid = createGrid();
             Label label = createLabel("Параметры подгруппы");
             kategorySettingsGrid.Children.Add(label);
             Grid.SetRow(label, 0);
+
+            Grid grid = new Grid();
+            grid.HorizontalAlignment = HorizontalAlignment.Stretch;
+            grid.VerticalAlignment = VerticalAlignment.Stretch;
+            RowDefinition row1 = new RowDefinition();
+            row1.Height = new GridLength(100);
+            RowDefinition row2 = new RowDefinition();
+            RowDefinition row3 = new RowDefinition();
+            RowDefinition row4 = new RowDefinition();
+            grid.RowDefinitions.Add(row1);
+            grid.RowDefinitions.Add(row2);
+            grid.RowDefinitions.Add(row3);
+            grid.RowDefinitions.Add(row4);
+
+            Grid firstRow = new Grid();
+            ColumnDefinition column1 = new ColumnDefinition();
+            ColumnDefinition column2 = new ColumnDefinition();
+            firstRow.ColumnDefinitions.Add(column1);
+            firstRow.ColumnDefinitions.Add(column2);
+            Label countInKategoryLabel = createLabel("Количество участников в категории");
+            countInKategoryLabel.FontSize = 12;
+            firstRow.Children.Add(countInKategory);
+            firstRow.Children.Add(countInKategoryLabel);
+            Grid.SetColumn(countInKategory, 0);
+            Grid.SetColumn(countInKategoryLabel, 1);
+
+            grid.Children.Add(firstRow);
+            Grid.SetRow(firstRow, 0);
+            row1.Height = new GridLength(50);
+
+            kategorySettingsGrid.Children.Add(grid);
+            Grid.SetRow(grid, 1);
+
             return kategorySettingsGrid;
         }
 
