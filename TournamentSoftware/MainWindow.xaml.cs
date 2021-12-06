@@ -447,7 +447,6 @@ namespace TournamentSoftware
                 n.CellTemplate = checkBoxTemplate;
                 registrationTable.Columns.Add(n);
                 nominationsColumn.Add(n);
-                registrator.nominationsNames.Add(nominationName);
             }
         }
         /// <summary>
