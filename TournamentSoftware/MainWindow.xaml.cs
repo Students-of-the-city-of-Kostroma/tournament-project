@@ -18,14 +18,16 @@ namespace TournamentSoftware
     {
         public static ObservableCollection<ParticipantFormModel> participantsList = new ObservableCollection<ParticipantFormModel>();
 
-        public ObservableCollection<Nomination> nominationsList = new ObservableCollection<Nomination>();
+        public static ObservableCollection<Nomination> nominationsList = new ObservableCollection<Nomination>();
         public ObservableCollection<DataGridTemplateColumn> nominationsColumn = new ObservableCollection<DataGridTemplateColumn>();
         public static string appStateJsonPath = "..\\..\\app.json";
         public static string dataBasePath = "..\\..\\db.db";
         public static string registrationBackupPath = "..\\..\\registrationBackup.json";
         private SubgroupsFormation subgroupsFormation = new SubgroupsFormation();
-        private ParticipantsReagistrator registrator = new ParticipantsReagistrator();
+        private static ParticipantsReagistrator registrator = new ParticipantsReagistrator();
         public ApplicationState appState = new ApplicationState();
+
+        public static ParticipantsReagistrator GetReagistrator{ get { return registrator; } }
 
         private static List<string> requiredColumnsHeaders = new List<string>{
             "Имя",
@@ -163,6 +165,8 @@ namespace TournamentSoftware
             {
                 registrationTable.Columns.Remove(column);
             }
+
+            nominationsList.Clear();
         }
 
         /// <summary>
@@ -443,6 +447,7 @@ namespace TournamentSoftware
                 n.CellTemplate = checkBoxTemplate;
                 registrationTable.Columns.Add(n);
                 nominationsColumn.Add(n);
+                registrator.nominationsNames.Add(nominationName);
             }
         }
         /// <summary>
@@ -512,11 +517,22 @@ namespace TournamentSoftware
             {
                 appState.isRegistrationComplited = true;
                 appGrid.Visibility = Visibility.Hidden;
-                SubgroupsFormationGrid.Visibility = Visibility.Visible;
+                SubgroupsFormationGridParent.Visibility = Visibility.Visible;
+
+                UIElement nominationList = subgroupsFormation.nominationsList();
+                SubgroupsFormationGrid.Children.Add(nominationList);
+                Grid.SetRow(nominationList, 0);
+                Grid.SetColumn(nominationList, 0);
+
                 UIElement grid = subgroupsFormation.kategoryList();
                 SubgroupsFormationGrid.Children.Add(grid);
                 Grid.SetRow(grid, 0);
                 Grid.SetColumn(grid, 1);
+
+                UIElement kategoryParametersPanel = subgroupsFormation.kategorySettingsPanel();
+                SubgroupsFormationGrid.Children.Add(kategoryParametersPanel);
+                Grid.SetRow(kategoryParametersPanel, 0);
+                Grid.SetColumn(kategoryParametersPanel, 2);
             }
             else
             {
@@ -532,6 +548,12 @@ namespace TournamentSoftware
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             appGrid.ColumnDefinitions[1].Width = new GridLength(50);
+        }
+
+        private void backToRegistratioinTable(object sender, RoutedEventArgs e)
+        {
+            SubgroupsFormationGridParent.Visibility = Visibility.Hidden;
+            appGrid.Visibility = Visibility.Visible;
         }
     }
 }

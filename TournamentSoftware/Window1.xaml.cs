@@ -95,6 +95,7 @@ namespace TournamentSoftware
 
                         mainNominationsColumns.Add(nominationColumn);
                         mainWindowColumns.Add(nominationColumn);
+                        MainWindow.GetReagistrator.nominationsNames.Add(nominationName);
                     }
 
                 }
@@ -111,16 +112,17 @@ namespace TournamentSoftware
             {
                 for (int j = 0; j < mainNominationsColumns.Count; j++)
                 {
+                    string nominationName = nominationsForDelete[i].Nomination.Name;
                     // находим удаляемую колонку и удаляем из таблицы
-                    if (nominationsForDelete[i].Nomination.Name.Equals(mainNominationsColumns[j].Header))
+                    if (nominationName.Equals(mainNominationsColumns[j].Header))
                     {
-                        Console.WriteLine("delete " + nominationsForDelete[i].Nomination.Name);
                         mainWindowColumns.Remove(mainNominationsColumns[j]);
                         // удаляем номинации у участников
                         foreach (ParticipantFormModel p in participants)
                         {
-                            p.Nominations.Remove(nominationsForDelete[i].Nomination.Name);
+                            p.Nominations.Remove(nominationName);
                         }
+                        MainWindow.GetReagistrator.nominationsNames.Remove(nominationName);
                     }
                 }
             }
