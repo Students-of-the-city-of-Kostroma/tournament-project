@@ -23,11 +23,11 @@ namespace TournamentSoftware
         public static string appStateJsonPath = "..\\..\\app.json";
         public static string dataBasePath = "..\\..\\db.db";
         public static string registrationBackupPath = "..\\..\\registrationBackup.json";
-        private SubgroupsFormation subgroupsFormation = new SubgroupsFormation();
+        private SubgroupsFormation subgroupsFormation;
         private static ParticipantsReagistrator registrator = new ParticipantsReagistrator();
         public ApplicationState appState = new ApplicationState();
 
-        public static ParticipantsReagistrator GetReagistrator{ get { return registrator; } }
+        public static ParticipantsReagistrator GetReagistrator { get { return registrator; } }
 
         private static List<string> requiredColumnsHeaders = new List<string>{
             "Имя",
@@ -485,7 +485,7 @@ namespace TournamentSoftware
 
                 if (participant.Participant.DateOfBirth < 1900 || participant.Participant.DateOfBirth > DateTime.Now.Year - 13)
                 {
-                    errors.Add("Некорректно заполнена дата рождения участника на строке " + count);
+                    errors.Add("Некорректно заполнен год рождения участника на строке " + count);
                 }
 
                 if (!participant.Participant.Sex.Equals("М") && !participant.Participant.Sex.Equals("Ж"))
@@ -520,25 +520,24 @@ namespace TournamentSoftware
             {
                 appState.isRegistrationComplited = true;
                 appGrid.Visibility = Visibility.Hidden;
+                SubgroupsFormationGrid.Children.Clear();
                 SubgroupsFormationGridParent.Visibility = Visibility.Visible;
+                subgroupsFormation = new SubgroupsFormation();
+                UIElement nominationList = subgroupsFormation.nominationsList();
+                SubgroupsFormationGrid.Children.Add(nominationList);
+                Grid.SetRow(nominationList, 0);
+                Grid.SetColumn(nominationList, 0);
 
-                if(subgroupsFormation.getKateoryGroups.Count == 0)
-                {
-                    UIElement nominationList = subgroupsFormation.nominationsList();
-                    SubgroupsFormationGrid.Children.Add(nominationList);
-                    Grid.SetRow(nominationList, 0);
-                    Grid.SetColumn(nominationList, 0);
+                UIElement grid = subgroupsFormation.kategoryList();
+                SubgroupsFormationGrid.Children.Add(grid);
+                Grid.SetRow(grid, 0);
+                Grid.SetColumn(grid, 1);
 
-                    UIElement grid = subgroupsFormation.kategoryList();
-                    SubgroupsFormationGrid.Children.Add(grid);
-                    Grid.SetRow(grid, 0);
-                    Grid.SetColumn(grid, 1);
+                UIElement kategoryParametersPanel = subgroupsFormation.kategorySettingsPanel();
+                SubgroupsFormationGrid.Children.Add(kategoryParametersPanel);
+                Grid.SetRow(kategoryParametersPanel, 0);
+                Grid.SetColumn(kategoryParametersPanel, 2);
 
-                    UIElement kategoryParametersPanel = subgroupsFormation.kategorySettingsPanel();
-                    SubgroupsFormationGrid.Children.Add(kategoryParametersPanel);
-                    Grid.SetRow(kategoryParametersPanel, 0);
-                    Grid.SetColumn(kategoryParametersPanel, 2);
-                }
             }
             else
             {
