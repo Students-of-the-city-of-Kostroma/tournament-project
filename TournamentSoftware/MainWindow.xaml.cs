@@ -235,6 +235,10 @@ namespace TournamentSoftware
                         foreach (string nomination in participant.Nominations.Keys)
                         {
                             addNominationColumn(nomination);
+                            if (!registrator.nominationsNames.Contains(nomination))
+                            {
+                                registrator.nominationsNames.Add(nomination);
+                            }
                         }
                     }
                 }
@@ -518,20 +522,23 @@ namespace TournamentSoftware
                 appGrid.Visibility = Visibility.Hidden;
                 SubgroupsFormationGridParent.Visibility = Visibility.Visible;
 
-                UIElement nominationList = subgroupsFormation.nominationsList();
-                SubgroupsFormationGrid.Children.Add(nominationList);
-                Grid.SetRow(nominationList, 0);
-                Grid.SetColumn(nominationList, 0);
+                if(subgroupsFormation.getKateoryGroups.Count == 0)
+                {
+                    UIElement nominationList = subgroupsFormation.nominationsList();
+                    SubgroupsFormationGrid.Children.Add(nominationList);
+                    Grid.SetRow(nominationList, 0);
+                    Grid.SetColumn(nominationList, 0);
 
-                UIElement grid = subgroupsFormation.kategoryList();
-                SubgroupsFormationGrid.Children.Add(grid);
-                Grid.SetRow(grid, 0);
-                Grid.SetColumn(grid, 1);
+                    UIElement grid = subgroupsFormation.kategoryList();
+                    SubgroupsFormationGrid.Children.Add(grid);
+                    Grid.SetRow(grid, 0);
+                    Grid.SetColumn(grid, 1);
 
-                UIElement kategoryParametersPanel = subgroupsFormation.kategorySettingsPanel();
-                SubgroupsFormationGrid.Children.Add(kategoryParametersPanel);
-                Grid.SetRow(kategoryParametersPanel, 0);
-                Grid.SetColumn(kategoryParametersPanel, 2);
+                    UIElement kategoryParametersPanel = subgroupsFormation.kategorySettingsPanel();
+                    SubgroupsFormationGrid.Children.Add(kategoryParametersPanel);
+                    Grid.SetRow(kategoryParametersPanel, 0);
+                    Grid.SetColumn(kategoryParametersPanel, 2);
+                }
             }
             else
             {
