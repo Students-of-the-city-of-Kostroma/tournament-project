@@ -42,10 +42,6 @@ namespace TournamentSoftware
         public void GetParticipants()
         {
             var participants = _db.Query<Participant>("SELECT * FROM Participant");
-            foreach (var participant in participants)
-            {
-               // Console.WriteLine(participant.Id + " " + participant.Surname + " " + participant.Name + " " + participant.ClubId);
-            }
         }
         public void AddTournamentGrid(TournamentGrid tournamentGrid)
         {
