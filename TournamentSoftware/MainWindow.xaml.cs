@@ -49,7 +49,7 @@ namespace TournamentSoftware
         public MainWindow()
         {
             InitializeComponent();
-            appGrid.Visibility = Visibility.Hidden;
+
             participantsList = new ObservableCollection<ParticipantFormModel>();
             registrationTable.DataContext = participantsList;
         }
@@ -72,23 +72,6 @@ namespace TournamentSoftware
                     ((TextBox)e.Source).Text = "";
                 }
             }
-        }
-
-        /// <summary>
-        /// Переход к модулю регистрации
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void goRegistrate(object sender, RoutedEventArgs e)
-        {
-            openRegistration();
-        }
-
-        private void openRegistration()
-        {
-            startWindowLabel.Visibility = Visibility.Hidden;
-            goRegistrateButton.Visibility = Visibility.Hidden;
-            appGrid.Visibility = Visibility.Visible;
         }
 
         /// <summary>
@@ -257,7 +240,6 @@ namespace TournamentSoftware
             // если закончили на этапе регистрации
             if (!appState.isRegistrationComplited)
             {
-                openRegistration();
                 readRegistrationFromBackup();
                 registrationTable.ItemsSource = participantsList;
             }
