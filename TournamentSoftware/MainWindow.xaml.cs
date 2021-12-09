@@ -8,6 +8,8 @@ using System.IO;
 using System.Windows.Input;
 using System.Windows.Data;
 using Newtonsoft.Json;
+using System.Windows.Media;
+using System.Windows.Controls.Primitives;
 
 namespace TournamentSoftware
 {
@@ -440,8 +442,19 @@ namespace TournamentSoftware
                 DataGridTemplateColumn n = new DataGridTemplateColumn();
                 n.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
                 n.Header = nominationName;
+
+                var cellStyle = new Style(typeof(DataGridCell));
+                cellStyle.Setters.Add(new Setter()
+                {
+                    Property = BackgroundProperty,
+                    Value = (Brush) new BrushConverter().ConvertFrom("#F5F1DA")
+                });
+                n.CellStyle = cellStyle;
+
                 FrameworkElementFactory checkBox = new FrameworkElementFactory(typeof(CheckBox));
                 checkBox.SetBinding(CheckBox.IsCheckedProperty, bind);
+                checkBox.SetValue(CheckBox.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+                checkBox.SetValue(CheckBox.VerticalAlignmentProperty, VerticalAlignment.Center);
                 DataTemplate checkBoxTemplate = new DataTemplate();
                 checkBoxTemplate.VisualTree = checkBox;
                 n.CellTemplate = checkBoxTemplate;
@@ -591,12 +604,27 @@ namespace TournamentSoftware
             appGrid.ColumnDefinitions[1].Width = new GridLength(50);
 
         }
-    }
 
         private void backToRegistratioinTable(object sender, RoutedEventArgs e)
         {
             SubgroupsFormationGridParent.Visibility = Visibility.Hidden;
             appGrid.Visibility = Visibility.Visible;
+        }
+
+        private void DateOfBirth_TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if ((sender as TextBox).Text == "" || Convert.ToInt32((sender as TextBox).Text) < 1900)
+            {
+                (sender as TextBox).Background = (Brush)new BrushConverter().ConvertFrom("#FFFFDDDB");
+                if ((sender as TextBox).Text == "")
+                {
+                    (sender as TextBox).Text = "0";
+                }
+            }
+            else 
+            {
+                (sender as TextBox).Background = (Brush)new BrushConverter().ConvertFrom("#FFF5F1DA");
+            }
         }
     }
 }
