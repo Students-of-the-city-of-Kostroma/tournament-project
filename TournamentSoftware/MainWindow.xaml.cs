@@ -25,11 +25,11 @@ namespace TournamentSoftware
         public static string appStateJsonPath = "..\\..\\app.json";
         public static string dataBasePath = "..\\..\\db.db";
         public static string registrationBackupPath = "..\\..\\registrationBackup.json";
-        private SubgroupsFormation subgroupsFormation = new SubgroupsFormation();
+        private SubgroupsFormation subgroupsFormation;
         private static ParticipantsReagistrator registrator = new ParticipantsReagistrator();
         public ApplicationState appState = new ApplicationState();
 
-        public static ParticipantsReagistrator GetReagistrator{ get { return registrator; } }
+        public static ParticipantsReagistrator GetReagistrator { get { return registrator; } }
 
         private static List<string> requiredColumnsHeaders = new List<string>{
             "Имя",
@@ -51,7 +51,7 @@ namespace TournamentSoftware
         public MainWindow()
         {
             InitializeComponent();
-            appGrid.Visibility = Visibility.Hidden;
+
             participantsList = new ObservableCollection<ParticipantFormModel>();
             registrationTable.DataContext = participantsList;
         }
@@ -74,23 +74,6 @@ namespace TournamentSoftware
                     ((TextBox)e.Source).Text = "";
                 }
             }
-        }
-
-        /// <summary>
-        /// Переход к модулю регистрации
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void goRegistrate(object sender, RoutedEventArgs e)
-        {
-            openRegistration();
-        }
-
-        private void openRegistration()
-        {
-            startWindowLabel.Visibility = Visibility.Hidden;
-            goRegistrateButton.Visibility = Visibility.Hidden;
-            appGrid.Visibility = Visibility.Visible;
         }
 
         /// <summary>
@@ -237,6 +220,10 @@ namespace TournamentSoftware
                         foreach (string nomination in participant.Nominations.Keys)
                         {
                             addNominationColumn(nomination);
+                            if (!registrator.nominationsNames.Contains(nomination))
+                            {
+                                registrator.nominationsNames.Add(nomination);
+                            }
                         }
                     }
                 }
@@ -255,7 +242,6 @@ namespace TournamentSoftware
             // если закончили на этапе регистрации
             if (!appState.isRegistrationComplited)
             {
-                openRegistration();
                 readRegistrationFromBackup();
                 registrationTable.ItemsSource = participantsList;
             }
@@ -509,7 +495,7 @@ namespace TournamentSoftware
 
                 if (participant.Participant.DateOfBirth < 1900 || participant.Participant.DateOfBirth > DateTime.Now.Year - 13)
                 {
-                    errors.Add("Некорректно заполнена дата рождения участника на строке " + count);
+                    errors.Add("Некорректно заполнен год рождения участника на строке " + count);
                 }
 
                 if (!participant.Participant.Sex.Equals("М") && !participant.Participant.Sex.Equals("Ж"))
@@ -542,51 +528,25 @@ namespace TournamentSoftware
         {
             if (isRegistrationTableValid())
             {
-                foreach (ParticipantFormModel participantFormModel in participantsList) 
-                {
-                    Club club = new Club
-                    {
-                        Name = participantFormModel.Club,
-                        City = participantFormModel.City,
-                        ContactInformation = "something"
-                    };
-                    //Participant participant = new Participant
-                    //{
-                    //    //Name = "Andrey",
-                    //    //Surname = "Tyurin",
-                    //    //Age = 19,
-                    //    //ClubId = 4,
-                    //    //ClubRating = 5,
-                    //    //CommonRating = 6,
-                    //    //Height = 174,
-                    //    //Leader = true,
-                    //    //Patronymic = "wad",
-                    //    //Pseudonym = "dwada",
-                    //    //Sex = "m",
-                    //    //Weight = 69
-                    //};
-                    Nomination nomination = new Nomination
-                    {
-                        ParticipantId = 1,
-                        TournamentGridId = 1,
-                        Name = "fight",
-                    };
+                appState.isRegistrationComplited = true;
+                appGrid.Visibility = Visibility.Hidden;
+                SubgroupsFormationGrid.Children.Clear();
+                SubgroupsFormationGridParent.Visibility = Visibility.Visible;
+                subgroupsFormation = new SubgroupsFormation();
+                UIElement nominationList = subgroupsFormation.nominationsList();
+                SubgroupsFormationGrid.Children.Add(nominationList);
+                Grid.SetRow(nominationList, 0);
+                Grid.SetColumn(nominationList, 0);
 
-                    TournamentGrid tournament = new TournamentGrid
-                    {
-                        Name = TornnamentNameTextBox.Text,
-                        Date = new DateTime()
-                    };
+                UIElement grid = subgroupsFormation.kategoryList();
+                SubgroupsFormationGrid.Children.Add(grid);
+                Grid.SetRow(grid, 0);
+                Grid.SetColumn(grid, 1);
 
-                    //databaseHandler.AddClub(club);
-                    //databaseHandler.AddParticipant(participantFormModel.Participant);
-                    //databaseHandler.AddTournamentGrid(tournament);
-                    //databaseHandler.AddNomination(nomination);
-                    //databaseHandler.GetClubs();
-                    //databaseHandler.GetNominations();
-                    //databaseHandler.GetParticipants();
-                    //databaseHandler.GetTournamentGrids();
-                }
+                UIElement kategoryParametersPanel = subgroupsFormation.kategorySettingsPanel();
+                SubgroupsFormationGrid.Children.Add(kategoryParametersPanel);
+                Grid.SetRow(kategoryParametersPanel, 0);
+                Grid.SetColumn(kategoryParametersPanel, 2);
             }
             else
             {

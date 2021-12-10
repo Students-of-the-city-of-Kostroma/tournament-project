@@ -98,6 +98,9 @@
     <Compile Include="Nomination.cs" />
     <Compile Include="ParticipantFormModel.cs" />
     <Compile Include="ParticipantsReagistrator.cs" />
+    <Compile Include="StartWindow.xaml.cs">
+      <DependentUpon>StartWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SubgroupsFormation.cs" />
     <Compile Include="TournamentGrid.cs" />
     <Compile Include="Window1.xaml.cs">
@@ -119,6 +122,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="StartWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Window1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
