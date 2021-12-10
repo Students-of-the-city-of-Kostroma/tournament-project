@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.Win32;
-using SQLite;
-using Excel = Microsoft.Office.Interop.Excel;
-using ExcelDataReader;
 using System.IO;
 using System.Windows.Input;
-using System.Collections;
+using System.Windows.Data;
+using Newtonsoft.Json;
 using System.Windows.Media;
+using System.Windows.Controls.Primitives;
 
 namespace TournamentSoftware
 {
@@ -21,33 +18,49 @@ namespace TournamentSoftware
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ObservableCollection<Participant> participantsList = new ObservableCollection<Participant>();
-        public ObservableCollection<Participant> ParticipantsCollection
-        {
-            get { return this.participantsList; }
-        }
-        public ObservableCollection<Nomination> nominationsList = new ObservableCollection<Nomination>();
-        public ObservableCollection<DataGridCheckBoxColumn> nominationsColumn = new ObservableCollection<DataGridCheckBoxColumn>();
+        public static ObservableCollection<ParticipantFormModel> participantsList = new ObservableCollection<ParticipantFormModel>();
+
+        public static ObservableCollection<Nomination> nominationsList = new ObservableCollection<Nomination>();
+        public ObservableCollection<DataGridTemplateColumn> nominationsColumn = new ObservableCollection<DataGridTemplateColumn>();
+        public static string appStateJsonPath = "..\\..\\app.json";
+        public static string dataBasePath = "..\\..\\db.db";
+        public static string registrationBackupPath = "..\\..\\registrationBackup.json";
+        private SubgroupsFormation subgroupsFormation;
+        private static ParticipantsReagistrator registrator = new ParticipantsReagistrator();
+        public ApplicationState appState = new ApplicationState();
+
+        public static ParticipantsReagistrator GetReagistrator { get { return registrator; } }
+
+        private static List<string> requiredColumnsHeaders = new List<string>{
+            "Имя",
+            "Фамилия",
+            "Отчество",
+            "Посевной",
+            "Пол",
+            "Год рождения",
+            "Клуб",
+            "Город",
+            "Рост",
+            "Вес",
+            "Рейтинг (общий)",
+            "Рейтинг (клубный)",
+            "Псевдоним",
+            "Категория"
+        };
+
         public MainWindow()
         {
             InitializeComponent();
-            appGrid.Visibility = Visibility.Hidden;
-            participantsList = new ObservableCollection<Participant>();
+
+            participantsList = new ObservableCollection<ParticipantFormModel>();
             registrationTable.DataContext = participantsList;
-            registrationTable.CellEditEnding += RegistrationTable_CellEditEnding;
-
         }
 
-        private void ParticipantsList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            Console.WriteLine("информация об участниках изменена");
-        }
-
-        private void RegistrationTable_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        {
-            Console.WriteLine(e.Row.GetIndex());
-        }
-
+        /// <summary>
+        /// Проверка введения числа
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void NumericOnly(object sender, TextCompositionEventArgs e)
         {
             if (!int.TryParse(e.Text, out _))
@@ -56,27 +69,11 @@ namespace TournamentSoftware
             }
             else
             {
-                Console.WriteLine(((TextBox)e.Source).Text);
                 if (((TextBox)e.Source).Text.Equals("0"))
                 {
-                    Console.WriteLine("0");
                     ((TextBox)e.Source).Text = "";
                 }
             }
-        }
-
-        public static int participantCount = 0;
-
-        /// <summary>
-        /// Переход к модулю регистрации
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void goRegistrate(object sender, RoutedEventArgs e)
-        {
-            startWindowLabel.Visibility = Visibility.Hidden;
-            goRegistrateButton.Visibility = Visibility.Hidden;
-            appGrid.Visibility = Visibility.Visible;
         }
 
         /// <summary>
@@ -86,32 +83,33 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void addParticipant(object sender, RoutedEventArgs e)
         {
-            participantCount++;
-
             Participant participant = new Participant()
             {
                 Name = "",
                 Surname = "",
-                Otchestvo = "",
-                Psevdonim = "",
-                Posevnoy = false,
-                Club = "",
-                City = "",
+                Patronymic = "",
+                Pseudonym = "",
+                Leader = false,
                 DateOfBirth = 0,
                 Height = 0,
                 Weight = 0,
-                Kategory = "",
-                Sex = "",
                 CommonRating = 0,
                 ClubRating = 0,
+                ClubId = 0,
+            };
+
+            ParticipantFormModel participantFormModel = new ParticipantFormModel()
+            {
+                Participant = participant,
+                Club = "",
+                City = "",
                 AvailableSex = new string[2] { "М", "Ж" },
                 IsSelected = false,
             };
 
-            participantsList.Add(participant);
+            participantsList.Add(participantFormModel);
             registrationTable.ItemsSource = participantsList;
             exportButton.IsEnabled = true;
-            // DbConnection.connect<Participant>(participant as object);
         }
 
         /// <summary>
@@ -121,13 +119,10 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void deleteParticipant(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Вего участников " + participantsList.Count);
             for (int i = 0; i < participantsList.Count;)
             {
-                Console.WriteLine(participantsList[i].IsSelected);
                 if (participantsList[i].IsSelected)
                 {
-                    Console.WriteLine(participantsList[i].Name);
                     participantsList.Remove(participantsList[i]);
                 }
                 else
@@ -135,14 +130,28 @@ namespace TournamentSoftware
                     i++;
                 }
             }
-            delete.IsEnabled = false;
-            selectorAllForDelete_Unchecked(sender, e);
-            CheckBox newCheckBox = new CheckBox();
-            newCheckBox.IsChecked = false;
+            // если удалены все участники удаляем колонки с номинациями
             if (participantsList.Count == 0)
             {
+                deleteNominationsColumns();
                 exportButton.IsEnabled = false;
             }
+
+            delete.IsEnabled = false;
+            selectorAllForDelete_Unchecked(sender, e);
+        }
+
+        /// <summary>
+        /// Удаление всех колонок с номинациями
+        /// </summary>
+        private void deleteNominationsColumns()
+        {
+            foreach (DataGridTemplateColumn column in nominationsColumn)
+            {
+                registrationTable.Columns.Remove(column);
+            }
+
+            nominationsList.Clear();
         }
 
         /// <summary>
@@ -156,15 +165,10 @@ namespace TournamentSoftware
             {
                 participantsList[i].IsSelected = false;
             }
-            for (int i = 0; i < participantsList.Count; i++)
-            {
-                Console.WriteLine(participantsList[i].IsSelected);
-            }
             delete.IsEnabled = false;
             DataGridColumn newCol = checkboxCol;
             registrationTable.Columns.Remove(checkboxCol);
             registrationTable.Columns.Insert(0, newCol);
-
         }
 
         /// <summary>
@@ -178,18 +182,75 @@ namespace TournamentSoftware
             {
                 participantsList[i].IsSelected = true;
             }
-            for (int i = 0; i < participantsList.Count; i++)
-            {
-                Console.WriteLine(participantsList[i].IsSelected);
-            }
             delete.IsEnabled = true;
+        }
+
+        /// <summary>
+        /// При закрытии приложения - запись в промежуточный файл
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void mainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            // если были участники и не перешли к турниру
+            if (participantsList.Count > 0 && !appState.IsTournamentComplited)
+            {
+                appState.isRegistrationComplited = false;
+                registrator.backupRegistrationTable();
+            }
+            // если нет участников
+            else
+            {
+                appState.isRegistrationComplited = true;
+            }
+            string json = JsonConvert.SerializeObject(appState);
+            File.WriteAllText(appStateJsonPath, json);
+        }
+
+        private void readRegistrationFromBackup()
+        {
+            List<ParticipantFormModel> participants = registrator.getParticipantsFromBackup(registrationBackupPath);
+            if (participants != null && participants.Count > 0)
+            {
+                foreach (ParticipantFormModel participant in participants)
+                {
+                    participantsList.Add(participant);
+                    if (participant.Nominations.Count > 0)
+                    {
+                        foreach (string nomination in participant.Nominations.Keys)
+                        {
+                            addNominationColumn(nomination);
+                            if (!registrator.nominationsNames.Contains(nomination))
+                            {
+                                registrator.nominationsNames.Add(nomination);
+                            }
+                        }
+                    }
+                }
+                exportButton.IsEnabled = true;
+            }
         }
 
         private void mainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            participantsList = new ObservableCollection<Participant>();
-            registrationTable.DataContext = participantsList;
-            participantsList.CollectionChanged += ParticipantsList_CollectionChanged;
+            participantsList = new ObservableCollection<ParticipantFormModel>();
+
+            // проверяем на каком этапе закрылось приложение в прошлый раз
+            StreamReader r = new StreamReader(appStateJsonPath);
+            string json = r.ReadToEnd();
+            appState = JsonConvert.DeserializeObject<ApplicationState>(json);
+            // если закончили на этапе регистрации
+            if (!appState.isRegistrationComplited)
+            {
+                readRegistrationFromBackup();
+                registrationTable.ItemsSource = participantsList;
+            }
+            // если остановились на турнирной сетке
+            else if (!appState.IsTournamentComplited)
+            {
+
+            }
+            r.Close();
         }
 
         /// <summary>
@@ -226,7 +287,6 @@ namespace TournamentSoftware
             }
         }
 
-
         /// <summary>
         /// Экспортируем тиблицу регистрации в файл
         /// </summary>
@@ -234,108 +294,89 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void saveFile(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog SaveFileDialog = new SaveFileDialog();
-
-            SaveFileDialog.Filter = "Файлы Excel (*.xls; *.xlsx) | *.xls; *.xlsx";
-            // SaveFileDialog.FileOk += SaveFileDialog_FileOk;
-
-            bool? result = SaveFileDialog.ShowDialog();
-            if (result == true)
-            {
-                string path = Path.GetFullPath(SaveFileDialog.FileName);
-                SaveFileDialog_FileOk(path);
-            }
+            registrator.saveFile(toDataTable(participantsList));
         }
 
-        private void SaveFileDialog_FileOk(string path)
+        private DataTable toDataTable(ObservableCollection<ParticipantFormModel> participants)
         {
-
-            //string Destination = path;
-            //registrationTable.ClipboardCopyMode = DataGridClipboardCopyMode.IncludeHeader;
-            //registrationTable.SelectAllCells();
-
-
-            //ApplicationCommands.Copy.Execute(null, registrationTable);
-            //String resultat = (string)Clipboard.GetData(DataFormats.CommaSeparatedValue);
-            //String result = (string)Clipboard.GetData(DataFormats.Text);
-            //System.IO.StreamWriter file1 = new System.IO.StreamWriter(Destination);
-            //file1.WriteLine(result.Replace(',', ' '));
-            //file1.Close();
-
-            Excel.Application excelapp = new Excel.Application();
-            Excel.Workbook workbook = excelapp.Workbooks.Add();
-            Excel.Worksheet worksheet = workbook.ActiveSheet;
-
-
-            registrationTable.Columns.RemoveAt(0);
-            for (int i = 1; i < registrationTable.Items.Count + 1; i++)
+            DataTable dataTable = new DataTable();
+            List<string> nominationsArray = new List<string>();
+            for (int i = 0; i < nominationsColumn.Count; i++)
             {
-                for (int j = 1; j < registrationTable.Columns.Count + 1; j++)
+                nominationsArray.Add(nominationsColumn[i].Header.ToString());
+            }
+
+            for (int i = 1; i < registrationTable.Columns.Count; i++)
+            {
+                dataTable.Columns.Add();
+                string header = registrationTable.Columns[i].Header.ToString();
+                Console.WriteLine(registrationTable.Columns[i].Header.ToString());
+                dataTable.Columns[i - 1].Caption = header;
+            }
+            foreach (ParticipantFormModel participant in participants)
+            {
+                DataRow row = dataTable.NewRow();
+                for (int i = 0; i < dataTable.Columns.Count; i++)
                 {
-                    DataGridColumn col = registrationTable.Columns[j - 1];
-                    if (col.Header.Equals("Посевной"))
+                    string columnHeader = dataTable.Columns[i].Caption;
+                    if (nominationsArray.Contains(columnHeader))
                     {
-                        if (col.GetCellContent(registrationTable.Items[i - 1]) != null)
-                        {
-                            Console.WriteLine("Посевной " + (col.GetCellContent(registrationTable.Items[i - 1]) as ContentPresenter).Content);
-                            //bool? text = (col.GetCellContent(registrationTable.Items[i - 1]) as CheckBox).IsChecked;
-                            //worksheet.Rows[i].Columns[j] = text.ToString();
-                            //Console.WriteLine(text);
-                        }
-                        else
-                        {
-                            Console.WriteLine("cell content is null");
-                        }
-                    }
-                    else if (col.Header.Equals("Пол"))
-                    {
-                        if (col.GetCellContent(registrationTable.Items[i - 1]) != null)
-                        {
-                            string text = (col.GetCellContent(registrationTable.Items[i - 1]) as ComboBox).SelectedItem.ToString();
-                            worksheet.Rows[i].Columns[j] = text;
-                            Console.WriteLine(text);
-                        }
-                        else
-                        {
-                            Console.WriteLine("cell content is null");
-                        }
+                        row[i] = participant.Nominations[columnHeader];
                     }
                     else
                     {
-                        Console.WriteLine("колонка " + (j - 1) + " " + col.Header);
-                        string text = "txt";
-                        if (col.GetCellContent(registrationTable.Items[i - 1]) != null)
+                        switch (columnHeader)
                         {
-                           text = (col.GetCellContent(registrationTable.Items[i - 1]) as TextBlock).Text;
-                            worksheet.Rows[i].Columns[j] = text;
-                        }
-                        else
-                        {
-                            Console.WriteLine("cell content is null");
+                            case "Имя":
+                                row[i] = participant.Participant.Name;
+                                break;
+                            case "Фамилия":
+                                row[i] = participant.Participant.Surname;
+                                break;
+                            case "Отчество":
+                                row[i] = participant.Participant.Patronymic;
+                                break;
+                            case "Псевдоним":
+                                row[i] = participant.Participant.Pseudonym;
+                                break;
+                            case "Посевной":
+                                row[i] = participant.Participant.Leader;
+                                break;
+                            case "Пол":
+                                row[i] = participant.Participant.Sex;
+                                break;
+                            case "Год рождения":
+                                row[i] = participant.Participant.DateOfBirth.ToString();
+                                break;
+                            case "Клуб":
+                                row[i] = participant.Club;
+                                break;
+                            case "Город":
+                                row[i] = participant.City;
+                                break;
+                            case "Рост":
+                                row[i] = participant.Participant.Height;
+                                break;
+                            case "Вес":
+                                row[i] = participant.Participant.Weight;
+                                break;
+                            case "Категория":
+                                row[i] = participant.Kategory;
+                                break;
+                            case "Рейтинг (общий)":
+                                row[i] = participant.Participant.CommonRating;
+                                break;
+                            case "Рейтинг (клубный)":
+                                row[i] = participant.Participant.ClubRating;
+                                break;
                         }
                     }
                 }
+                dataTable.Rows.Add(row);
             }
-
-            excelapp.AlertBeforeOverwriting = false;
-            workbook.SaveAs(path);
-            excelapp.Quit();
+            return dataTable;
         }
 
-        public IEnumerable<DataGridRow> GetDataGridRows(DataGrid grid)
-        {
-            var itemsSource = grid.ItemsSource as IEnumerable;
-            if (null == itemsSource) yield return null;
-            foreach (var item in itemsSource)
-            {
-                var row = grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
-                if (null != row) yield return row;
-            }
-        }
-
-        private void exportRegistrationTable()
-        {
-        }
 
         /// <summary>
         /// Открываем инструменты для редактирования лейаута модуля регистрации
@@ -355,181 +396,57 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void OpenExcel_Click(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult result = new MessageBoxResult();
-            if (participantsList.Count > 0)
+            registrator.loadParticipantsFromFile(requiredColumnsHeaders);
+            registrationTable.ItemsSource = participantsList;
+            List<string> nominations = registrator.nominationsNames;
+            foreach (string nomination in nominations)
             {
-                result = MessageBox.Show("Все предыдущие записи в таблице регистрации будут удалены. Вы хотите продолжить?", "Предупреждение",
-               MessageBoxButton.OKCancel,
-               MessageBoxImage.Warning, MessageBoxResult.Cancel);
-            }
-
-            if (participantsList.Count == 0 || MessageBoxResult.OK == result)
-            {
-                OpenFileDialog openFileDialog = new OpenFileDialog();
-                openFileDialog.Filter = "EXCEL Files (*.xlsx)|*.xlsx|EXCEL Files 2003 (*.xls)|*.xls|All files (*.*)|*.*";
-                if (openFileDialog.ShowDialog() != true)
-                    return;
-
-                if (!checkTableHeadersValid(openFileDialog.FileName))
-                {
-                    MessageBox.Show("Не удалось прочитать таблицу! Попробуйте загрузить другой файл", "Ошибка");
-                }
+                addNominationColumn(nomination);
             }
         }
 
-        private bool checkTableHeadersValid(string fileName)
+        private bool checkNominationExists(string nominationName)
         {
-            FileStream stream = File.Open(fileName, FileMode.Open, FileAccess.Read);
-            var reader = ExcelReaderFactory.CreateReader(stream);
-            DataSet dataSet = reader.AsDataSet();
-            var dataTable = dataSet.Tables[0];
-            DataColumnCollection loadedColumns = dataTable.Columns;
-            int requredColumnExists = 0;
-            ObservableCollection<DataGridColumn> validationColumnsSet = registrationTable.Columns;
-            DataRowCollection rows = dataTable.Rows;
-            for (int i = 1; i < validationColumnsSet.Count; i++)
+            foreach (DataGridTemplateColumn column in nominationsColumn)
             {
-                for (int j = 0; j < loadedColumns.Count; j++)
-                {
-                    if (rows[0].ItemArray[j].Equals(validationColumnsSet[i].Header))
-                    {
-                        requredColumnExists++;
-                        break;
-                    }
-                }
+                if (column.Header.Equals(nominationName)) return true;
+
             }
-
-            if (requredColumnExists == validationColumnsSet.Count - 1)
-            {
-                participantsList.Clear();
-                for (int i = 1; i < dataTable.Rows.Count; i++)
-                {
-                    DataRow row = dataTable.Rows[i];
-                    Participant newParticipant = new Participant();
-                    for (int j = 0; j < dataTable.Columns.Count; j++)
-                    {
-                        if (dataTable.Rows[0].ItemArray[j].Equals("Имя"))
-                        {
-                            newParticipant.Name = row.ItemArray[j].ToString();
-                        }
-
-                        if (dataTable.Rows[0].ItemArray[j].Equals("Фамилия"))
-                        {
-                            newParticipant.Surname = row.ItemArray[j].ToString();
-                        }
-
-                        if (dataTable.Rows[0].ItemArray[j].Equals("Отчество"))
-                        {
-                            newParticipant.Otchestvo = row.ItemArray[j].ToString();
-                        }
-
-                        if (dataTable.Rows[0].ItemArray[j].Equals("Псевдоним"))
-                        {
-                            newParticipant.Psevdonim = row.ItemArray[j].ToString();
-                        }
-
-                        if (dataTable.Rows[0].ItemArray[j].Equals("Клуб"))
-                        {
-                            newParticipant.Club = row.ItemArray[j].ToString();
-                        }
-
-                        if (dataTable.Rows[0].ItemArray[j].Equals("Город"))
-                        {
-                            newParticipant.City = row.ItemArray[j].ToString();
-                        }
-
-                        if (dataTable.Rows[0].ItemArray[j].Equals("Посевной"))
-                        {
-                            if (bool.TryParse(row.ItemArray[j].ToString(), out _))
-                            {
-                                newParticipant.Posevnoy = bool.Parse(row.ItemArray[j].ToString());
-                            }
-                            else
-                            {
-                                newParticipant.Posevnoy = false;
-                            }
-                        }
-
-                        if (dataTable.Rows[0].ItemArray[j].Equals("Пол"))
-                        {
-                            if (row.ItemArray[j].ToString().Equals("М") || row.ItemArray[j].ToString().Equals("Ж"))
-                            {
-                                newParticipant.Sex = row.ItemArray[j].ToString();
-                            }
-                        }
-
-                        if (dataTable.Rows[0].ItemArray[j].Equals("Год рождения"))
-                        {
-                            if (int.TryParse(row.ItemArray[j].ToString(), out _))
-                            {
-                                int year = int.Parse(row.ItemArray[j].ToString());
-                                if (year > 1900)
-                                {
-                                    newParticipant.DateOfBirth = year;
-                                }
-                            }
-                        }
-
-                        if (dataTable.Rows[0].ItemArray[j].Equals("Категория"))
-                        {
-                            newParticipant.Kategory = row.ItemArray[j].ToString();
-                        }
-
-                        if (dataTable.Rows[0].ItemArray[j].Equals("Рост"))
-                        {
-                            if (int.TryParse(row.ItemArray[j].ToString(), out _))
-                            {
-                                int height = int.Parse(row.ItemArray[j].ToString());
-                                if (height > 100)
-                                {
-                                    newParticipant.Height = height;
-                                }
-                            }
-                        }
-
-                        if (dataTable.Rows[0].ItemArray[j].Equals("Вес"))
-                        {
-                            if (int.TryParse(row.ItemArray[j].ToString(), out _))
-                            {
-                                int weight = int.Parse(row.ItemArray[j].ToString());
-                                if (weight > 10)
-                                {
-                                    newParticipant.Weight = weight;
-                                }
-                            }
-                        }
-
-                        if (dataTable.Rows[0].ItemArray[j].Equals("Рейтинг (общий)"))
-                        {
-                            if (int.TryParse(row.ItemArray[j].ToString(), out _))
-                            {
-                                int raiting = int.Parse(row.ItemArray[j].ToString());
-                                newParticipant.CommonRating = raiting;
-                            }
-                        }
-
-                        if (dataTable.Rows[0].ItemArray[j].Equals("Рейтинг (клубный)"))
-                        {
-                            if (int.TryParse(row.ItemArray[j].ToString(), out _))
-                            {
-                                int raiting = int.Parse(row.ItemArray[j].ToString());
-                                newParticipant.ClubRating = raiting;
-                            }
-                        }
-                    }
-                    participantsList.Add(newParticipant);
-                    registrationTable.ItemsSource = participantsList;
-                }
-                stream.Close();
-                reader.Close();
-                return true;
-            }
-            else
-            {
-                Console.WriteLine("not valid");
-            }
-
             return false;
+        }
+
+        /// <summary>
+        /// Добавление колонки номинации
+        /// </summary>
+        /// <param name="nominationName"></param>
+        private void addNominationColumn(string nominationName)
+        {
+            if (!checkNominationExists(nominationName))
+            {
+                Binding bind = new Binding("Nominations[" + nominationName + "]");
+                bind.Mode = BindingMode.TwoWay;
+                DataGridTemplateColumn n = new DataGridTemplateColumn();
+                n.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
+                n.Header = nominationName;
+
+                var cellStyle = new Style(typeof(DataGridCell));
+                cellStyle.Setters.Add(new Setter()
+                {
+                    Property = BackgroundProperty,
+                    Value = (Brush) new BrushConverter().ConvertFrom("#F5F1DA")
+                });
+                n.CellStyle = cellStyle;
+
+                FrameworkElementFactory checkBox = new FrameworkElementFactory(typeof(CheckBox));
+                checkBox.SetBinding(CheckBox.IsCheckedProperty, bind);
+                checkBox.SetValue(CheckBox.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+                checkBox.SetValue(CheckBox.VerticalAlignmentProperty, VerticalAlignment.Center);
+                DataTemplate checkBoxTemplate = new DataTemplate();
+                checkBoxTemplate.VisualTree = checkBox;
+                n.CellTemplate = checkBoxTemplate;
+                registrationTable.Columns.Add(n);
+                nominationsColumn.Add(n);
+            }
         }
 
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)
@@ -542,23 +459,132 @@ namespace TournamentSoftware
             if (((ComboBox)e.Source).SelectedItem != "M" && ((ComboBox)e.Source).SelectedItem != "Ж")
             {
                 SolidColorBrush scb = new SolidColorBrush(Color.FromRgb(255, 221, 219));
-                Console.WriteLine("back");
                 ((ComboBox)e.Source).Background = scb;
             }
         }
-    }
 
-    public class DbConnection : Window
-    {
-        public static void connect<T>(object obj)
+        /// <summary>
+        /// Проверка заполнения всех обязательных полей у участников
+        /// </summary>
+        /// <returns></returns>
+        private bool isRegistrationTableValid()
         {
-
-            using (SQLiteConnection connection = new SQLiteConnection("db.db"))
+            List<string> errors = new List<string>();
+            int count = 1;
+            foreach (ParticipantFormModel participant in participantsList)
             {
-                connection.CreateTable<T>();
-                connection.Insert(obj);
-            }
+                if (participant.Participant.Name.Equals(""))
+                {
+                    errors.Add("Заполните имя участника на строке " + count);
+                }
 
+                if (participant.Participant.Surname.Equals(""))
+                {
+                    errors.Add("Заполните фамилию участника на строке " + count);
+                }
+
+                if (participant.Club.Equals(""))
+                {
+                    errors.Add("Заполните клуб участника на строке " + count);
+                }
+
+                if (participant.City.Equals(""))
+                {
+                    errors.Add("Заполните город участника на строке " + count);
+                }
+
+                if (participant.Participant.DateOfBirth < 1900 || participant.Participant.DateOfBirth > DateTime.Now.Year - 13)
+                {
+                    errors.Add("Некорректно заполнен год рождения участника на строке " + count);
+                }
+
+                if (!participant.Participant.Sex.Equals("М") && !participant.Participant.Sex.Equals("Ж"))
+                {
+                    errors.Add("Заполните пол участника на строке " + count + " " + participant.Participant.Sex);
+                }
+
+                if (participant.Kategory.Equals(""))
+                {
+                    errors.Add("Заполните категорию участника на строке " + count);
+                }
+
+                count++;
+            }
+            if (errors.Count > 0 && TornnamentNameTextBox.Text.Equals(""))
+            {
+                ErrorListWindow errorListWindow = new ErrorListWindow();
+                errorListWindow.ShowErrors(errors);
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Переходим к турнирной сетке
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void goTournament_Click(object sender, RoutedEventArgs e)
+        {
+            if (isRegistrationTableValid())
+            {
+                appState.isRegistrationComplited = true;
+                appGrid.Visibility = Visibility.Hidden;
+                SubgroupsFormationGrid.Children.Clear();
+                SubgroupsFormationGridParent.Visibility = Visibility.Visible;
+                subgroupsFormation = new SubgroupsFormation();
+                UIElement nominationList = subgroupsFormation.nominationsList();
+                SubgroupsFormationGrid.Children.Add(nominationList);
+                Grid.SetRow(nominationList, 0);
+                Grid.SetColumn(nominationList, 0);
+
+                UIElement grid = subgroupsFormation.kategoryList();
+                SubgroupsFormationGrid.Children.Add(grid);
+                Grid.SetRow(grid, 0);
+                Grid.SetColumn(grid, 1);
+
+                UIElement kategoryParametersPanel = subgroupsFormation.kategorySettingsPanel();
+                SubgroupsFormationGrid.Children.Add(kategoryParametersPanel);
+                Grid.SetRow(kategoryParametersPanel, 0);
+                Grid.SetColumn(kategoryParametersPanel, 2);
+            }
+            else
+            {
+                appState.isRegistrationComplited = false;
+            }
+        }
+
+        private void DataGridTextColumn_PastingCellClipboardContent(object sender, DataGridCellClipboardEventArgs e)
+        {
+            Console.WriteLine(e.Content);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            appGrid.ColumnDefinitions[1].Width = new GridLength(50);
+
+        }
+
+        private void backToRegistratioinTable(object sender, RoutedEventArgs e)
+        {
+            SubgroupsFormationGridParent.Visibility = Visibility.Hidden;
+            appGrid.Visibility = Visibility.Visible;
+        }
+
+        private void DateOfBirth_TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if ((sender as TextBox).Text == "" || Convert.ToInt32((sender as TextBox).Text) < 1900)
+            {
+                (sender as TextBox).Background = (Brush)new BrushConverter().ConvertFrom("#FFFFDDDB");
+                if ((sender as TextBox).Text == "")
+                {
+                    (sender as TextBox).Text = "0";
+                }
+            }
+            else 
+            {
+                (sender as TextBox).Background = (Brush)new BrushConverter().ConvertFrom("#FFF5F1DA");
+            }
         }
     }
 }
