@@ -209,6 +209,7 @@ namespace TournamentSoftware
             {
                 appState.isRegistrationComplited = true;
             }
+            appState.TournamentName = TournamentNameTextBox.Text;
             string json = JsonConvert.SerializeObject(appState);
             File.WriteAllText(appStateJsonPath, json);
         }
@@ -245,6 +246,7 @@ namespace TournamentSoftware
             StreamReader r = new StreamReader(appStateJsonPath);
             string json = r.ReadToEnd();
             appState = JsonConvert.DeserializeObject<ApplicationState>(json);
+            TournamentNameTextBox.Text = appState.TournamentName;
             // если закончили на этапе регистрации
             if (!appState.isRegistrationComplited)
             {
@@ -595,6 +597,11 @@ namespace TournamentSoftware
             {
                 (sender as TextBox).Background = (Brush)new BrushConverter().ConvertFrom("#FFF5F1DA");
             }
+        }
+
+        private void TournamentNameTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            appState.TournamentName = TournamentNameTextBox.Text;
         }
     }
 }

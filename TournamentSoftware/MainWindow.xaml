@@ -358,7 +358,7 @@
                     Click="Button_Click"/>
             <TextBox x:Name="TournamentNameTextBox" Grid.Column="1" 
                      HorizontalAlignment="Center" Margin="0,110,0,0" TextWrapping="Wrap" 
-                     VerticalAlignment="Top" Width="120" Height="25" FontSize="16"/>
+                     VerticalAlignment="Top" Width="120" Height="25" FontSize="16" LostFocus="TournamentNameTextBox_LostFocus"/>
         </Grid >
         <Grid x:Name="SubgroupsFormationGridParent"
               Visibility="Hidden"
