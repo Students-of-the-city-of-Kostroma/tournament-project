@@ -27,6 +27,7 @@ namespace TournamentSoftware
         private SubgroupsFormation subgroupsFormation;
         private static ParticipantsReagistrator registrator = new ParticipantsReagistrator();
         public ApplicationState appState = new ApplicationState();
+        private bool isPanelOpen = true;
 
         public static ParticipantsReagistrator GetReagistrator { get { return registrator; } }
 
@@ -570,9 +571,41 @@ namespace TournamentSoftware
             Console.WriteLine(e.Content);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Управление боковой панелью
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void hideInstrumentsPanel(object sender, RoutedEventArgs e)
         {
-            appGrid.ColumnDefinitions[1].Width = new GridLength(50);
+            if (isPanelOpen)
+            {
+                appGrid.ColumnDefinitions[1].Width = new GridLength(30);
+                exportButton.Visibility = Visibility.Hidden;
+                TournamentNameLabel.Visibility = Visibility.Hidden;
+                TournamentNameTextBox.Visibility = Visibility.Hidden;
+                add.Visibility = Visibility.Hidden;
+                loadFromFile.Visibility = Visibility.Hidden;
+                delete.Visibility = Visibility.Hidden;
+                viewSettingsButton.Visibility = Visibility.Hidden;
+                goHome.Visibility = Visibility.Hidden;
+                goTournament.Visibility = Visibility.Hidden;
+                isPanelOpen = false;
+            }
+            else {
+                appGrid.ColumnDefinitions[1].Width = new GridLength(160);
+                exportButton.Visibility = Visibility.Visible;
+                TournamentNameLabel.Visibility = Visibility.Visible;
+                TournamentNameTextBox.Visibility = Visibility.Visible;
+                add.Visibility = Visibility.Visible;
+                loadFromFile.Visibility = Visibility.Visible;
+                delete.Visibility = Visibility.Visible;
+                viewSettingsButton.Visibility = Visibility.Visible;
+                goHome.Visibility = Visibility.Visible;
+                goTournament.Visibility = Visibility.Visible;
+                isPanelOpen = true;
+            }
+            
 
         }
 

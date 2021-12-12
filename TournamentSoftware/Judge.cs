@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 namespace TournamentSoftware
 {
     [Table("Judes")]
-    public class Jude : INotifyPropertyChanged
+    public class Judge : INotifyPropertyChanged
     {
         private string name;
         private string surname;

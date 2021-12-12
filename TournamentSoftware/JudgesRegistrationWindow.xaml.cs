@@ -20,7 +20,9 @@ namespace TournamentSoftware
     /// </summary>
     public partial class JudgesRegistrationWindow : Window
     {
-        public static ObservableCollection<Jude> judesList = new ObservableCollection<Jude>();
+        public static ObservableCollection<Judge> judesList = new ObservableCollection<Judge>();
+
+        private bool isPanelOpen = true;
         public JudgesRegistrationWindow()
         {
             InitializeComponent();
@@ -34,7 +36,7 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void addJude (object sender, RoutedEventArgs e)
         {
-            Jude jude = new Jude
+            Judge jude = new Judge
             {
                 Name = "",
                 Surname = "",
@@ -44,6 +46,26 @@ namespace TournamentSoftware
             };
 
             judesList.Add(jude);
+        }
+
+        /// <summary>
+        /// Скрытие панели инструментов
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (isPanelOpen)
+            {
+                mainGrid.ColumnDefinitions[1].Width = new GridLength(40, GridUnitType.Pixel);
+                addJudgeButton.Visibility = Visibility.Hidden;
+                isPanelOpen = false;
+            }
+            else {
+                mainGrid.ColumnDefinitions[1].Width = new GridLength(100, GridUnitType.Pixel);
+                addJudgeButton.Visibility = Visibility.Visible;
+                isPanelOpen = true;
+            }
         }
     }
 }

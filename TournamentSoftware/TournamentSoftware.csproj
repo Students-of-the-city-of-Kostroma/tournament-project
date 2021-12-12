@@ -95,7 +95,7 @@
     <Compile Include="ErrorListWindow.xaml.cs">
       <DependentUpon>ErrorListWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Jude.cs" />
+    <Compile Include="Judge.cs" />
     <Compile Include="JudgesRegistrationWindow.xaml.cs">
       <DependentUpon>JudgesRegistrationWindow.xaml</DependentUpon>
     </Compile>

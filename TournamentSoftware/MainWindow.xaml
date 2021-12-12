@@ -16,8 +16,8 @@
               VerticalAlignment="Stretch"  
               ShowGridLines="True" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1030*"/>
-                <ColumnDefinition Width="167*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="160"/>
             </Grid.ColumnDefinitions>
 
             <Button x:Name="goTournament" Content="" 
@@ -335,7 +335,7 @@
                    Margin="0,75,0,0" 
                    VerticalAlignment="Top" 
                    FontSize="14" Width="120" Height="30"/>
-            <Button x:Name="goTournament_Copy" 
+            <Button x:Name="goHome" 
                     Content="Домой" Grid.Column="1" 
                     HorizontalAlignment="Center" Margin="0,331,0,0" 
                     VerticalAlignment="Top" Padding="5" Height="30" Width="120"/>
@@ -344,21 +344,23 @@
                     HorizontalAlignment="Center" Margin="0,261,0,0"
                     VerticalAlignment="Top" Padding="5" Height="30" Width="120" 
                     Click="saveFile" IsEnabled="False"/>
-            <Button x:Name="add_Copy" 
+            <Button x:Name="viewSettingsButton" 
                     Content="Настроить вид" 
                     Grid.Column="1" 
                     HorizontalAlignment="Center" 
                     Margin="0,296,0,0" VerticalAlignment="Top"
                     Padding="5" Height="30" Width="120" 
                     Click="showRegistrationModuleSettings"/>
-            <Button x:Name="HideInstrumentPanelButton" 
-                    Grid.Column="1" Content="" 
-                    Margin="128,10,10,0" VerticalAlignment="Top" 
-                    Height="30" RenderTransformOrigin="-0.337,0.468" 
-                    Click="Button_Click"/>
             <TextBox x:Name="TournamentNameTextBox" Grid.Column="1" 
                      HorizontalAlignment="Center" Margin="0,110,0,0" TextWrapping="Wrap" 
                      VerticalAlignment="Top" Width="120" Height="25" FontSize="16" LostFocus="TournamentNameTextBox_LostFocus"/>
+            <Button x:Name="hideInstrumentPanelButton" Content="" 
+                    Grid.Column="1" 
+                    HorizontalAlignment="Left" 
+                    Margin="5.2,0,0,0" 
+                    VerticalAlignment="Top" 
+                    Width="20"
+                    Height="20" Click="hideInstrumentsPanel"/>
         </Grid >
         <Grid x:Name="SubgroupsFormationGridParent"
               Visibility="Hidden"

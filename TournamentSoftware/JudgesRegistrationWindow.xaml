@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TournamentSoftware"
         mc:Ignorable="d"
         Title="Судьи" Height="450" Width="800">
-    <Grid Margin="5">
+    <Grid x:Name="mainGrid" Margin="5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="100"/>
@@ -75,23 +75,11 @@
         </DataGrid>
         <Button Grid.Column="1" 
                 HorizontalAlignment="Left" 
-                Margin="15.4,10,0,0" 
-                VerticalAlignment="Top" Width="26" 
-                Height="22" 
-                RenderTransformOrigin="0.308,0.846"/>
-        <Button Content="OK" 
-                Grid.Column="1" 
-                HorizontalAlignment="Left"
-                Margin="15.4,94,0,0" 
-                Grid.Row="1" VerticalAlignment="Top" 
-                Width="75"/>
-        <Button Content="Отмена" 
-                Grid.Column="1" 
-                HorizontalAlignment="Left" 
-                Margin="15.4,133,0,0" 
-                Grid.Row="1" 
-                VerticalAlignment="Top" Width="75"/>
-        <Button Content="Добавить" 
+                Margin="10,29,0,0" 
+                VerticalAlignment="Top" Width="27" 
+                Height="21" 
+                RenderTransformOrigin="0.308,0.846" Click="Button_Click"/>
+        <Button x:Name="addJudgeButton" Content="Добавить" 
                 Grid.Column="1" 
                 HorizontalAlignment="Left" 
                 Margin="15,56,0,0" 
