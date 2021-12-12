@@ -1,17 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace TournamentSoftware
 {
@@ -20,13 +10,21 @@ namespace TournamentSoftware
     /// </summary>
     public partial class JudgesRegistrationWindow : Window
     {
-        public static ObservableCollection<Judge> judesList = new ObservableCollection<Judge>();
+        public static ObservableCollection<Judge> judgesList = new ObservableCollection<Judge>();
+        private ParticipantsReagistrator reagistrator = new ParticipantsReagistrator();
+        private string judgesBackupPath = "..\\..\\judgesBackup.json";
+        private bool isJudgesSaved = false;
+
+        public bool JudesSaved
+        {
+            get { return isJudgesSaved; }
+            set { isJudgesSaved = value; }
+        }
 
         private bool isPanelOpen = true;
         public JudgesRegistrationWindow()
         {
             InitializeComponent();
-            JudesTable.ItemsSource = judesList;
         }
 
         /// <summary>
@@ -45,7 +43,7 @@ namespace TournamentSoftware
                 City = "",
             };
 
-            judesList.Add(jude);
+            judgesList.Add(jude);
         }
 
         /// <summary>
@@ -66,6 +64,43 @@ namespace TournamentSoftware
                 addJudgeButton.Visibility = Visibility.Visible;
                 isPanelOpen = true;
             }
+        }
+
+        /// <summary>
+        /// При закрытии окна - запись судей в файл
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            reagistrator.backupRegistrationTable(judgesList, judgesBackupPath);
+        }
+
+        /// <summary>
+        /// Сохранение судей в БД
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void saveJudgesList(object sender, RoutedEventArgs e)
+        {
+            isJudgesSaved = true;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (!isJudgesSaved)
+            {
+                judgesList.Clear();
+                List<Judge> judges = reagistrator.getJudgesFromBackup(judgesBackupPath);
+                if (judges != null)
+                {
+                    foreach (Judge j in judges)
+                    {
+                        judgesList.Add(j);
+                    }
+                }
+            }
+            JudesTable.ItemsSource = judgesList;
         }
     }
 }

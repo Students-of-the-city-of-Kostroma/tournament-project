@@ -7,6 +7,7 @@ using Microsoft.Win32;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Data;
 using ExcelDataReader;
+using System.Collections.ObjectModel;
 
 namespace TournamentSoftware
 {
@@ -16,15 +17,15 @@ namespace TournamentSoftware
         /// <summary>
         /// Записываем информацию о всех участнниках в файл
         /// </summary>
-        public void backupRegistrationTable()
+        public void backupRegistrationTable<T>(ObservableCollection<T> elements, string path)
         {
-            List<ParticipantFormModel> participantsArray = new List<ParticipantFormModel>();
-            foreach (ParticipantFormModel participant in MainWindow.participantsList)
+            List<T> participantsArray = new List<T>();
+            foreach (T participant in elements)
             {
                 participantsArray.Add(participant);
             }
             string participantsArrayJson = JsonConvert.SerializeObject(participantsArray);
-            File.WriteAllText(MainWindow.registrationBackupPath, participantsArrayJson);
+            File.WriteAllText(path, participantsArrayJson);
         }
 
         public void saveFile(DataTable table)
@@ -78,6 +79,16 @@ namespace TournamentSoftware
             var participants = JsonConvert.DeserializeObject<List<ParticipantFormModel>>(json);
             reader.Close();
             return participants;
+        }
+
+        public List<Judge> getJudgesFromBackup(string path)
+        {
+            StreamReader reader = new StreamReader(path);
+            string json = reader.ReadToEnd();
+            var judges = new List<Judge>();
+            judges = JsonConvert.DeserializeObject<List<Judge>>(json);
+            reader.Close();
+            return judges;
         }
 
         public void loadParticipantsFromFile(List<string> requiredColumnHeaders)

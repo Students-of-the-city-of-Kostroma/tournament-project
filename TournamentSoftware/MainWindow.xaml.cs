@@ -202,7 +202,7 @@ namespace TournamentSoftware
             if (participantsList.Count > 0 && !appState.IsTournamentComplited)
             {
                 appState.isRegistrationComplited = false;
-                registrator.backupRegistrationTable();
+                registrator.backupRegistrationTable(participantsList, registrationBackupPath);
             }
             // если нет участников
             else
