@@ -516,7 +516,11 @@ namespace TournamentSoftware
 
                 count++;
             }
-            if (errors.Count > 0 && TornnamentNameTextBox.Text.Equals(""))
+            if (TournamentNameTextBox.Text.Equals(""))
+            {
+                errors.Add("Введите название турнира");
+            }
+            if (errors.Count > 0)
             {
                 ErrorListWindow errorListWindow = new ErrorListWindow();
                 errorListWindow.ShowErrors(errors);
