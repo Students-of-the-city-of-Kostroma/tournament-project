@@ -13,12 +13,13 @@ namespace TournamentSoftware
         private Grid kategorySettingsGrid = new Grid();
         private Label countInKategory = new Label();
         private TextBox countSubgroups = new TextBox();
-        private List<string> fightSystems = new List<string> {
-            "Круговая",
-            "На вылет",
-            "Смешанный тип",
-            "До двух поражений" };
-        private List<string> rools = new List<string> { "Разводной", "Безразводной", "Сходовой"};
+        public bool isPanelOpen = true;
+        //private List<string> fightSystems = new List<string> {
+        //    "Круговая",
+        //    "На вылет",
+        //    "Смешанный тип",
+        //    "До двух поражений" };
+        private List<string> rools = new List<string> { "Правило посевных бойцов", "Правило одноклубников", "Правило города"};
 
         public Dictionary<string, List<Participant>> getKateoryGroups
         {
@@ -187,28 +188,28 @@ namespace TournamentSoftware
             Grid.SetRow(chooseRulesLabel, 0);
             Grid.SetRow(roolsListBox, 1);
 
-            Label fightSystemLabel = createLabel("Выбор вида системы боев", 16);
-            fightSystemLabel.HorizontalAlignment = HorizontalAlignment.Center;
-            fightSystemLabel.VerticalAlignment = VerticalAlignment.Bottom;
-            ComboBox fightSystemsComboBox = new ComboBox();
-            fightSystemsComboBox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            fightSystemsComboBox.HorizontalContentAlignment = HorizontalAlignment.Center;
-            fightSystemsComboBox.VerticalAlignment = VerticalAlignment.Top;
-            fightSystemsComboBox.Margin = new Thickness(30, 0, 30, 10);
-            fightSystemsComboBox.Height = 30;
-            fightSystemsComboBox.FontSize = 15;
-            fightSystemsComboBox.VerticalAlignment = VerticalAlignment.Top;
-            fightSystemsComboBox.ItemsSource = fightSystems;
+            //Label fightSystemLabel = createLabel("Выбор вида системы боев", 16);
+            //fightSystemLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            //fightSystemLabel.VerticalAlignment = VerticalAlignment.Bottom;
+            //ComboBox fightSystemsComboBox = new ComboBox();
+            //fightSystemsComboBox.HorizontalAlignment = HorizontalAlignment.Stretch;
+            //fightSystemsComboBox.HorizontalContentAlignment = HorizontalAlignment.Center;
+            //fightSystemsComboBox.VerticalAlignment = VerticalAlignment.Top;
+            //fightSystemsComboBox.Margin = new Thickness(30, 0, 30, 10);
+            //fightSystemsComboBox.Height = 30;
+            //fightSystemsComboBox.FontSize = 15;
+            //fightSystemsComboBox.VerticalAlignment = VerticalAlignment.Top;
+            //fightSystemsComboBox.ItemsSource = fightSystems;
 
             Grid fightSystemRow = new Grid();
             RowDefinition fightSystemRow1 = new RowDefinition();
             RowDefinition fightSystemRow2 = new RowDefinition();
             fightSystemRow.RowDefinitions.Add(fightSystemRow1);
             fightSystemRow.RowDefinitions.Add(fightSystemRow2);
-            fightSystemRow.Children.Add(fightSystemLabel);
-            fightSystemRow.Children.Add(fightSystemsComboBox);
-            Grid.SetRow(fightSystemLabel, 0);
-            Grid.SetRow(fightSystemsComboBox, 1);
+            //fightSystemRow.Children.Add(fightSystemLabel);
+            //fightSystemRow.Children.Add(fightSystemsComboBox);
+            //Grid.SetRow(fightSystemLabel, 0);
+            //Grid.SetRow(fightSystemsComboBox, 1);
             fightSystemRow.VerticalAlignment = VerticalAlignment.Top;
 
             grid.Children.Add(fightSystemRow);

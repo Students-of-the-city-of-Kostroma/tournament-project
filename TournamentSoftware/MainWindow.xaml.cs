@@ -545,6 +545,7 @@ namespace TournamentSoftware
                 SubgroupsFormationGrid.Children.Clear();
                 SubgroupsFormationGridParent.Visibility = Visibility.Visible;
                 subgroupsFormation = new SubgroupsFormation();
+
                 UIElement nominationList = subgroupsFormation.nominationsList();
                 SubgroupsFormationGrid.Children.Add(nominationList);
                 Grid.SetRow(nominationList, 0);
@@ -640,6 +641,36 @@ namespace TournamentSoftware
         {
             JudgesRegistrationWindow registrationWindow = new JudgesRegistrationWindow();
             registrationWindow.Show();
+        }
+
+        /// <summary>
+        /// Скрытие панели инструментов для окна формирования категорий
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void hideInstrimentsPanelButtonSubgroups(object sender, RoutedEventArgs e)
+        {
+            if (subgroupsFormation.isPanelOpen)
+            {
+                SubgroupsFormationGridParent.ColumnDefinitions[1].Width = new GridLength(30, GridUnitType.Pixel);
+                backToRegistrateButton.Visibility = Visibility.Hidden;
+                showJudgesWindowButton.Visibility = Visibility.Hidden;
+                goCreateTournamentGridButton.Visibility = Visibility.Hidden;
+                subgroupsFormation.isPanelOpen = false;
+            }
+            else
+            {
+                SubgroupsFormationGridParent.ColumnDefinitions[1].Width = new GridLength(100, GridUnitType.Pixel);
+                backToRegistrateButton.Visibility = Visibility.Visible;
+                showJudgesWindowButton.Visibility = Visibility.Visible;
+                goCreateTournamentGridButton.Visibility = Visibility.Visible;
+                subgroupsFormation.isPanelOpen = true;
+            }
+        }
+
+        private void goCreateTournamentGrid(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
