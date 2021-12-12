@@ -60,7 +60,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding IsSelected, 
-                                    UpdateSourceTrigger = PropertyChanged}" 
+                                    UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
                                           Checked="participantChecked" Unchecked="participantUnchecked"
                                           VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             </DataTemplate>
@@ -393,6 +393,14 @@
                         Margin="5"
                         Grid.Column="0"
                         HorizontalAlignment="Left" Click="backToRegistratioinTable">
+                </Button>
+                <Button Content="Судьи"
+                        Width="120"
+                        Height="40"
+                        FontSize="15"
+                        Margin="5"
+                        Grid.Column="2"
+                        HorizontalAlignment="Left" Click="openJudesWindow">
                 </Button>
             </Grid>
             <Grid x:Name="SubgroupsFormationGrid" 

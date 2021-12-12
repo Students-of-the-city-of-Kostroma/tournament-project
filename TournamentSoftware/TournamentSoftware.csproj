@@ -95,6 +95,10 @@
     <Compile Include="ErrorListWindow.xaml.cs">
       <DependentUpon>ErrorListWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Jude.cs" />
+    <Compile Include="JudgesRegistrationWindow.xaml.cs">
+      <DependentUpon>JudgesRegistrationWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Nomination.cs" />
     <Compile Include="ParticipantFormModel.cs" />
     <Compile Include="ParticipantsReagistrator.cs" />
@@ -107,6 +111,10 @@
       <DependentUpon>Window1.xaml</DependentUpon>
     </Compile>
     <Page Include="ErrorListWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="JudgesRegistrationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

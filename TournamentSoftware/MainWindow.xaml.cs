@@ -9,7 +9,6 @@ using System.Windows.Input;
 using System.Windows.Data;
 using Newtonsoft.Json;
 using System.Windows.Media;
-using System.Windows.Controls.Primitives;
 
 namespace TournamentSoftware
 {
@@ -602,6 +601,12 @@ namespace TournamentSoftware
         private void TournamentNameTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             appState.TournamentName = TournamentNameTextBox.Text;
+        }
+
+        private void openJudesWindow(object sender, RoutedEventArgs e)
+        {
+            JudgesRegistrationWindow registrationWindow = new JudgesRegistrationWindow();
+            registrationWindow.Show();
         }
     }
 }
