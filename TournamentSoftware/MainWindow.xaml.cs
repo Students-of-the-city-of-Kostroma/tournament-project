@@ -51,9 +51,15 @@ namespace TournamentSoftware
         public MainWindow()
         {
             InitializeComponent();
+            Visibility = Visibility.Hidden;
+            StartWindow startWindow = new StartWindow();
+            startWindow.Show();
+            startWindow.Closed += StartWindow_Closed;
+        }
 
-            participantsList = new ObservableCollection<ParticipantFormModel>();
-            registrationTable.DataContext = participantsList;
+        private void StartWindow_Closed(object sender, EventArgs e)
+        {
+            Visibility = Visibility.Visible;
         }
 
         /// <summary>
