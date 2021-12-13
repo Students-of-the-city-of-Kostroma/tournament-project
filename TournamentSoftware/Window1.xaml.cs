@@ -199,7 +199,7 @@ namespace TournamentSoftware
         {
             NominationFormModel nomination = new NominationFormModel()
             {
-               IsSelected = false,
+                IsSelected = false,
             };
 
             nominationsList.Add(nomination);
@@ -217,10 +217,8 @@ namespace TournamentSoftware
             {
                 if (nominationsList[i].IsSelected)
                 {
-                    Console.WriteLine(nominationsList[i] + " - delete");
                     nominationsForDelete.Add(nominationsList[i]);
                     nominationsList.Remove(nominationsList[i]);
-
                 }
                 else
                 {
@@ -228,12 +226,6 @@ namespace TournamentSoftware
                 }
             }
             nominationsGrid.ItemsSource = nominationsList;
-
-            //foreach (NominationFormModel nomination in nominationsForDelete)
-            //{
-            //    nominationsList.Remove(nomination);
-            //}
-            //nominationsGrid.ItemsSource = nominationsList;
         }
 
         /// <summary>
@@ -304,7 +296,7 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void nominationSelected(object sender, RoutedEventArgs e)
         {
-            
+
         }
 
         /// <summary>
@@ -314,16 +306,17 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void nominationUnselected(object sender, RoutedEventArgs e)
         {
-            
+
         }
     }
 
     public class NominationFormModel : INotifyPropertyChanged
     {
-        private Nomination _nomination = new Nomination() {
-        Name = "",
-        Id = 0,
-        ParticipantId = 0,
+        private Nomination _nomination = new Nomination()
+        {
+            Name = "",
+            Id = 0,
+            ParticipantId = 0,
         };
         private bool _isSelected;
 

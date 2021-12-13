@@ -542,24 +542,26 @@ namespace TournamentSoftware
             {
                 appState.isRegistrationComplited = true;
                 appGrid.Visibility = Visibility.Hidden;
-                SubgroupsFormationGrid.Children.Clear();
+                if (SubgroupsFormationGrid.Children.Count > 5)
+                {
+                    while (SubgroupsFormationGrid.Children.Count != 5)
+                    {
+                        SubgroupsFormationGrid.Children.RemoveAt(4);
+                    }
+                }
                 SubgroupsFormationGridParent.Visibility = Visibility.Visible;
                 subgroupsFormation = new SubgroupsFormation();
 
-                UIElement nominationList = subgroupsFormation.nominationsList();
-                SubgroupsFormationGrid.Children.Add(nominationList);
-                Grid.SetRow(nominationList, 0);
-                Grid.SetColumn(nominationList, 0);
+                UIElement kategories = subgroupsFormation.kategoryList();
+                kategoriesStackPanel.Children.Add(kategories);
 
-                UIElement grid = subgroupsFormation.kategoryList();
-                SubgroupsFormationGrid.Children.Add(grid);
-                Grid.SetRow(grid, 0);
-                Grid.SetColumn(grid, 1);
+                UIElement kategorySettingsPanel = subgroupsFormation.kategorySettingsPanel();
+                SubgroupsFormationGrid.Children.Add(kategorySettingsPanel);
+                Grid.SetColumn(kategorySettingsPanel, 1);
+                Grid.SetRow(kategorySettingsPanel, 1);
 
-                UIElement kategoryParametersPanel = subgroupsFormation.kategorySettingsPanel();
-                SubgroupsFormationGrid.Children.Add(kategoryParametersPanel);
-                Grid.SetRow(kategoryParametersPanel, 0);
-                Grid.SetColumn(kategoryParametersPanel, 2);
+                UIElement subgroupSettingsPanel = subgroupsFormation.subgroupSettings();
+                subgroupsStackPanel.Children.Add(subgroupSettingsPanel);
             }
             else
             {
@@ -637,12 +639,6 @@ namespace TournamentSoftware
             appState.TournamentName = TournamentNameTextBox.Text;
         }
 
-        private void openJudesWindow(object sender, RoutedEventArgs e)
-        {
-            JudgesRegistrationWindow registrationWindow = new JudgesRegistrationWindow();
-            registrationWindow.Show();
-        }
-
         /// <summary>
         /// Скрытие панели инструментов для окна формирования категорий
         /// </summary>
@@ -653,17 +649,11 @@ namespace TournamentSoftware
             if (subgroupsFormation.isPanelOpen)
             {
                 SubgroupsFormationGridParent.ColumnDefinitions[1].Width = new GridLength(30, GridUnitType.Pixel);
-                backToRegistrateButton.Visibility = Visibility.Hidden;
-                showJudgesWindowButton.Visibility = Visibility.Hidden;
-                goCreateTournamentGridButton.Visibility = Visibility.Hidden;
                 subgroupsFormation.isPanelOpen = false;
             }
             else
             {
                 SubgroupsFormationGridParent.ColumnDefinitions[1].Width = new GridLength(100, GridUnitType.Pixel);
-                backToRegistrateButton.Visibility = Visibility.Visible;
-                showJudgesWindowButton.Visibility = Visibility.Visible;
-                goCreateTournamentGridButton.Visibility = Visibility.Visible;
                 subgroupsFormation.isPanelOpen = true;
             }
         }
