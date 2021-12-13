@@ -542,13 +542,17 @@ namespace TournamentSoftware
             {
                 appState.isRegistrationComplited = true;
                 appGrid.Visibility = Visibility.Hidden;
-                if (SubgroupsFormationGrid.Children.Count > 5)
+                if (SubgroupsFormationGrid.Children.Count > 6)
                 {
-                    while (SubgroupsFormationGrid.Children.Count != 5)
+                    while (SubgroupsFormationGrid.Children.Count != 6)
                     {
-                        SubgroupsFormationGrid.Children.RemoveAt(4);
+                        SubgroupsFormationGrid.Children.RemoveAt(5);
                     }
                 }
+                nominationsStackPanel.Children.Clear();
+                kategoriesStackPanel.Children.Clear();
+                subgroupsStackPanel.Children.Clear();
+                SubgroupFormationLabel.Content = "Формирование групп";
                 SubgroupsFormationGridParent.Visibility = Visibility.Visible;
                 subgroupsFormation = new SubgroupsFormation();
 
@@ -562,6 +566,9 @@ namespace TournamentSoftware
 
                 UIElement subgroupSettingsPanel = subgroupsFormation.subgroupSettings();
                 subgroupsStackPanel.Children.Add(subgroupSettingsPanel);
+
+                UIElement nominations = subgroupsFormation.nominationsList();
+                nominationsStackPanel.Children.Add(nominations);
             }
             else
             {
@@ -649,16 +656,18 @@ namespace TournamentSoftware
             if (subgroupsFormation.isPanelOpen)
             {
                 SubgroupsFormationGridParent.ColumnDefinitions[1].Width = new GridLength(30, GridUnitType.Pixel);
+                instrumentsPanelGrid.Visibility = Visibility.Hidden;
                 subgroupsFormation.isPanelOpen = false;
             }
             else
             {
-                SubgroupsFormationGridParent.ColumnDefinitions[1].Width = new GridLength(100, GridUnitType.Pixel);
+                SubgroupsFormationGridParent.ColumnDefinitions[1].Width = new GridLength(160, GridUnitType.Pixel);
+                instrumentsPanelGrid.Visibility = Visibility.Visible;
                 subgroupsFormation.isPanelOpen = true;
             }
         }
 
-        private void goCreateTournamentGrid(object sender, RoutedEventArgs e)
+        private void сreateTournamentGrid(object sender, RoutedEventArgs e)
         {
 
         }

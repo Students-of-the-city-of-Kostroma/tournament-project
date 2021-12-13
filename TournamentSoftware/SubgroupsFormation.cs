@@ -19,6 +19,7 @@ namespace TournamentSoftware
         private List<string> rools = new List<string> { "Правило посевных бойцов", "Правило одноклубников", "Правило города" };
         private List<Button> kategoriesButtons = new List<Button>();
         private int lastClickedKategory = -1;
+        private ParticipantsReagistrator registrator = new ParticipantsReagistrator();
 
         public Dictionary<string, List<Participant>> getKateoryGroups
         {
@@ -66,6 +67,44 @@ namespace TournamentSoftware
             label.FontSize = fontSize;
             label.Margin = new Thickness(5);
             return label;
+        }
+
+        public UIElement nominationsList() 
+        {
+            Grid grid = new Grid();
+            grid.Margin = new Thickness(5);
+            grid.VerticalAlignment = VerticalAlignment.Stretch;
+            grid.HorizontalAlignment = HorizontalAlignment.Stretch;
+
+            int rowsCount = 0;
+
+            List<string> nominationsNames = MainWindow.GetReagistrator.nominationsNames;
+            foreach (string name in nominationsNames)
+            {
+                RowDefinition row = new RowDefinition();
+                Button nominationButton = new Button();
+                nominationButton.Margin = new Thickness(5);
+                nominationButton.Height = 30;
+                nominationButton.FontSize = 15;
+                nominationButton.Content = name;
+                nominationButton.Tag = name;
+                nominationButton.Click += NominationButton_Click; 
+                kategoriesButtons.Add(nominationButton);
+                grid.RowDefinitions.Add(row);
+                grid.Children.Add(nominationButton);
+                Grid.SetRow(nominationButton, rowsCount);
+                rowsCount++;
+            }
+
+            return grid;
+        }
+
+        private void NominationButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            string nomination = button.Tag.ToString();
+            selectedNomination = nomination;
+            ((MainWindow)Application.Current.MainWindow).SubgroupFormationLabel.Content = "Формирование групп. " + nomination;
         }
 
         public UIElement kategoryList()
@@ -185,91 +224,6 @@ namespace TournamentSoftware
             {
                 e.Handled = true;
             }
-        }
-
-        public UIElement nominationsList()
-        {
-            Grid grid = createGrid();
-            Label label = createLabel("Номинации");
-            ListBox listBox = new ListBox();
-            listBox.Padding = new Thickness(10);
-            listBox.Margin = new Thickness(0, 0, 5, 0);
-            listBox.HorizontalContentAlignment = HorizontalAlignment.Center;
-
-            List<string> nominationsNames = MainWindow.GetReagistrator.nominationsNames;
-            Console.WriteLine(nominationsNames.Count);
-            foreach (string nomination in nominationsNames)
-            {
-                Button button = new Button();
-                button.Content = nomination;
-                button.Width = 100;
-                button.Height = 50;
-                button.FontSize = 15;
-                listBox.Items.Add(button);
-            }
-
-            grid.Children.Add(label);
-            grid.Children.Add(listBox);
-            Grid.SetRow(label, 0);
-            Grid.SetRow(listBox, 1);
-            return grid;
-        }
-
-        /// <summary>
-        /// Панель инструментов
-        /// </summary>
-        /// <returns></returns>
-        public UIElement instrumentsPanel()
-        {
-            Grid grid = new Grid();
-            grid.HorizontalAlignment = HorizontalAlignment.Stretch;
-            grid.VerticalAlignment = VerticalAlignment.Stretch;
-
-            RowDefinition row1 = new RowDefinition();
-            row1.Height = new GridLength(1.5, GridUnitType.Star);
-            RowDefinition row2 = new RowDefinition();
-            row2.Height = new GridLength(1, GridUnitType.Star);
-
-            UIElement nominations = nominationsGrid();
-            grid.Children.Add(nominations);
-            Grid.SetRow(nominations, 0);
-
-            Button goRegistrate = new Button();
-            goRegistrate.Content = "<---";
-            goRegistrate.Margin = new Thickness(0, 10, 0, 10);
-            goRegistrate.Height = 30;
-
-            Button goCreateTournamentGrid = new Button();
-            goCreateTournamentGrid.Content = "--->";
-            goCreateTournamentGrid.Height = 30;
-            goCreateTournamentGrid.Margin = new Thickness(0, 50, 0, 10);
-
-            grid.Children.Add(goRegistrate);
-            Grid.SetRow(goRegistrate, 1);
-            grid.Children.Add(goCreateTournamentGrid);
-            Grid.SetRow(goCreateTournamentGrid, 1);
-
-            grid.RowDefinitions.Add(row1);
-            grid.RowDefinitions.Add(row2);
-            return grid;
-        }
-
-        public UIElement nominationsGrid()
-        {
-            Grid grid = new Grid();
-            grid.Margin = new Thickness(5);
-            Label label = createLabel("Номинации", 10);
-            RowDefinition row1 = new RowDefinition();
-            row1.Height = new GridLength(30, GridUnitType.Pixel);
-            RowDefinition row2 = new RowDefinition();
-            UIElement _nominationsListGrid = nominationsListGrid();
-            grid.RowDefinitions.Add(row1);
-            grid.RowDefinitions.Add(row2);
-            grid.Children.Add(label);
-            grid.Children.Add(_nominationsListGrid);
-            Grid.SetRow(label, 0);
-            Grid.SetRow(_nominationsListGrid, 1);
-            return grid;
         }
 
         public UIElement nominationsListGrid()
