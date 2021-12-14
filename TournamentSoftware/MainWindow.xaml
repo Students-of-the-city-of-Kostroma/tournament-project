@@ -14,7 +14,8 @@
         <Grid x:Name="appGrid" HorizontalAlignment="Stretch" 
               Margin="3,3,-0.8,3" 
               VerticalAlignment="Stretch"  
-              ShowGridLines="True" Grid.ColumnSpan="2">
+              Grid.ColumnSpan="2"
+              >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="160"/>
@@ -25,7 +26,7 @@
                     Margin="0,366,0,0" VerticalAlignment="Top" Padding="5" Height="30" 
                     IsEnabled="true" Width="120" Click="goTournament_Click">
                 <Button.Background>
-                    <ImageBrush ImageSource="Arrow 3.png" Stretch="Uniform"/>
+                    <ImageBrush ImageSource="/Arrow 3.png" Stretch="Uniform"/>
                 </Button.Background>
             </Button>
             <Button x:Name="loadFromFile" 
@@ -50,12 +51,14 @@
                       IsSynchronizedWithCurrentItem="False"
                       AutoGenerateColumns="False"
                       HorizontalGridLinesBrush="White"
-                      VerticalGridLinesBrush="White">
+                      VerticalGridLinesBrush="White"
+                      BorderBrush="#FF808C6C"
+                      BorderThickness="0,0,3,0">
                 <DataGrid.DataContext>
                     <local:Participant/>
                 </DataGrid.DataContext>
                 <DataGrid.Columns>
-                    
+
                     <DataGridTemplateColumn x:Name="checkboxCol" CanUserResize="False" MaxWidth="20" Width="20">
                         <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>
@@ -179,8 +182,7 @@
                                     UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
                                          PreviewTextInput="NumericOnly" 
                                          MaxLength="4"  
-                                         BorderThickness="0" 
-                                         KeyDown="DateOfBirth_TextBox_KeyDown" >
+                                         BorderThickness="0" TextChanged="TextBox_TextChanged" >
                                     <TextBox.Style>
                                         <Style TargetType="TextBox">
                                             <Setter Property="Background" Value="#FFF5F1DA"/>
@@ -314,7 +316,7 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    
+
                 </DataGrid.Columns>
                 <DataGrid.Resources>
                     <Style TargetType="DataGridCell">
@@ -331,13 +333,12 @@
                     </Style>
                 </DataGrid.Resources>
             </DataGrid>
-            
+
             <Label x:Name="TournamentNameLabel" Content="Название турнира:" 
                    Grid.Column="1" 
                    HorizontalAlignment="Center" 
                    Margin="0,75,0,0" 
-                   VerticalAlignment="Top" 
-                   FontSize="14" Width="120" Height="30"/>
+                   VerticalAlignment="Top" Width="120" Height="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
             <Button x:Name="goHome" 
                     Content="Домой" Grid.Column="1" 
                     HorizontalAlignment="Center" Margin="0,331,0,0" 
@@ -356,16 +357,25 @@
                     Click="showRegistrationModuleSettings"/>
             <TextBox x:Name="TournamentNameTextBox" Grid.Column="1" 
                      HorizontalAlignment="Center" Margin="0,110,0,0" TextWrapping="Wrap" 
-                     VerticalAlignment="Top" Width="120" Height="25" FontSize="16" LostFocus="TournamentNameTextBox_LostFocus"/>
+                     VerticalAlignment="Top" Width="120" Height="25" FontSize="16" LostFocus="TournamentNameTextBox_LostFocus" BorderBrush="#FFF5F1DA" BorderThickness="3,3,3,3"/>
             <Button x:Name="hideInstrumentPanelButton" Content="" 
                     Grid.Column="1" 
                     HorizontalAlignment="Left" 
-                    Margin="5.2,0,0,0" 
+                    Margin="10,10,0,0" 
                     VerticalAlignment="Top" 
-                    Width="20"
-                    Height="20" Click="hideInstrumentsPanel"/>
+                    Width="35"
+                    Height="35" Click="hideInstrumentsPanel">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="100"/>
+                    </Style>
+                </Button.Resources>
+                <Button.Background>
+                    <ImageBrush ImageSource="/burger menu.png"/>
+                </Button.Background>
+            </Button>
         </Grid >
-        
+
         <Grid x:Name="SubgroupsFormationGridParent"
               ShowGridLines="True"
               Visibility="Hidden"
@@ -377,7 +387,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="160"/>
             </Grid.ColumnDefinitions>
-            
+
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="*"/>
@@ -388,7 +398,7 @@
                    Grid.Column="0"
                    Grid.Row="0">
             </Label>
-            
+
             <Button x:Name="hideInstrimentsPanelButton_sub"
                     HorizontalAlignment="Left" 
                     Margin="5.2,0,0,0" 
@@ -438,7 +448,7 @@
                 <ScrollViewer x:Name="scrollViewer2" Margin="5" Grid.Column="2" Grid.Row="1" VerticalScrollBarVisibility="Auto">
                     <StackPanel x:Name="subgroupsStackPanel"></StackPanel>
                 </ScrollViewer>
-                
+
             </Grid>
 
             <Grid x:Name="instrumentsPanelGrid"
@@ -473,6 +483,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="40"/>
                         <RowDefinition Height="40"/>
+                        <RowDefinition Height="40"/>
                     </Grid.RowDefinitions>
                     <Button x:Name="goBackToRegistrate" 
                             HorizontalAlignment="Stretch"
@@ -486,10 +497,16 @@
                             Content="сетка"
                             Margin="5"
                             Grid.Row="1" Click="сreateTournamentGrid"/>
+                    <Button
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Content="судьи"
+                            Margin="5"
+                            Grid.Row="2" Click="openJudges"/>
                 </Grid>
-                
+
             </Grid>
-            
+
         </Grid>
     </Grid>
 </Window>

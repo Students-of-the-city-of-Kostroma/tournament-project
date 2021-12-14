@@ -625,22 +625,6 @@ namespace TournamentSoftware
             appGrid.Visibility = Visibility.Visible;
         }
 
-        private void DateOfBirth_TextBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if ((sender as TextBox).Text == "" || Convert.ToInt32((sender as TextBox).Text) < 1900)
-            {
-                (sender as TextBox).Background = (Brush)new BrushConverter().ConvertFrom("#FFFFDDDB");
-                if ((sender as TextBox).Text == "")
-                {
-                    (sender as TextBox).Text = "0";
-                }
-            }
-            else 
-            {
-                (sender as TextBox).Background = (Brush)new BrushConverter().ConvertFrom("#FFF5F1DA");
-            }
-        }
-
         private void TournamentNameTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             appState.TournamentName = TournamentNameTextBox.Text;
@@ -670,6 +654,24 @@ namespace TournamentSoftware
         private void сreateTournamentGrid(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if ((sender as TextBox).Text == "" || Convert.ToInt32((sender as TextBox).Text) < 1900 || Convert.ToInt32((sender as TextBox).Text) > DateTime.Now.Year - 13)
+            {
+                (sender as TextBox).Background = (Brush)new BrushConverter().ConvertFrom("#FFFFDDDB");
+            }
+            else
+            {
+                (sender as TextBox).Background = (Brush)new BrushConverter().ConvertFrom("#FFF5F1DA");
+            }
+        }
+
+        private void openJudges(object sender, RoutedEventArgs e)
+        {
+            JudgesRegistrationWindow judgesRegistrationWindow = new JudgesRegistrationWindow();
+            judgesRegistrationWindow.Show();
         }
     }
 }

@@ -104,7 +104,7 @@ namespace TournamentSoftware
             var button = sender as Button;
             string nomination = button.Tag.ToString();
             selectedNomination = nomination;
-            ((MainWindow)Application.Current.MainWindow).SubgroupFormationLabel.Content = "Формирование групп. " + nomination;
+            ((MainWindow)Application.Current.MainWindow).SubgroupFormationLabel.Content = "Формирование групп. Номинация " + nomination;
         }
 
         public UIElement kategoryList()
