@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Media;
 
 namespace TournamentSoftware
@@ -12,6 +11,7 @@ namespace TournamentSoftware
     {
         private Dictionary<string, List<Participant>> kategoryGroups = new Dictionary<string, List<Participant>>();
         private Grid kategorySettingsGrid = new Grid();
+        private Grid subgroupsSettingsGrid = new Grid();
         private Label countInKategory = new Label { FontSize = 30, VerticalAlignment = VerticalAlignment.Center };
         private TextBox countSubgroups = new TextBox
         {
@@ -28,6 +28,7 @@ namespace TournamentSoftware
         private List<Button> kategoriesButtons = new List<Button>();
         private int lastClickedKategory = -1;
         private List<string> selectedRools = new List<string> { "Правило посевных бойцов", "Правило одноклубников", "Правило города" };
+        private string selectedKategory = "";
 
         public Dictionary<string, List<Participant>> getKateoryGroups
         {
@@ -138,17 +139,20 @@ namespace TournamentSoftware
             var button = sender as Button;
             button.Background = solidBG;
             string kategory = button.Tag.ToString();
+            selectedKategory = kategory;
             countInKategory.Content = kategoryGroups[kategory].Count;
             showKategorySettings();
             if (lastClickedKategory != -1)
             {
                 kategoriesButtons[lastClickedKategory].Background = white;
             }
+            countSubgroups.Text = "";
             lastClickedKategory = kategoriesButtons.IndexOf(button);
         }
 
         public void showKategorySettings()
         {
+            subgroupsSettingsGrid.Children.Clear();
             kategorySettingsGrid.Children.Clear();
             kategorySettingsGrid.ShowGridLines = true;
             var parent = VisualTreeHelper.GetParent(countInKategory);
@@ -201,7 +205,78 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void GoNext_Click(object sender, RoutedEventArgs e)
         {
-            
+            int _subgroups = int.Parse(countSubgroups.Text);
+            int _countInKategory = int.Parse(countInKategory.Content.ToString());
+            if (_countInKategory>0 && _subgroups>0 && _countInKategory / _subgroups >= 2)
+            {
+                Dictionary<string, List<Participant>> subgroups = new Dictionary<string, List<Participant>>();
+                for (int i = 1; i <= _subgroups; i++) 
+                {
+                    subgroups.Add(i.ToString(), new List<Participant>());
+                }
+                List<Participant> participantsInKategory = kategoryGroups[selectedKategory];
+
+                int lastAddedGroup = 1; // группа в которую последний раз добавляли участника
+
+                participantsInKategory.ForEach(participant => {
+                    if (lastAddedGroup > _subgroups)
+                    {
+                        subgroups["1"].Add(participant);
+                        lastAddedGroup = 2;
+                    }
+                    else 
+                    {
+                        subgroups[lastAddedGroup.ToString()].Add(participant);
+                        lastAddedGroup++;
+                    }
+                });
+
+                setSubgroups(subgroups);
+            }
+            else 
+            {
+                MessageBox.Show("Введено некорректное количество подгрупп!", "Ошибка", MessageBoxButton.OK);
+            }
+        }
+
+        private void setSubgroups(Dictionary<string, List<Participant>> subgroups)
+        {
+            subgroupsSettingsGrid.Children.Clear();
+            subgroupsSettingsGrid.RowDefinitions.Clear();
+
+            for (int i = 1; i <= subgroups.Count; i++)
+            {
+                RowDefinition row = new RowDefinition();
+
+                Grid grid = new Grid();
+                grid.Margin = new Thickness(5);
+                RowDefinition r = new RowDefinition();
+                Label label = createLabel("Подгруппа" + i, 25);
+                label.HorizontalAlignment = HorizontalAlignment.Left;
+                grid.RowDefinitions.Add(r);
+                grid.Children.Add(label);
+                Grid.SetRow(label, grid.RowDefinitions.Count - 1);
+
+                SolidColorBrush solidBG = new SolidColorBrush(Color.FromRgb(255, 215, 0));
+                Console.WriteLine("В подгруппе" + i + " -> " + subgroups[i.ToString()].Count + " участников");
+
+                subgroups[i.ToString()].ForEach(participant => {
+                    Label l = createLabel(participant.Name + " " + participant.Surname + " " + participant.Patronymic, 20);
+                    l.Background = solidBG;
+                    l.Margin = new Thickness(10, 5, 5, 5);
+                    l.HorizontalAlignment = HorizontalAlignment.Right;
+                    RowDefinition rr = new RowDefinition();
+                    grid.RowDefinitions.Add(rr);
+
+                    grid.Children.Add(l);
+                    Grid.SetRow(l, grid.RowDefinitions.Count - 1);
+                });
+
+                subgroupsSettingsGrid.RowDefinitions.Add(row);
+                subgroupsSettingsGrid.Children.Add(grid);
+                Grid.SetRow(grid, subgroupsSettingsGrid.RowDefinitions.Count - 1);
+            }
+
         }
 
         private UIElement chooseRools()
@@ -280,6 +355,8 @@ namespace TournamentSoftware
 
         public UIElement kategorySettingsPanel()
         {
+            subgroupsSettingsGrid.Children.Clear();
+            kategorySettingsGrid.Children.Clear();
             kategorySettingsGrid = new Grid();
             RowDefinition row1 = new RowDefinition();
             RowDefinition row2 = new RowDefinition();
@@ -313,13 +390,12 @@ namespace TournamentSoftware
 
         public UIElement subgroupSettings()
         {
-            Grid grid = new Grid();
             RowDefinition row1 = new RowDefinition();
             RowDefinition row2 = new RowDefinition();
             row1.Height = new GridLength(80);
             row2.Height = new GridLength(100);
-            grid.RowDefinitions.Add(row1);
-            grid.RowDefinitions.Add(row2);
+            subgroupsSettingsGrid.RowDefinitions.Add(row1);
+            subgroupsSettingsGrid.RowDefinitions.Add(row2);
             Label startMessage = new Label
             {
                 Content = "Введите кол-во подгрупп",
@@ -329,9 +405,9 @@ namespace TournamentSoftware
                 VerticalContentAlignment = VerticalAlignment.Center,
                 HorizontalContentAlignment = HorizontalAlignment.Center,
             };
-            grid.Children.Add(startMessage);
+            subgroupsSettingsGrid.Children.Add(startMessage);
             Grid.SetRow(startMessage, 1);
-            return grid;
+            return subgroupsSettingsGrid;
         }
 
         /// <summary>
@@ -345,34 +421,6 @@ namespace TournamentSoftware
             {
                 e.Handled = true;
             }
-        }
-
-        public UIElement nominationsListGrid()
-        {
-            DataGrid nominationsList = new DataGrid();
-            nominationsList.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-            nominationsList.HeadersVisibility = DataGridHeadersVisibility.None;
-            DataGridTemplateColumn column = new DataGridTemplateColumn();
-            ObservableCollection<Nomination> nominationsNames = MainWindow.nominationsList;
-
-
-            Binding bind = new Binding("Name")
-            {
-                Mode = BindingMode.TwoWay
-            };
-
-            FrameworkElementFactory button = new FrameworkElementFactory(typeof(Button));
-            button.AddHandler(Button.ClickEvent, new RoutedEventHandler(selectNomination));
-            button.SetBinding(ContentControl.ContentProperty, bind);
-            DataTemplate buttonTemplate = new DataTemplate
-            {
-                VisualTree = button
-            };
-
-            column.CellTemplate = buttonTemplate;
-            nominationsList.Columns.Add(column);
-            nominationsList.ItemsSource = nominationsNames;
-            return nominationsList;
         }
 
         public void selectNomination(object sender, RoutedEventArgs e)
