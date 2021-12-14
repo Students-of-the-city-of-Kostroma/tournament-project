@@ -12,14 +12,22 @@ namespace TournamentSoftware
     {
         private Dictionary<string, List<Participant>> kategoryGroups = new Dictionary<string, List<Participant>>();
         private Grid kategorySettingsGrid = new Grid();
-        private Label countInKategory = new Label();
-        private TextBox countSubgroups = new TextBox();
+        private Label countInKategory = new Label { FontSize = 30, VerticalAlignment = VerticalAlignment.Center };
+        private TextBox countSubgroups = new TextBox
+        {
+            Width = 50,
+            Height = 50,
+            FontSize = 30,
+            VerticalAlignment = VerticalAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Right,
+            VerticalContentAlignment = VerticalAlignment.Center
+        };
         private string selectedNomination = "";
         public bool isPanelOpen = true;
         private List<string> rools = new List<string> { "Правило посевных бойцов", "Правило одноклубников", "Правило города" };
         private List<Button> kategoriesButtons = new List<Button>();
         private int lastClickedKategory = -1;
-        private ParticipantsReagistrator registrator = new ParticipantsReagistrator();
+        private List<string> selectedRools = new List<string> { "Правило посевных бойцов", "Правило одноклубников", "Правило города" };
 
         public Dictionary<string, List<Participant>> getKateoryGroups
         {
@@ -47,19 +55,6 @@ namespace TournamentSoftware
             return kategoryGroups;
         }
 
-        private Grid createGrid()
-        {
-            Grid grid = new Grid();
-            grid.HorizontalAlignment = HorizontalAlignment.Stretch;
-            grid.VerticalAlignment = VerticalAlignment.Stretch;
-            RowDefinition row1 = new RowDefinition();
-            RowDefinition row2 = new RowDefinition();
-            row1.Height = new GridLength(50);
-            grid.RowDefinitions.Add(row1);
-            grid.RowDefinitions.Add(row2);
-            return grid;
-        }
-
         private Label createLabel(string content, int fontSize = 24)
         {
             Label label = new Label();
@@ -69,7 +64,7 @@ namespace TournamentSoftware
             return label;
         }
 
-        public UIElement nominationsList() 
+        public UIElement nominationsList()
         {
             Grid grid = new Grid();
             grid.Margin = new Thickness(5);
@@ -88,14 +83,13 @@ namespace TournamentSoftware
                 nominationButton.FontSize = 15;
                 nominationButton.Content = name;
                 nominationButton.Tag = name;
-                nominationButton.Click += NominationButton_Click; 
+                nominationButton.Click += NominationButton_Click;
                 kategoriesButtons.Add(nominationButton);
                 grid.RowDefinitions.Add(row);
                 grid.Children.Add(nominationButton);
                 Grid.SetRow(nominationButton, rowsCount);
                 rowsCount++;
             }
-
             return grid;
         }
 
@@ -144,8 +138,8 @@ namespace TournamentSoftware
             var button = sender as Button;
             button.Background = solidBG;
             string kategory = button.Tag.ToString();
-            showKategorySettings();
             countInKategory.Content = kategoryGroups[kategory].Count;
+            showKategorySettings();
             if (lastClickedKategory != -1)
             {
                 kategoriesButtons[lastClickedKategory].Background = white;
@@ -155,7 +149,133 @@ namespace TournamentSoftware
 
         public void showKategorySettings()
         {
+            kategorySettingsGrid.Children.Clear();
+            kategorySettingsGrid.ShowGridLines = true;
+            var parent = VisualTreeHelper.GetParent(countInKategory);
+            var parentGrid = parent as Grid;
+            if (parentGrid != null)
+            {
+                parentGrid.Children.Clear();
+            }
+
+            Grid countInLategoryGrid = new Grid();
+            ColumnDefinition column1 = new ColumnDefinition();
+            ColumnDefinition column2 = new ColumnDefinition();
+            countInLategoryGrid.ColumnDefinitions.Add(column1);
+            countInLategoryGrid.ColumnDefinitions.Add(column2);
+            countInLategoryGrid.Children.Add(countInKategory);
+            countInKategory.HorizontalAlignment = HorizontalAlignment.Right;
+            Label label1 = createLabel("Количество\nбойцов в\nгруппе", 15);
+            label1.HorizontalContentAlignment = HorizontalAlignment.Left;
+            label1.HorizontalAlignment = HorizontalAlignment.Left;
+            label1.VerticalAlignment = VerticalAlignment.Center;
+            countInLategoryGrid.Children.Add(label1);
+            Grid.SetColumn(countInKategory, 0);
+            Grid.SetColumn(label1, 1);
+
+            var countOfSubgroups = countOfSubgroupsGrid();
+            var rools = chooseRools();
+
+            Button goNext = new Button();
+            goNext.Margin = new Thickness(5);
+            goNext.Content = "Продолжить";
+            goNext.HorizontalAlignment = HorizontalAlignment.Center;
+            goNext.VerticalAlignment = VerticalAlignment.Top;
+            goNext.Height = 40;
+            goNext.Click += GoNext_Click;
+
+            kategorySettingsGrid.Children.Add(goNext);
+            kategorySettingsGrid.Children.Add(rools);
+            kategorySettingsGrid.Children.Add(countOfSubgroups);
+            kategorySettingsGrid.Children.Add(countInLategoryGrid);
+            Grid.SetRow(countInLategoryGrid, 0);
+            Grid.SetRow(rools, 1);
+            Grid.SetRow(countOfSubgroups, 2);
+            Grid.SetRow(goNext, 3);
+        }
+
+        /// <summary>
+        /// Формирование подгрупп
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void GoNext_Click(object sender, RoutedEventArgs e)
+        {
             
+        }
+
+        private UIElement chooseRools()
+        {
+            Grid grid = new Grid();
+            RowDefinition row1 = new RowDefinition();
+            row1.Height = new GridLength(40, GridUnitType.Pixel);
+            grid.RowDefinitions.Add(row1);
+            
+            Label label = createLabel("Выбор правил", 15);
+            label.HorizontalAlignment = HorizontalAlignment.Center;
+
+            grid.Children.Add(label);
+            Grid.SetRow(label, 0);
+
+            rools.ForEach(rool =>
+            {
+                RowDefinition row = new RowDefinition { Height = new GridLength(30, GridUnitType.Pixel) };
+                CheckBox checkBox = new CheckBox { Content = rool, Tag = rool };
+                checkBox.Margin = new Thickness(5,0,0,0);
+                checkBox.IsChecked = true;
+                checkBox.Checked += CheckBox_Checked;
+                checkBox.Unchecked += CheckBox_Unchecked;
+
+                grid.RowDefinitions.Add(row);
+                grid.Children.Add(checkBox);
+                Grid.SetRow(checkBox, grid.RowDefinitions.Count - 1);
+            });
+
+            return grid;
+        }
+
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            var checkBox = sender as CheckBox;
+            string rool = checkBox.Tag.ToString();
+            if (selectedRools.Contains(rool)) selectedRools.Remove(rool);
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            var checkBox = sender as CheckBox;
+            string rool = checkBox.Tag.ToString();
+            if (!selectedRools.Contains(rool)) selectedRools.Add(rool);
+        }
+
+        private UIElement countOfSubgroupsGrid()
+        {
+            var parent = VisualTreeHelper.GetParent(countSubgroups);
+            var parentGrid = parent as Grid;
+            if (parentGrid != null)
+            {
+                parentGrid.Children.Clear();
+            }
+
+            Grid countOfSubgroupsGrid = new Grid();
+            ColumnDefinition column1 = new ColumnDefinition();
+            column1.Width = new GridLength(1, GridUnitType.Star);
+            ColumnDefinition column2 = new ColumnDefinition();
+            column2.Width = new GridLength(1.5, GridUnitType.Star);
+            countOfSubgroupsGrid.ColumnDefinitions.Add(column1);
+            countOfSubgroupsGrid.ColumnDefinitions.Add(column2);
+
+            countSubgroups.PreviewTextInput += CountSubgroups_PreviewTextInput;
+
+            Label label = createLabel("Количество подгрупп", 15);
+            label.HorizontalAlignment = HorizontalAlignment.Left;
+            label.VerticalAlignment = VerticalAlignment.Center;
+
+            countOfSubgroupsGrid.Children.Add(countSubgroups);
+            countOfSubgroupsGrid.Children.Add(label);
+            Grid.SetColumn(countSubgroups, 0);
+            Grid.SetColumn(label, 1);
+            return countOfSubgroupsGrid;
         }
 
         public UIElement kategorySettingsPanel()
@@ -167,17 +287,18 @@ namespace TournamentSoftware
             RowDefinition row4 = new RowDefinition();
 
             row1.Height = new GridLength(80);
-            row2.Height = new GridLength(100);
+            row2.Height = new GridLength(150);
             row3.Height = new GridLength(80);
             row4.Height = new GridLength(1, GridUnitType.Star);
 
-            Label startMessage = new Label { 
-            Content = "Выберите подгруппу",
-            FontSize = 15,
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch,
-            VerticalContentAlignment = VerticalAlignment.Center,
-            HorizontalContentAlignment = HorizontalAlignment.Center,
+            Label startMessage = new Label
+            {
+                Content = "Выберите подгруппу",
+                FontSize = 15,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                VerticalContentAlignment = VerticalAlignment.Center,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
             };
 
             kategorySettingsGrid.RowDefinitions.Add(row1);
