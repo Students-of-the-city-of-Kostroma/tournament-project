@@ -100,6 +100,7 @@ namespace TournamentSoftware
                     }
                 }
             }
+            JudesTable.Items.Clear();
             JudesTable.ItemsSource = judgesList;
         }
     }
