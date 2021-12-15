@@ -9,9 +9,9 @@ namespace TournamentSoftware
 {
     public class SubgroupsFormation
     {
-        private Dictionary<string, List<Participant>> kategoryGroups = new Dictionary<string, List<Participant>>();
+        private Dictionary<string, List<ParticipantFormModel>> kategoryGroups = new Dictionary<string, List<ParticipantFormModel>>();
         private Grid kategorySettingsGrid = new Grid();
-        private Grid subgroupsSettingsGrid = new Grid();
+        private Grid subgroupsSettingsGrid = new Grid { AllowDrop = true };
         private Label countInKategory = new Label { FontSize = 30, VerticalAlignment = VerticalAlignment.Center };
         private TextBox countSubgroups = new TextBox
         {
@@ -29,29 +29,34 @@ namespace TournamentSoftware
         private int lastClickedKategory = -1;
         private List<string> selectedRools = new List<string> { "Правило посевных бойцов", "Правило одноклубников", "Правило города" };
         private string selectedKategory = "";
+        private Button goNextButton = new Button();
         SolidColorBrush solidBG = new SolidColorBrush(Color.FromRgb(255, 215, 0));
         SolidColorBrush white = new SolidColorBrush(Color.FromRgb(255, 255, 255));
         SolidColorBrush red = new SolidColorBrush(Color.FromRgb(255, 0, 0));
 
-        public Dictionary<string, List<Participant>> getKateoryGroups
+        private bool passPosevRule = true;
+        private bool passClubRule = true;
+        private bool passCityRule = true;
+
+        public Dictionary<string, List<ParticipantFormModel>> getKateoryGroups
         {
             get { return kategoryGroups; }
         }
 
         // получаем список катерогий
-        private Dictionary<string, List<Participant>> getKategories(ObservableCollection<ParticipantFormModel> participants)
+        private Dictionary<string, List<ParticipantFormModel>> getKategories(ObservableCollection<ParticipantFormModel> participants)
         {
             foreach (ParticipantFormModel participant in participants)
             {
                 string kategory = participant.Kategory;
                 if (kategoryGroups.ContainsKey(kategory))
                 {
-                    kategoryGroups[kategory].Add(participant.Participant);
+                    kategoryGroups[kategory].Add(participant);
                 }
                 else
                 {
-                    List<Participant> list = new List<Participant>();
-                    list.Add(participant.Participant);
+                    List<ParticipantFormModel> list = new List<ParticipantFormModel>();
+                    list.Add(participant);
                     kategoryGroups.Add(kategory, list);
                 }
             }
@@ -118,17 +123,21 @@ namespace TournamentSoftware
             foreach (string kategory in kategoryGroups.Keys)
             {
                 RowDefinition row = new RowDefinition();
-                Button kategoryButton = new Button();
+                Button kategoryButton = new Button ();
                 kategoryButton.Margin = new Thickness(5);
                 kategoryButton.Height = 30;
                 kategoryButton.FontSize = 15;
                 kategoryButton.Content = kategory;
                 kategoryButton.Tag = kategory;
-                kategoryButton.Click += KategoryButton_Click;
+
                 if (kategoryGroups[kategory].Count == 1)
                 {
-                    kategoryButton.BorderBrush = red;
                     kategoryButton.ToolTip = "В этой категории всего 1 участник";
+                    kategoryButton.Click += KategoryButton_Click;
+                }
+                else 
+                {
+                    kategoryButton.Click += KategoryButton_Click;
                 }
                 kategoriesButtons.Add(kategoryButton);
                 kategoriesGrid.RowDefinitions.Add(row);
@@ -168,6 +177,13 @@ namespace TournamentSoftware
                 parentGrid.Children.Clear();
             }
 
+            var goNextBtn_Parent = VisualTreeHelper.GetParent(goNextButton);
+            var goNextBtn_ParentGrid = goNextBtn_Parent as Grid;
+            if (goNextBtn_ParentGrid != null)
+            {
+                goNextBtn_ParentGrid.Children.Clear();
+            }
+
             Grid countInLategoryGrid = new Grid();
             ColumnDefinition column1 = new ColumnDefinition();
             ColumnDefinition column2 = new ColumnDefinition();
@@ -186,22 +202,23 @@ namespace TournamentSoftware
             var countOfSubgroups = countOfSubgroupsGrid();
             var rools = chooseRools();
 
-            Button goNext = new Button();
-            goNext.Margin = new Thickness(5);
-            goNext.Content = "Продолжить";
-            goNext.HorizontalAlignment = HorizontalAlignment.Center;
-            goNext.VerticalAlignment = VerticalAlignment.Top;
-            goNext.Height = 40;
-            goNext.Click += GoNext_Click;
+            goNextButton = new Button();
+            goNextButton.IsEnabled = false;
+            goNextButton.Margin = new Thickness(5);
+            goNextButton.Content = "Продолжить";
+            goNextButton.HorizontalAlignment = HorizontalAlignment.Center;
+            goNextButton.VerticalAlignment = VerticalAlignment.Top;
+            goNextButton.Height = 40;
+            goNextButton.Click += GoNext_Click;
 
-            kategorySettingsGrid.Children.Add(goNext);
+            kategorySettingsGrid.Children.Add(goNextButton);
             kategorySettingsGrid.Children.Add(rools);
             kategorySettingsGrid.Children.Add(countOfSubgroups);
             kategorySettingsGrid.Children.Add(countInLategoryGrid);
             Grid.SetRow(countInLategoryGrid, 0);
             Grid.SetRow(rools, 1);
             Grid.SetRow(countOfSubgroups, 2);
-            Grid.SetRow(goNext, 3);
+            Grid.SetRow(goNextButton, 3);
         }
 
         /// <summary>
@@ -215,14 +232,41 @@ namespace TournamentSoftware
             int _countInKategory = int.Parse(countInKategory.Content.ToString());
             if (_countInKategory>0 && _subgroups>0 && _countInKategory / _subgroups >= 2)
             {
-                Dictionary<string, List<Participant>> subgroups = new Dictionary<string, List<Participant>>();
+                Dictionary<string, List<ParticipantFormModel>> subgroups = new Dictionary<string, List<ParticipantFormModel>>();
                 for (int i = 1; i <= _subgroups; i++) 
                 {
-                    subgroups.Add(i.ToString(), new List<Participant>());
+                    subgroups.Add(i.ToString(), new List<ParticipantFormModel>());
                 }
-                List<Participant> participantsInKategory = kategoryGroups[selectedKategory];
+                List<ParticipantFormModel> participantsInKategory = kategoryGroups[selectedKategory];
 
                 int lastAddedGroup = 1; // группа в которую последний раз добавляли участника
+
+                checkRules(_subgroups, participantsInKategory);
+
+                Button button = kategoriesButtons.Find(btn => btn.Tag.ToString().Equals(selectedKategory));
+
+                string str = "";
+
+                if (!passPosevRule)
+                {
+                    button.Background = red;
+                    str += "Нарушение правила посевных бойцов";
+                    button.ToolTip = str;
+                }
+
+                if (!passClubRule)
+                {
+                    button.Background = red;
+                    str += "\nНарушение правила одноклубников";
+                    button.ToolTip = str;
+                }
+
+                if (!passCityRule)
+                {
+                    button.Background = red;
+                    str += "\nНарушение правила города";
+                    button.ToolTip = str;
+                }
 
                 participantsInKategory.ForEach(participant => {
                     if (lastAddedGroup > _subgroups)
@@ -245,16 +289,83 @@ namespace TournamentSoftware
             }
         }
 
-        private void setSubgroups(Dictionary<string, List<Participant>> subgroups)
+
+
+        private bool checkRules(int subgroupsCount, List<ParticipantFormModel> participants)
+        {
+            Dictionary<string, int> club_count = new Dictionary<string, int>();
+            Dictionary<string, int> city_count = new Dictionary<string, int>();
+            int posevCount = 0;
+            // количество посевных в подгруппе
+            participants.ForEach(p=> {
+                string club = p.Club;
+                string city = p.City;
+                // подсчет одноклубников
+                if (club_count.ContainsKey(club))
+                {
+                    int count = club_count[club] + 1;
+                    club_count[club] = count;
+                }
+                else
+                {
+                    club_count.Add(club, 1);
+                }
+
+                // подсчет одногородних
+                if (city_count.ContainsKey(city))
+                {
+                    int count = city_count[city] + 1;
+                    city_count[city] = count;
+                }
+                else
+                {
+                    city_count.Add(city,1);
+                }
+
+                // подсчет посевных
+                if (p.Participant.Leader)
+                {
+                    posevCount++;
+                }
+            });
+
+            foreach (KeyValuePair<string, int> entry in club_count)
+            {
+                if (entry.Value > subgroupsCount)
+                {
+                    passClubRule = false;
+                    passCityRule = false;
+                }
+            }
+            
+            foreach (KeyValuePair<string, int> entry in city_count)
+            {
+                if (entry.Value > subgroupsCount)
+                {
+                    passCityRule = false;
+                }
+            }
+
+            passPosevRule = posevCount <= subgroupsCount;
+
+            return posevCount <= subgroupsCount && passClubRule;
+        }
+
+        private void setSubgroups(Dictionary<string, List<ParticipantFormModel>> subgroups)
         {
             subgroupsSettingsGrid.Children.Clear();
+            subgroupsSettingsGrid.ShowGridLines = true;
             subgroupsSettingsGrid.RowDefinitions.Clear();
+            subgroupsSettingsGrid.Drop += SubgroupsSettingsGrid_Drop;
+            subgroupsSettingsGrid.DragOver += SubgroupsSettingsGrid_DragOver;
 
             for (int i = 1; i <= subgroups.Count; i++)
             {
                 RowDefinition row = new RowDefinition();
 
                 Grid grid = new Grid();
+                grid.ShowGridLines = true;
+                grid.DragOver += Grid_DragOver;
                 grid.Margin = new Thickness(5);
                 RowDefinition r = new RowDefinition();
                 Label label = createLabel("Подгруппа" + i, 25);
@@ -267,7 +378,8 @@ namespace TournamentSoftware
                 Console.WriteLine("В подгруппе" + i + " -> " + subgroups[i.ToString()].Count + " участников");
 
                 subgroups[i.ToString()].ForEach(participant => {
-                    Label l = createLabel(participant.Name + " " + participant.Surname + " " + participant.Patronymic, 20);
+                    Label l = createLabel(participant.Participant.Name + " " + participant.Participant.Surname + " " + participant.Participant.Patronymic, 20);
+                    l.ToolTip = "Посев: " + participant.Participant.Leader+"\nКлуб: " + participant.Club + "\nГород: " + participant.City;
                     l.Background = solidBG;
                     l.Margin = new Thickness(10, 5, 5, 5);
                     l.HorizontalAlignment = HorizontalAlignment.Right;
@@ -283,6 +395,21 @@ namespace TournamentSoftware
                 Grid.SetRow(grid, subgroupsSettingsGrid.RowDefinitions.Count - 1);
             }
 
+        }
+
+        private void Grid_DragOver(object sender, DragEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void SubgroupsSettingsGrid_DragOver(object sender, DragEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void SubgroupsSettingsGrid_Drop(object sender, DragEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private UIElement chooseRools()
@@ -346,6 +473,7 @@ namespace TournamentSoftware
             countOfSubgroupsGrid.ColumnDefinitions.Add(column1);
             countOfSubgroupsGrid.ColumnDefinitions.Add(column2);
 
+            countSubgroups.TextChanged += CountSubgroups_TextChanged;
             countSubgroups.PreviewTextInput += CountSubgroups_PreviewTextInput;
 
             Label label = createLabel("Количество подгрупп", 15);
@@ -357,6 +485,19 @@ namespace TournamentSoftware
             Grid.SetColumn(countSubgroups, 0);
             Grid.SetColumn(label, 1);
             return countOfSubgroupsGrid;
+        }
+
+        private void CountSubgroups_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!int.TryParse(countSubgroups.Text, out _))
+            {
+                e.Handled = true;
+                goNextButton.IsEnabled = false;
+            }
+            else
+            {
+                goNextButton.IsEnabled = true;
+            }
         }
 
         public UIElement kategorySettingsPanel()
@@ -426,6 +567,11 @@ namespace TournamentSoftware
             if (!int.TryParse(e.Text, out _))
             {
                 e.Handled = true;
+                goNextButton.IsEnabled = false;
+            }
+            else 
+            {
+                goNextButton.IsEnabled = true;
             }
         }
 
