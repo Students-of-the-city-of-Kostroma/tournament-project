@@ -12,12 +12,12 @@ namespace TournamentSoftware
         private string patronymic;
         private string club;
         private string city;
-        private bool isCheked;
+        private bool isChecked;
 
-        public bool IsCheked
+        public bool IsChecked
         {
-            get { return isCheked; }
-            set { isCheked = value; OnPropertyChanged("IsCheked"); }
+            get { return isChecked; }
+            set { isChecked = value; OnPropertyChanged("IsChecked"); }
         }
         public string Name
         {

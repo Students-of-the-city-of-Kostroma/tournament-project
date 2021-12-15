@@ -29,6 +29,9 @@ namespace TournamentSoftware
         private int lastClickedKategory = -1;
         private List<string> selectedRools = new List<string> { "Правило посевных бойцов", "Правило одноклубников", "Правило города" };
         private string selectedKategory = "";
+        SolidColorBrush solidBG = new SolidColorBrush(Color.FromRgb(255, 215, 0));
+        SolidColorBrush white = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+        SolidColorBrush red = new SolidColorBrush(Color.FromRgb(255, 0, 0));
 
         public Dictionary<string, List<Participant>> getKateoryGroups
         {
@@ -122,6 +125,11 @@ namespace TournamentSoftware
                 kategoryButton.Content = kategory;
                 kategoryButton.Tag = kategory;
                 kategoryButton.Click += KategoryButton_Click;
+                if (kategoryGroups[kategory].Count == 1)
+                {
+                    kategoryButton.BorderBrush = red;
+                    kategoryButton.ToolTip = "В этой категории всего 1 участник";
+                }
                 kategoriesButtons.Add(kategoryButton);
                 kategoriesGrid.RowDefinitions.Add(row);
                 kategoriesGrid.Children.Add(kategoryButton);
@@ -134,8 +142,6 @@ namespace TournamentSoftware
 
         private void KategoryButton_Click(object sender, RoutedEventArgs e)
         {
-            SolidColorBrush solidBG = new SolidColorBrush(Color.FromRgb(255, 215, 0));
-            SolidColorBrush white = new SolidColorBrush(Color.FromRgb(255, 255, 255));
             var button = sender as Button;
             button.Background = solidBG;
             string kategory = button.Tag.ToString();

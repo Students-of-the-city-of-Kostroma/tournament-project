@@ -50,7 +50,7 @@
                     </DataGridTemplateColumn.HeaderTemplate>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <CheckBox IsChecked="{Binding IsSelected, 
+                            <CheckBox IsChecked="{Binding IsChecked, 
                                     UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"
                                           VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </DataTemplate>
