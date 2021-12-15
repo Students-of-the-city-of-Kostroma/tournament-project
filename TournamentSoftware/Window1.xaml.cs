@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
 
 namespace TournamentSoftware
 {
@@ -81,8 +82,18 @@ namespace TournamentSoftware
                         Binding bind = new Binding("Nominations[" + nominationName + "]");
                         bind.Mode = BindingMode.TwoWay;
 
+                        var cellStyle = new Style(typeof(DataGridCell));
+                        cellStyle.Setters.Add(new Setter()
+                        {
+                            Property = BackgroundProperty,
+                            Value = (Brush)new BrushConverter().ConvertFrom("#F5F1DA")
+                        });
+                        nominationColumn.CellStyle = cellStyle;
+
                         FrameworkElementFactory checkBox = new FrameworkElementFactory(typeof(CheckBox));
                         checkBox.SetBinding(CheckBox.IsCheckedProperty, bind);
+                        checkBox.SetValue(CheckBox.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+                        checkBox.SetValue(CheckBox.VerticalAlignmentProperty, VerticalAlignment.Center);
                         DataTemplate checkBoxTemplate = new DataTemplate();
                         checkBoxTemplate.VisualTree = checkBox;
 

@@ -24,54 +24,164 @@
                Width="249" Height="58" 
                FontSize="30"/>
         <DataGrid x:Name="JudesTable" 
-                  GridLinesVisibility="All" 
-                  HeadersVisibility="All"  
-                  HorizontalScrollBarVisibility="Auto" 
-                  SelectionMode="Extended" 
-                  IsReadOnly="False" 
-                  CanUserAddRows="False" 
-                  AutoGenerateColumns="False"
-                  VerticalScrollBarVisibility="Auto"
-                  HorizontalAlignment="Stretch" 
-                  Margin="0,59,-0.4,0" 
-                  VerticalAlignment="Stretch" 
-                  Grid.RowSpan="2">
+                GridLinesVisibility="All" 
+                HeadersVisibility="All"  
+                HorizontalScrollBarVisibility="Auto" 
+                SelectionMode="Extended" 
+                IsReadOnly="False" 
+                CanUserAddRows="False" 
+                AutoGenerateColumns="False"
+                VerticalScrollBarVisibility="Auto"
+                HorizontalAlignment="Stretch" 
+                Margin="0,59,-0.4,0" 
+                VerticalAlignment="Stretch" 
+                Grid.RowSpan="2"
+                HorizontalGridLinesBrush="White"
+                VerticalGridLinesBrush="White"
+                BorderBrush="#FF808C6C"
+                BorderThickness="0,0,3,0">>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Имя"
-                                        Width="*"
-                                    Binding="{Binding Name, 
-                                                UpdateSourceTrigger = PropertyChanged, 
-                    Mode=TwoWay}">
-                </DataGridTextColumn>
 
-                <DataGridTextColumn Header="Фамилия" 
-                                        Width="*"
-                                        Binding="{Binding Surname,
-                    UpdateSourceTrigger = PropertyChanged, 
-                    Mode=TwoWay}">
-                </DataGridTextColumn>
+                <DataGridTemplateColumn x:Name="checkboxCol" CanUserResize="False" MaxWidth="20" Width="20">
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <CheckBox />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding IsSelected, 
+                                    UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"
+                                          VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellStyle>
+                        <Style TargetType="{x:Type DataGridCell}">
+                            <Setter Property="Background" Value="#808C6C"/>
+                        </Style>
+                    </DataGridTemplateColumn.CellStyle>
+                </DataGridTemplateColumn>
 
-                <DataGridTextColumn Header="Отчество" 
-                                        Width="*"
-                                    Binding="{Binding Patronymic,
-                    UpdateSourceTrigger = PropertyChanged, 
-                    Mode=TwoWay}">
-                </DataGridTextColumn>
+                <DataGridTemplateColumn Header="Имя" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding Name, 
+                                            UpdateSourceTrigger = PropertyChanged,
+                                            Mode=TwoWay}" 
+                                         BorderThickness="0" >
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Setter Property="Background" Value="#FFF5F1DA"/>
+                                        <Style.Triggers>
+                                            <Trigger Property="Text" Value="">
+                                                <Setter Property="Background" Value="#FFFFDDDB"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 
-                <DataGridTextColumn Header="Город" 
-                                        Width="*"
-                                    Binding="{Binding City,
-                    UpdateSourceTrigger = PropertyChanged, 
-                    Mode=TwoWay}">
-                </DataGridTextColumn>
+                <DataGridTemplateColumn Header="Фамилия" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding Surname,
+                                            UpdateSourceTrigger = PropertyChanged, 
+                                            Mode=TwoWay}" 
+                                         BorderThickness="0" >
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Setter Property="Background" Value="#FFF5F1DA"/>
+                                        <Style.Triggers>
+                                            <Trigger Property="Text" Value="">
+                                                <Setter Property="Background" Value="#FFFFDDDB"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 
-                <DataGridTextColumn Header="Клуб" 
-                                        Width="*"
-                                    Binding="{Binding Club,
-                    UpdateSourceTrigger = PropertyChanged, 
-                    Mode=TwoWay}">
-                </DataGridTextColumn>
+                <DataGridTemplateColumn Header="Отчество" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding Patronymic,
+                                            UpdateSourceTrigger = PropertyChanged, 
+                                            Mode=TwoWay}" 
+                                         BorderThickness="0" >
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Setter Property="Background" Value="#FFF5F1DA"/>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Город" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding City,
+                                            UpdateSourceTrigger = PropertyChanged, 
+                                            Mode=TwoWay}" 
+                                         BorderThickness="0" >
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Setter Property="Background" Value="#FFF5F1DA"/>
+                                        <Style.Triggers>
+                                            <Trigger Property="Text" Value="">
+                                                <Setter Property="Background" Value="#FFFFDDDB"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Клуб" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding Club,
+                                            UpdateSourceTrigger = PropertyChanged, 
+                                            Mode=TwoWay}" 
+                                         BorderThickness="0" >
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Setter Property="Background" Value="#FFF5F1DA"/>
+                                        <Style.Triggers>
+                                            <Trigger Property="Text" Value="">
+                                                <Setter Property="Background" Value="#FFFFDDDB"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
             </DataGrid.Columns>
+            <DataGrid.Resources>
+                <Style TargetType="DataGridCell">
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="BorderBrush" Value="Black" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="#808C6C"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    <Setter Property="Foreground" Value="White" />
+                </Style>
+            </DataGrid.Resources>
         </DataGrid>
         <Button Grid.Column="1" 
                 HorizontalAlignment="Left" 
