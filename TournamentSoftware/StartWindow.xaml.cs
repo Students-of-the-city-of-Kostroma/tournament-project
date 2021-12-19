@@ -28,7 +28,9 @@ namespace TournamentSoftware
         }
         private void goRegistrate(object sender, RoutedEventArgs e)
         {
+            MainWindow mainWindow = new MainWindow();
             Close();
+            mainWindow.Show();
         }
         private void startWindow_Loaded(object sender, RoutedEventArgs e)
         {

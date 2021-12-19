@@ -51,15 +51,6 @@ namespace TournamentSoftware
         public MainWindow()
         {
             InitializeComponent();
-            Visibility = Visibility.Hidden;
-            StartWindow startWindow = new StartWindow();
-            startWindow.Show();
-            startWindow.Closed += StartWindow_Closed;
-        }
-
-        private void StartWindow_Closed(object sender, EventArgs e)
-        {
-            Visibility = Visibility.Visible;
         }
 
         /// <summary>
