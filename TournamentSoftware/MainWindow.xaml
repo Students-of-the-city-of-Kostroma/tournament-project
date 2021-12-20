@@ -26,18 +26,30 @@
                     Margin="0,366,0,0" VerticalAlignment="Top" Padding="5" Height="30" 
                     IsEnabled="true" Width="120" Click="goTournament_Click">
                 <Button.Background>
-                    <ImageBrush ImageSource="/Arrow 3.png" Stretch="Uniform"/>
+                    <ImageBrush ImageSource="D:\ыыыыыы\tournament-project\images\button_tournament.png"/>
                 </Button.Background>
             </Button>
             <Button x:Name="loadFromFile" 
-                    Content="Загрузить из файла" 
+                    Content="" 
                     Grid.Column="1" 
                     HorizontalAlignment="Center"
                     Margin="0,191,0,0" VerticalAlignment="Top" 
                     Padding="5" Height="30" Width="120" 
-                    Click="OpenExcel_Click"/>
-            <Button x:Name="add" Content="Добавить участника" Grid.Column="1" HorizontalAlignment="Center" Margin="0,156,0,0" VerticalAlignment="Top" Padding="5" Height="30" Width="120" Click="addParticipant"/>
-            <Button x:Name="delete" Content="Удалить участника" Grid.Column="1" HorizontalAlignment="Center" Margin="0,226,0,0" VerticalAlignment="Top" Padding="5" Height="30" Width="120" Click="deleteParticipant" IsEnabled="False"/>
+                    Click="OpenExcel_Click">
+                <Button.Background>
+                    <ImageBrush ImageSource="D:\ыыыыыы\tournament-project\images\button_download.png"/>
+                </Button.Background>
+            </Button>
+            <Button x:Name="add" Content="" Grid.Column="1" HorizontalAlignment="Center" Margin="0,156,0,0" VerticalAlignment="Top" Padding="5" Height="30" Width="120" Click="addParticipant">
+                <Button.Background>
+                    <ImageBrush ImageSource="D:\ыыыыыы\tournament-project\images\button_add.png"/>
+                </Button.Background>
+            </Button>
+            <Button x:Name="delete" Content="" Grid.Column="1" HorizontalAlignment="Center" Margin="20,261,20,0" VerticalAlignment="Top" Padding="5" Height="30" Width="120" Click="deleteParticipant" Style="{DynamicResource DelStyle}" IsEnabled="False">
+                <Button.Background>
+                    <ImageBrush ImageSource="D:\ыыыыыы\tournament-project\images\button_del.png"/>
+                </Button.Background>
+            </Button>
             <DataGrid x:Name="registrationTable" 
                       x:FieldModifier="public" 
                       ItemsSource="{Binding ParticipantsCollection, Mode=OneWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}"
@@ -340,21 +352,30 @@
                    Margin="0,75,0,0" 
                    VerticalAlignment="Top" Width="120" Height="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
             <Button x:Name="goHome" 
-                    Content="Домой" Grid.Column="1" 
-                    HorizontalAlignment="Center" Margin="0,331,0,0" 
-                    VerticalAlignment="Top" Padding="5" Height="30" Width="120"/>
+                    Content="" Grid.Column="1"
+                HorizontalAlignment="Center" Margin="20,226,20,0" 
+                    VerticalAlignment="Top" Padding="5" Height="30" Width="120">
+                <Button.Background>
+                    <ImageBrush ImageSource="D:\ыыыыыы\tournament-project\images\button_mainscreen.png"/>
+                </Button.Background>
+            </Button>
             <Button x:Name="exportButton" 
-                    Content="В файл" Grid.Column="1" 
-                    HorizontalAlignment="Center" Margin="0,261,0,0"
+                    Content="" Grid.Column="1" 
+                    HorizontalAlignment="Center" Margin="20,296,20,0"
                     VerticalAlignment="Top" Padding="5" Height="30" Width="120" 
-                    Click="saveFile" IsEnabled="False"/>
+                    Click="saveFile" IsEnabled="False">
+                <Button.Background>
+                    <ImageBrush ImageSource="D:\ыыыыыы\tournament-project\images\button_savelist.png"/>
+                </Button.Background>
+            </Button>
             <Button x:Name="viewSettingsButton" 
                     Content="Настроить вид" 
                     Grid.Column="1" 
                     HorizontalAlignment="Center" 
-                    Margin="0,296,0,0" VerticalAlignment="Top"
+                    Margin="20,331,20,0" VerticalAlignment="Top"
                     Padding="5" Height="30" Width="120" 
-                    Click="showRegistrationModuleSettings"/>
+                    Click="showRegistrationModuleSettings">
+            </Button>
             <TextBox x:Name="TournamentNameTextBox" Grid.Column="1" 
                      HorizontalAlignment="Center" Margin="0,110,0,0" TextWrapping="Wrap" 
                      VerticalAlignment="Top" Width="120" Height="25" FontSize="16" LostFocus="TournamentNameTextBox_LostFocus" BorderBrush="#FFF5F1DA" BorderThickness="3,3,3,3"/>
@@ -371,7 +392,7 @@
                     </Style>
                 </Button.Resources>
                 <Button.Background>
-                    <ImageBrush ImageSource="/burger menu.png"/>
+                    <ImageBrush ImageSource="D:\ыыыыыы\tournament-project\images\burger_menu.png"/>
                 </Button.Background>
             </Button>
         </Grid >
