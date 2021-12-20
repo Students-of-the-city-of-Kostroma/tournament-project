@@ -314,7 +314,6 @@ namespace TournamentSoftware
             {
                 dataTable.Columns.Add();
                 string header = registrationTable.Columns[i].Header.ToString();
-                Console.WriteLine(registrationTable.Columns[i].Header.ToString());
                 dataTable.Columns[i - 1].Caption = header;
             }
             foreach (ParticipantFormModel participant in participants)
@@ -455,11 +454,6 @@ namespace TournamentSoftware
             }
         }
 
-        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine("in focus Рейтинг (общий) " + ((TextBox)e.Source).Text);
-        }
-
         private void ComboBox_Loaded(object sender, RoutedEventArgs e)
         {
             if (!((ComboBox)e.Source).SelectedItem.Equals("M") && !((ComboBox)e.Source).SelectedItem.Equals("Ж"))
@@ -516,8 +510,6 @@ namespace TournamentSoftware
                         errors.Add("Заполните категорию участника на строке " + count);
                     }
 
-                    Console.WriteLine(participant.Participant.Name);
-                    Console.WriteLine(participant.Nominations.Count);
                     if (participant.Nominations == null)
                     {
                         errors.Add("Выберите номинацию участника на строке " + count);
@@ -569,11 +561,11 @@ namespace TournamentSoftware
             {
                 appState.isRegistrationComplited = true;
                 appGrid.Visibility = Visibility.Hidden;
-                if (SubgroupsFormationGrid.Children.Count > 6)
+                if (SubgroupsFormationGrid.Children.Count > 5)
                 {
-                    while (SubgroupsFormationGrid.Children.Count != 6)
+                    while (SubgroupsFormationGrid.Children.Count != 5)
                     {
-                        SubgroupsFormationGrid.Children.RemoveAt(5);
+                        SubgroupsFormationGrid.Children.RemoveAt(4);
                     }
                 }
                 nominationsStackPanel.Children.Clear();
@@ -603,11 +595,6 @@ namespace TournamentSoftware
             {
                 appState.isRegistrationComplited = false;
             }
-        }
-
-        private void DataGridTextColumn_PastingCellClipboardContent(object sender, DataGridCellClipboardEventArgs e)
-        {
-            Console.WriteLine(e.Content);
         }
 
         /// <summary>
@@ -651,6 +638,10 @@ namespace TournamentSoftware
         private void backToRegistratioinTable(object sender, RoutedEventArgs e)
         {
             SubgroupsFormationGridParent.Visibility = Visibility.Hidden;
+            while (SubgroupsFormationGrid.Children.Count >= 6)
+            {
+                SubgroupsFormationGrid.Children.RemoveAt(5);
+            }
             appGrid.Visibility = Visibility.Visible;
         }
 

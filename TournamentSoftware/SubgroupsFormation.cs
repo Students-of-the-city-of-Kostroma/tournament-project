@@ -249,6 +249,26 @@ namespace TournamentSoftware
         }
 
         /// <summary>
+        /// Тасование массива
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="rng"></param>
+        /// <param name="array"></param>
+        public List<T> Shuffle<T>(Random rng, List<T> array)
+        {
+            int n = array.Count;
+            while (n > 1)
+            {
+                int k = rng.Next(n--);
+                T temp = array[n];
+                array[n] = array[k];
+                array[k] = temp;
+            }
+
+            return array;
+        }
+
+        /// <summary>
         /// Формирование подгрупп
         /// </summary>
         /// <param name="sender"></param>
@@ -269,25 +289,33 @@ namespace TournamentSoftware
                 int lastAddedGroup = 1; // группа в которую последний раз добавляли участника
 
                 Button button = kategoriesButtons.Find(btn => btn.Tag.ToString().Equals(selectedKategory));
+                var rand = new Random();
+
+                Console.WriteLine("before");
+
+                participantsInKategory.ForEach(p => {
+                    Console.WriteLine(p.Participant.Name);
+                });
+
+                participantsInKategory = Shuffle(rand, participantsInKategory);
+                Console.WriteLine("after");
+                participantsInKategory.ForEach(p => {
+                    Console.WriteLine(p.Participant.Name);
+                });
 
                 List<ParticipantFormModel> posevParticipants = participantsInKategory.FindAll(p => p.Participant.Leader == true);
-                Console.WriteLine("posevCount = " + posevParticipants.Count);
                 List<ParticipantFormModel> not_posevParticipants = participantsInKategory.FindAll(p => p.Participant.Leader == false);
 
                 Dictionary<string, List<ParticipantFormModel>> city_posev = filterParticipantsForCities(posevParticipants);
-                Console.WriteLine("posevCity " + city_posev.Count);
                 Dictionary<string, List<ParticipantFormModel>> city_not_posev = filterParticipantsForCities(not_posevParticipants);
 
                 foreach (KeyValuePair<string, List<ParticipantFormModel>> entry in city_posev)
                 {
                     Dictionary<string, List<ParticipantFormModel>> club_posev = filterParticipantsForClubs(entry.Value);
-                    Console.WriteLine("clubs = " + club_posev.Count);
                     foreach (KeyValuePair<string, List<ParticipantFormModel>> participantsList in club_posev)
                     {
-                        Console.WriteLine(participantsList.Value.Count);
                         participantsList.Value.ForEach(participant =>
                         {
-                            Console.WriteLine(participant.Participant.Name);
                             if (lastAddedGroup > _subgroups)
                             {
                                 subgroups["1"].Add(participant);
@@ -310,7 +338,6 @@ namespace TournamentSoftware
                     {
                         participantsList.Value.ForEach(participant =>
                         {
-                            Console.WriteLine("not posev " + participant.Participant.Name);
                             if (lastAddedGroup > _subgroups)
                             {
                                 subgroups["1"].Add(participant);
@@ -398,7 +425,6 @@ namespace TournamentSoftware
                 Grid.SetRow(label, grid.RowDefinitions.Count - 1);
 
                 SolidColorBrush solidBG = new SolidColorBrush(Color.FromRgb(255, 215, 0));
-                Console.WriteLine("В подгруппе" + i + " -> " + subgroups[i.ToString()].Count + " участников");
 
                 subgroups[i.ToString()].ForEach(participant =>
                 {
@@ -526,8 +552,26 @@ namespace TournamentSoftware
 
         public UIElement kategorySettingsPanel()
         {
+            Console.WriteLine("kategorySettingsPanel");
+            selectedKategory = "";
+            selectedNomination = "";
+            var parent = VisualTreeHelper.GetParent(countInKategory);
+            var parentGrid = parent as Grid;
+            if (parentGrid != null)
+            {
+                parentGrid.Children.Clear();
+            }
+
+            parent = VisualTreeHelper.GetParent(countSubgroups);
+            parentGrid = parent as Grid;
+            if (parentGrid != null)
+            {
+                parentGrid.Children.Clear();
+            }
+
             subgroupsSettingsGrid.Children.Clear();
             kategorySettingsGrid.Children.Clear();
+            kategorySettingsGrid.RowDefinitions.Clear();
             kategorySettingsGrid = new Grid();
             RowDefinition row1 = new RowDefinition();
             RowDefinition row2 = new RowDefinition();
