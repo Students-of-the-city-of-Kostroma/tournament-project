@@ -9,7 +9,8 @@ namespace TournamentSoftware
 {
     public class SubgroupsFormation
     {
-        private Dictionary<string, List<ParticipantFormModel>> kategoryGroups = new Dictionary<string, List<ParticipantFormModel>>();
+        private Dictionary<string, Dictionary<string, List<ParticipantFormModel>>> kategoryGroups = new Dictionary<string, Dictionary<string, List<ParticipantFormModel>>>();
+        private Grid kategoriesGrid = new Grid();
         private Grid kategorySettingsGrid = new Grid();
         private Grid subgroupsSettingsGrid = new Grid { AllowDrop = true };
         private Label countInKategory = new Label { FontSize = 30, VerticalAlignment = VerticalAlignment.Center };
@@ -30,37 +31,41 @@ namespace TournamentSoftware
         private List<string> selectedRools = new List<string> { "Правило посевных бойцов", "Правило одноклубников", "Правило города" };
         private string selectedKategory = "";
         private Button goNextButton = new Button();
-        SolidColorBrush solidBG = new SolidColorBrush(Color.FromRgb(255, 215, 0));
+        ParticipantsReagistrator reagistrator = MainWindow.GetReagistrator;
+        SolidColorBrush yellow = new SolidColorBrush(Color.FromRgb(255, 215, 0));
         SolidColorBrush white = new SolidColorBrush(Color.FromRgb(255, 255, 255));
         SolidColorBrush red = new SolidColorBrush(Color.FromRgb(255, 0, 0));
 
-        private bool passPosevRule = true;
-        private bool passClubRule = true;
-        private bool passCityRule = true;
-
-        public Dictionary<string, List<ParticipantFormModel>> getKateoryGroups
-        {
-            get { return kategoryGroups; }
-        }
-
         // получаем список катерогий
-        private Dictionary<string, List<ParticipantFormModel>> getKategories(ObservableCollection<ParticipantFormModel> participants)
+        public Dictionary<string, Dictionary<string, List<ParticipantFormModel>>> getKategories(ObservableCollection<ParticipantFormModel> participants)
         {
             foreach (ParticipantFormModel participant in participants)
             {
-                string kategory = participant.Kategory;
-                if (kategoryGroups.ContainsKey(kategory))
+                foreach (KeyValuePair<string, bool> nomination in participant.Nominations)
                 {
-                    kategoryGroups[kategory].Add(participant);
-                }
-                else
-                {
-                    List<ParticipantFormModel> list = new List<ParticipantFormModel>();
-                    list.Add(participant);
-                    kategoryGroups.Add(kategory, list);
+                    if (nomination.Value)
+                    {
+                        string nominationName = nomination.Key;
+                        if (!kategoryGroups.ContainsKey(nominationName))
+                        {
+                            Dictionary<string, List<ParticipantFormModel>> dictionary = new Dictionary<string, List<ParticipantFormModel>>();
+                            kategoryGroups.Add(nominationName, dictionary);
+                        }
+
+                        string kategory = participant.Kategory;
+                        if (kategoryGroups[nominationName].ContainsKey(kategory))
+                        {
+                            kategoryGroups[nominationName][kategory].Add(participant);
+                        }
+                        else
+                        {
+                            List<ParticipantFormModel> list = new List<ParticipantFormModel>();
+                            list.Add(participant);
+                            kategoryGroups[nominationName].Add(kategory, list);
+                        }
+                    }
                 }
             }
-
             return kategoryGroups;
         }
 
@@ -108,34 +113,32 @@ namespace TournamentSoftware
             string nomination = button.Tag.ToString();
             selectedNomination = nomination;
             ((MainWindow)Application.Current.MainWindow).SubgroupFormationLabel.Content = "Формирование групп. Номинация " + nomination;
+            showKategoriesForNomination(kategoryGroups[nomination]);
         }
 
-        public UIElement kategoryList()
+        private void showKategoriesForNomination(Dictionary<string, List<ParticipantFormModel>> kategories)
         {
-            Grid kategoriesGrid = new Grid();
-            kategoriesGrid.Margin = new Thickness(5);
-            kategoriesGrid.VerticalAlignment = VerticalAlignment.Stretch;
-            kategoriesGrid.HorizontalAlignment = HorizontalAlignment.Stretch;
+            kategoriesGrid.Children.Clear();
+            kategoriesGrid.RowDefinitions.Clear();
 
             int rowsCount = 0;
 
-            getKategories(MainWindow.participantsList);
-            foreach (string kategory in kategoryGroups.Keys)
+            foreach (string kategory in kategoryGroups[selectedNomination].Keys)
             {
                 RowDefinition row = new RowDefinition();
-                Button kategoryButton = new Button ();
+                Button kategoryButton = new Button();
                 kategoryButton.Margin = new Thickness(5);
                 kategoryButton.Height = 30;
                 kategoryButton.FontSize = 15;
                 kategoryButton.Content = kategory;
                 kategoryButton.Tag = kategory;
 
-                if (kategoryGroups[kategory].Count == 1)
+                if (kategoryGroups[selectedNomination][kategory].Count == 1)
                 {
                     kategoryButton.ToolTip = "В этой категории всего 1 участник";
                     kategoryButton.Click += KategoryButton_Click;
                 }
-                else 
+                else
                 {
                     kategoryButton.Click += KategoryButton_Click;
                 }
@@ -146,16 +149,40 @@ namespace TournamentSoftware
                 rowsCount++;
             }
 
+        }
+
+        public UIElement kategoryList()
+        {
+            kategoriesGrid = new Grid();
+            kategoriesGrid.Margin = new Thickness(5);
+            kategoriesGrid.VerticalAlignment = VerticalAlignment.Stretch;
+            kategoriesGrid.HorizontalAlignment = HorizontalAlignment.Stretch;
+            RowDefinition row1 = new RowDefinition();
+            RowDefinition row2 = new RowDefinition();
+
+            row1.Height = new GridLength(80, GridUnitType.Pixel);
+            row2.Height = new GridLength(150, GridUnitType.Pixel);
+
+            Label label = createLabel("Выберите номинацию", 15);
+            label.VerticalAlignment = VerticalAlignment.Center;
+            label.HorizontalAlignment = HorizontalAlignment.Center;
+
+            kategoriesGrid.RowDefinitions.Add(row1);
+            kategoriesGrid.RowDefinitions.Add(row2);
+
+            kategoriesGrid.Children.Add(label);
+            Grid.SetRow(label, 1);
+
             return kategoriesGrid;
         }
 
         private void KategoryButton_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            button.Background = solidBG;
+            button.Background = yellow;
             string kategory = button.Tag.ToString();
             selectedKategory = kategory;
-            countInKategory.Content = kategoryGroups[kategory].Count;
+            countInKategory.Content = kategoryGroups[selectedNomination][kategory].Count;
             showKategorySettings();
             if (lastClickedKategory != -1)
             {
@@ -230,125 +257,121 @@ namespace TournamentSoftware
         {
             int _subgroups = int.Parse(countSubgroups.Text);
             int _countInKategory = int.Parse(countInKategory.Content.ToString());
-            if (_countInKategory>0 && _subgroups>0 && _countInKategory / _subgroups >= 2)
+            if (_countInKategory > 0 && _subgroups > 0 && _countInKategory / _subgroups >= 2)
             {
                 Dictionary<string, List<ParticipantFormModel>> subgroups = new Dictionary<string, List<ParticipantFormModel>>();
-                for (int i = 1; i <= _subgroups; i++) 
+                for (int i = 1; i <= _subgroups; i++)
                 {
                     subgroups.Add(i.ToString(), new List<ParticipantFormModel>());
                 }
-                List<ParticipantFormModel> participantsInKategory = kategoryGroups[selectedKategory];
+                List<ParticipantFormModel> participantsInKategory = kategoryGroups[selectedNomination][selectedKategory];
 
                 int lastAddedGroup = 1; // группа в которую последний раз добавляли участника
 
-                checkRules(_subgroups, participantsInKategory);
-
                 Button button = kategoriesButtons.Find(btn => btn.Tag.ToString().Equals(selectedKategory));
 
-                string str = "";
+                List<ParticipantFormModel> posevParticipants = participantsInKategory.FindAll(p => p.Participant.Leader == true);
+                Console.WriteLine("posevCount = " + posevParticipants.Count);
+                List<ParticipantFormModel> not_posevParticipants = participantsInKategory.FindAll(p => p.Participant.Leader == false);
 
-                if (!passPosevRule)
+                Dictionary<string, List<ParticipantFormModel>> city_posev = filterParticipantsForCities(posevParticipants);
+                Console.WriteLine("posevCity " + city_posev.Count);
+                Dictionary<string, List<ParticipantFormModel>> city_not_posev = filterParticipantsForCities(not_posevParticipants);
+
+                foreach (KeyValuePair<string, List<ParticipantFormModel>> entry in city_posev)
                 {
-                    button.Background = red;
-                    str += "Нарушение правила посевных бойцов";
-                    button.ToolTip = str;
-                }
-
-                if (!passClubRule)
-                {
-                    button.Background = red;
-                    str += "\nНарушение правила одноклубников";
-                    button.ToolTip = str;
-                }
-
-                if (!passCityRule)
-                {
-                    button.Background = red;
-                    str += "\nНарушение правила города";
-                    button.ToolTip = str;
-                }
-
-                participantsInKategory.ForEach(participant => {
-                    if (lastAddedGroup > _subgroups)
+                    Dictionary<string, List<ParticipantFormModel>> club_posev = filterParticipantsForClubs(entry.Value);
+                    Console.WriteLine("clubs = " + club_posev.Count);
+                    foreach (KeyValuePair<string, List<ParticipantFormModel>> participantsList in club_posev)
                     {
-                        subgroups["1"].Add(participant);
-                        lastAddedGroup = 2;
+                        Console.WriteLine(participantsList.Value.Count);
+                        participantsList.Value.ForEach(participant =>
+                        {
+                            Console.WriteLine(participant.Participant.Name);
+                            if (lastAddedGroup > _subgroups)
+                            {
+                                subgroups["1"].Add(participant);
+                                lastAddedGroup = 2;
+                            }
+                            else
+                            {
+                                subgroups[lastAddedGroup.ToString()].Add(participant);
+                                lastAddedGroup++;
+                            }
+                        }
+                        );
                     }
-                    else 
+                }
+
+                foreach (KeyValuePair<string, List<ParticipantFormModel>> entry in city_not_posev)
+                {
+                    Dictionary<string, List<ParticipantFormModel>> club__not_posev = filterParticipantsForClubs(entry.Value);
+                    foreach (KeyValuePair<string, List<ParticipantFormModel>> participantsList in club__not_posev)
                     {
-                        subgroups[lastAddedGroup.ToString()].Add(participant);
-                        lastAddedGroup++;
+                        participantsList.Value.ForEach(participant =>
+                        {
+                            Console.WriteLine("not posev " + participant.Participant.Name);
+                            if (lastAddedGroup > _subgroups)
+                            {
+                                subgroups["1"].Add(participant);
+                                lastAddedGroup = 2;
+                            }
+                            else
+                            {
+                                subgroups[lastAddedGroup.ToString()].Add(participant);
+                                lastAddedGroup++;
+                            }
+                        }
+                        );
                     }
-                });
+                }
 
                 setSubgroups(subgroups);
             }
-            else 
+            else
             {
                 MessageBox.Show("Введено некорректное количество подгрупп!", "Ошибка", MessageBoxButton.OK);
             }
         }
 
-
-
-        private bool checkRules(int subgroupsCount, List<ParticipantFormModel> participants)
+        private Dictionary<string, List<ParticipantFormModel>> filterParticipantsForCities(List<ParticipantFormModel> participants)
         {
-            Dictionary<string, int> club_count = new Dictionary<string, int>();
-            Dictionary<string, int> city_count = new Dictionary<string, int>();
-            int posevCount = 0;
-            // количество посевных в подгруппе
-            participants.ForEach(p=> {
-                string club = p.Club;
-                string city = p.City;
-                // подсчет одноклубников
-                if (club_count.ContainsKey(club))
+            Dictionary<string, List<ParticipantFormModel>> participantsForCities = new Dictionary<string, List<ParticipantFormModel>>();
+            participants.ForEach(participant =>
+            {
+                string city = participant.City;
+                if (participantsForCities.ContainsKey(city))
                 {
-                    int count = club_count[club] + 1;
-                    club_count[club] = count;
+                    participantsForCities[city].Add(participant);
                 }
                 else
                 {
-                    club_count.Add(club, 1);
-                }
-
-                // подсчет одногородних
-                if (city_count.ContainsKey(city))
-                {
-                    int count = city_count[city] + 1;
-                    city_count[city] = count;
-                }
-                else
-                {
-                    city_count.Add(city,1);
-                }
-
-                // подсчет посевных
-                if (p.Participant.Leader)
-                {
-                    posevCount++;
+                    List<ParticipantFormModel> list = new List<ParticipantFormModel>();
+                    list.Add(participant);
+                    participantsForCities.Add(city, list);
                 }
             });
+            return participantsForCities;
+        }
 
-            foreach (KeyValuePair<string, int> entry in club_count)
+        private Dictionary<string, List<ParticipantFormModel>> filterParticipantsForClubs(List<ParticipantFormModel> participants)
+        {
+            Dictionary<string, List<ParticipantFormModel>> participantsForClubs = new Dictionary<string, List<ParticipantFormModel>>();
+            participants.ForEach(participant =>
             {
-                if (entry.Value > subgroupsCount)
+                string club = participant.Club;
+                if (participantsForClubs.ContainsKey(club))
                 {
-                    passClubRule = false;
-                    passCityRule = false;
+                    participantsForClubs[club].Add(participant);
                 }
-            }
-            
-            foreach (KeyValuePair<string, int> entry in city_count)
-            {
-                if (entry.Value > subgroupsCount)
+                else
                 {
-                    passCityRule = false;
+                    List<ParticipantFormModel> list = new List<ParticipantFormModel>();
+                    list.Add(participant);
+                    participantsForClubs.Add(club, list);
                 }
-            }
-
-            passPosevRule = posevCount <= subgroupsCount;
-
-            return posevCount <= subgroupsCount && passClubRule;
+            });
+            return participantsForClubs;
         }
 
         private void setSubgroups(Dictionary<string, List<ParticipantFormModel>> subgroups)
@@ -377,9 +400,10 @@ namespace TournamentSoftware
                 SolidColorBrush solidBG = new SolidColorBrush(Color.FromRgb(255, 215, 0));
                 Console.WriteLine("В подгруппе" + i + " -> " + subgroups[i.ToString()].Count + " участников");
 
-                subgroups[i.ToString()].ForEach(participant => {
+                subgroups[i.ToString()].ForEach(participant =>
+                {
                     Label l = createLabel(participant.Participant.Name + " " + participant.Participant.Surname + " " + participant.Participant.Patronymic, 20);
-                    l.ToolTip = "Посев: " + participant.Participant.Leader+"\nКлуб: " + participant.Club + "\nГород: " + participant.City;
+                    l.ToolTip = "Посев: " + participant.Participant.Leader + "\nКлуб: " + participant.Club + "\nГород: " + participant.City;
                     l.Background = solidBG;
                     l.Margin = new Thickness(10, 5, 5, 5);
                     l.HorizontalAlignment = HorizontalAlignment.Right;
@@ -418,7 +442,7 @@ namespace TournamentSoftware
             RowDefinition row1 = new RowDefinition();
             row1.Height = new GridLength(40, GridUnitType.Pixel);
             grid.RowDefinitions.Add(row1);
-            
+
             Label label = createLabel("Выбор правил", 15);
             label.HorizontalAlignment = HorizontalAlignment.Center;
 
@@ -429,7 +453,7 @@ namespace TournamentSoftware
             {
                 RowDefinition row = new RowDefinition { Height = new GridLength(30, GridUnitType.Pixel) };
                 CheckBox checkBox = new CheckBox { Content = rool, Tag = rool };
-                checkBox.Margin = new Thickness(5,0,0,0);
+                checkBox.Margin = new Thickness(5, 0, 0, 0);
                 checkBox.IsChecked = true;
                 checkBox.Checked += CheckBox_Checked;
                 checkBox.Unchecked += CheckBox_Unchecked;
@@ -510,19 +534,17 @@ namespace TournamentSoftware
             RowDefinition row3 = new RowDefinition();
             RowDefinition row4 = new RowDefinition();
 
-            row1.Height = new GridLength(80);
-            row2.Height = new GridLength(150);
-            row3.Height = new GridLength(80);
+            row1.Height = new GridLength(80, GridUnitType.Pixel);
+            row2.Height = new GridLength(150, GridUnitType.Pixel);
+            row3.Height = new GridLength(80, GridUnitType.Pixel);
             row4.Height = new GridLength(1, GridUnitType.Star);
 
             Label startMessage = new Label
             {
                 Content = "Выберите подгруппу",
                 FontSize = 15,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Stretch,
-                VerticalContentAlignment = VerticalAlignment.Center,
-                HorizontalContentAlignment = HorizontalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
             };
 
             kategorySettingsGrid.RowDefinitions.Add(row1);
@@ -569,7 +591,7 @@ namespace TournamentSoftware
                 e.Handled = true;
                 goNextButton.IsEnabled = false;
             }
-            else 
+            else
             {
                 goNextButton.IsEnabled = true;
             }

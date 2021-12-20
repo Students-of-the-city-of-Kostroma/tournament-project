@@ -18,8 +18,6 @@ namespace TournamentSoftware
     public partial class MainWindow : Window
     {
         public static ObservableCollection<ParticipantFormModel> participantsList = new ObservableCollection<ParticipantFormModel>();
-
-        public static ObservableCollection<Nomination> nominationsList = new ObservableCollection<Nomination>();
         public ObservableCollection<DataGridTemplateColumn> nominationsColumn = new ObservableCollection<DataGridTemplateColumn>();
         public static string appStateJsonPath = "..\\..\\app.json";
         public static string dataBasePath = "..\\..\\db.db";
@@ -156,8 +154,6 @@ namespace TournamentSoftware
             {
                 registrationTable.Columns.Remove(column);
             }
-
-            nominationsList.Clear();
         }
 
         /// <summary>
@@ -433,6 +429,7 @@ namespace TournamentSoftware
             {
                 Binding bind = new Binding("Nominations[" + nominationName + "]");
                 bind.Mode = BindingMode.TwoWay;
+
                 DataGridTemplateColumn n = new DataGridTemplateColumn();
                 n.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
                 n.Header = nominationName;
@@ -450,8 +447,9 @@ namespace TournamentSoftware
                 checkBox.SetValue(CheckBox.HorizontalAlignmentProperty, HorizontalAlignment.Center);
                 checkBox.SetValue(CheckBox.VerticalAlignmentProperty, VerticalAlignment.Center);
                 DataTemplate checkBoxTemplate = new DataTemplate();
-                checkBoxTemplate.VisualTree = checkBox;
+               checkBoxTemplate.VisualTree = checkBox;
                 n.CellTemplate = checkBoxTemplate;
+                //n.CellTemplate.VisualTree.AppendChild(checkBox);
                 registrationTable.Columns.Add(n);
                 nominationsColumn.Add(n);
             }
@@ -464,7 +462,7 @@ namespace TournamentSoftware
 
         private void ComboBox_Loaded(object sender, RoutedEventArgs e)
         {
-            if (((ComboBox)e.Source).SelectedItem != "M" && ((ComboBox)e.Source).SelectedItem != "Ж")
+            if (!((ComboBox)e.Source).SelectedItem.Equals("M") && !((ComboBox)e.Source).SelectedItem.Equals("Ж"))
             {
                 SolidColorBrush scb = new SolidColorBrush(Color.FromRgb(255, 221, 219));
                 ((ComboBox)e.Source).Background = scb;
@@ -479,44 +477,73 @@ namespace TournamentSoftware
         {
             List<string> errors = new List<string>();
             int count = 1;
-            foreach (ParticipantFormModel participant in participantsList)
+            if (nominationsColumn.Count != 0)
             {
-                if (participant.Participant.Name.Equals(""))
+                foreach (ParticipantFormModel participant in participantsList)
                 {
-                    errors.Add("Заполните имя участника на строке " + count);
-                }
+                    if (participant.Participant.Name.Equals(""))
+                    {
+                        errors.Add("Заполните имя участника на строке " + count);
+                    }
 
-                if (participant.Participant.Surname.Equals(""))
-                {
-                    errors.Add("Заполните фамилию участника на строке " + count);
-                }
+                    if (participant.Participant.Surname.Equals(""))
+                    {
+                        errors.Add("Заполните фамилию участника на строке " + count);
+                    }
 
-                if (participant.Club.Equals(""))
-                {
-                    errors.Add("Заполните клуб участника на строке " + count);
-                }
+                    if (participant.Club.Equals(""))
+                    {
+                        errors.Add("Заполните клуб участника на строке " + count);
+                    }
 
-                if (participant.City.Equals(""))
-                {
-                    errors.Add("Заполните город участника на строке " + count);
-                }
+                    if (participant.City.Equals(""))
+                    {
+                        errors.Add("Заполните город участника на строке " + count);
+                    }
 
-                if (participant.Participant.DateOfBirth < 1900 || participant.Participant.DateOfBirth > DateTime.Now.Year - 13)
-                {
-                    errors.Add("Некорректно заполнен год рождения участника на строке " + count);
-                }
+                    if (participant.Participant.DateOfBirth < 1900 || participant.Participant.DateOfBirth > DateTime.Now.Year - 13)
+                    {
+                        errors.Add("Некорректно заполнен год рождения участника на строке " + count);
+                    }
 
-                if (!participant.Participant.Sex.Equals("М") && !participant.Participant.Sex.Equals("Ж"))
-                {
-                    errors.Add("Заполните пол участника на строке " + count + " " + participant.Participant.Sex);
-                }
+                    if (participant.Participant.Sex == null || !participant.Participant.Sex.Equals("М") && !participant.Participant.Sex.Equals("Ж"))
+                    {
+                        errors.Add("Заполните пол участника на строке " + count + " " + participant.Participant.Sex);
+                    }
 
-                if (participant.Kategory.Equals(""))
-                {
-                    errors.Add("Заполните категорию участника на строке " + count);
-                }
+                    if (participant.Kategory == null || participant.Kategory.Equals(""))
+                    {
+                        errors.Add("Заполните категорию участника на строке " + count);
+                    }
 
-                count++;
+                    Console.WriteLine(participant.Participant.Name);
+                    Console.WriteLine(participant.Nominations.Count);
+                    if (participant.Nominations == null)
+                    {
+                        errors.Add("Выберите номинацию участника на строке " + count);
+                    }
+                    else
+                    {
+                        int countTrue = 0;
+                        foreach (KeyValuePair<string, bool> keyValuePair in participant.Nominations)
+                        {
+                            if (keyValuePair.Value)
+                            {
+                                countTrue++;
+                            }
+                        }
+
+                        if (countTrue == 0)
+                        {
+                            errors.Add("Выберите номинацию участника на строке " + count);
+                        }
+                    }
+
+                    count++;
+                }
+            }
+            else {
+                errors.Add("Добавьте хотябы 1 номинацию");
             }
             if (TournamentNameTextBox.Text.Equals(""))
             {
@@ -555,6 +582,8 @@ namespace TournamentSoftware
                 SubgroupFormationLabel.Content = "Формирование групп";
                 SubgroupsFormationGridParent.Visibility = Visibility.Visible;
                 subgroupsFormation = new SubgroupsFormation();
+
+                subgroupsFormation.getKategories(participantsList);
 
                 UIElement kategories = subgroupsFormation.kategoryList();
                 kategoriesStackPanel.Children.Add(kategories);
