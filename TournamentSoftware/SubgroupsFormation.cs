@@ -9,7 +9,7 @@ namespace TournamentSoftware
 {
     public class SubgroupsFormation
     {
-        private Dictionary<string, Dictionary<string, List<ParticipantFormModel>>> kategoryGroups = new Dictionary<string, Dictionary<string, List<ParticipantFormModel>>>();
+        public Dictionary<string, Dictionary<string, List<ParticipantFormModel>>> kategoryGroups = new Dictionary<string, Dictionary<string, List<ParticipantFormModel>>>();
         private Grid kategoriesGrid = new Grid();
         private Grid kategorySettingsGrid = new Grid();
         private Grid subgroupsSettingsGrid = new Grid { AllowDrop = true };
@@ -31,10 +31,8 @@ namespace TournamentSoftware
         private static List<string> selectedRools = new List<string> { "Правило посевных бойцов", "Правило одноклубников", "Правило города" };
         private string selectedKategory = "";
         private Button goNextButton = new Button();
-        ParticipantsReagistrator reagistrator = MainWindow.GetReagistrator;
         SolidColorBrush yellow = new SolidColorBrush(Color.FromRgb(255, 215, 0));
         SolidColorBrush white = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-        SolidColorBrush red = new SolidColorBrush(Color.FromRgb(255, 0, 0));
 
         // получаем список катерогий
         public Dictionary<string, Dictionary<string, List<ParticipantFormModel>>> getKategories(ObservableCollection<ParticipantFormModel> participants)

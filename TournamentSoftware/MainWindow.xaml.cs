@@ -631,8 +631,6 @@ namespace TournamentSoftware
                 goTournament.Visibility = Visibility.Visible;
                 isPanelOpen = true;
             }
-            
-
         }
 
         private void backToRegistratioinTable(object sender, RoutedEventArgs e)
@@ -673,7 +671,9 @@ namespace TournamentSoftware
 
         private void сreateTournamentGrid(object sender, RoutedEventArgs e)
         {
-
+            TournamentGridWindow tournamentGridWindow = new TournamentGridWindow();
+            tournamentGridWindow.Show(subgroupsFormation.kategoryGroups);
+            this.Close();
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -686,12 +686,6 @@ namespace TournamentSoftware
             {
                 (sender as TextBox).Background = (Brush)new BrushConverter().ConvertFrom("#FFF5F1DA");
             }
-        }
-
-        private void openJudges(object sender, RoutedEventArgs e)
-        {
-            JudgesRegistrationWindow judgesRegistrationWindow = new JudgesRegistrationWindow();
-            judgesRegistrationWindow.Show();
         }
     }
 }

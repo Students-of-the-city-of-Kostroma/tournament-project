@@ -503,12 +503,6 @@
                             Content="сетка"
                             Margin="5"
                             Grid.Row="1" Click="сreateTournamentGrid"/>
-                    <Button
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            Content="судьи"
-                            Margin="5"
-                            Grid.Row="2" Click="openJudges"/>
                 </Grid>
 
             </Grid>
