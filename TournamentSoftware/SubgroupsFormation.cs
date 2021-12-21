@@ -28,7 +28,7 @@ namespace TournamentSoftware
         private List<string> rools = new List<string> { "Правило посевных бойцов", "Правило одноклубников", "Правило города" };
         private List<Button> kategoriesButtons = new List<Button>();
         private int lastClickedKategory = -1;
-        private List<string> selectedRools = new List<string> { "Правило посевных бойцов", "Правило одноклубников", "Правило города" };
+        private static List<string> selectedRools = new List<string> { "Правило посевных бойцов", "Правило одноклубников", "Правило города" };
         private string selectedKategory = "";
         private Button goNextButton = new Button();
         ParticipantsReagistrator reagistrator = MainWindow.GetReagistrator;
@@ -268,6 +268,83 @@ namespace TournamentSoftware
             return array;
         }
 
+        private static void participantsSort(ref Dictionary<string, List<ParticipantFormModel>> subgroups,
+            ref List<ParticipantFormModel> participants, ref int lastAddedGroup, int _subgroups,
+            Dictionary<string, List<ParticipantFormModel>> filtered = null)
+        {
+            int lastAddedGroup1 = lastAddedGroup;
+            Dictionary<string, List<ParticipantFormModel>> subgroups1 = subgroups;
+            if (filtered == null)
+            {
+                participants.ForEach(participant =>
+                {
+                    if (lastAddedGroup1 > _subgroups)
+                    {
+                        subgroups1["1"].Add(participant);
+                        lastAddedGroup1 = 2;
+                    }
+                    else
+                    {
+                        subgroups1[lastAddedGroup1.ToString()].Add(participant);
+                        lastAddedGroup1++;
+                    }
+                });
+            }
+            else
+            {
+                foreach (KeyValuePair<string, List<ParticipantFormModel>> participantsList in filtered)
+                {
+                    participantsList.Value.ForEach(participant =>
+                    {
+                        if (lastAddedGroup1 > _subgroups)
+                        {
+                            subgroups1["1"].Add(participant);
+                            lastAddedGroup1 = 2;
+                        }
+                        else
+                        {
+                            subgroups1[lastAddedGroup1.ToString()].Add(participant);
+                            lastAddedGroup1++;
+                        }
+                    });
+                }
+            }
+            subgroups = subgroups1;
+            lastAddedGroup = lastAddedGroup1;
+        }
+
+        private static void participantsSortWithRools(ref Dictionary<string, List<ParticipantFormModel>> subgroups, ref List<ParticipantFormModel> participants, ref int lastAddedGroup, int _subgroups)
+        {
+            if (selectedRools.Contains("Правило города"))
+            {
+                Dictionary<string, List<ParticipantFormModel>> city = filterParticipantsForCities(participants);
+                foreach (KeyValuePair<string, List<ParticipantFormModel>> entry in city)
+                {
+                    if (selectedRools.Contains("Правило одноклубников"))
+                    {
+                        Dictionary<string, List<ParticipantFormModel>> club = filterParticipantsForClubs(entry.Value);
+                        participantsSort(ref subgroups, ref participants, ref lastAddedGroup, _subgroups, club);
+                    }
+                    else
+                    {
+                        participantsSort(ref subgroups, ref participants, ref lastAddedGroup, _subgroups);
+                    }
+                }
+            }
+            else
+            {
+                if (selectedRools.Contains("Правило одноклубников"))
+                {
+                    Dictionary<string, List<ParticipantFormModel>> club = filterParticipantsForClubs(participants);
+                    participantsSort(ref subgroups, ref participants, ref lastAddedGroup, _subgroups, club);
+                }
+                else
+                {
+                    participantsSort(ref subgroups, ref participants, ref lastAddedGroup, _subgroups);
+                }
+            }
+        }
+
         /// <summary>
         /// Формирование подгрупп
         /// </summary>
@@ -291,66 +368,91 @@ namespace TournamentSoftware
                 Button button = kategoriesButtons.Find(btn => btn.Tag.ToString().Equals(selectedKategory));
                 var rand = new Random();
 
-                Console.WriteLine("before");
-
-                participantsInKategory.ForEach(p => {
-                    Console.WriteLine(p.Participant.Name);
-                });
-
                 participantsInKategory = Shuffle(rand, participantsInKategory);
-                Console.WriteLine("after");
-                participantsInKategory.ForEach(p => {
-                    Console.WriteLine(p.Participant.Name);
-                });
 
                 List<ParticipantFormModel> posevParticipants = participantsInKategory.FindAll(p => p.Participant.Leader == true);
                 List<ParticipantFormModel> not_posevParticipants = participantsInKategory.FindAll(p => p.Participant.Leader == false);
 
-                Dictionary<string, List<ParticipantFormModel>> city_posev = filterParticipantsForCities(posevParticipants);
-                Dictionary<string, List<ParticipantFormModel>> city_not_posev = filterParticipantsForCities(not_posevParticipants);
-
-                foreach (KeyValuePair<string, List<ParticipantFormModel>> entry in city_posev)
+                // учет правила посевных бойцов
+                if (selectedRools.Contains("Правило посевных бойцов"))
                 {
-                    Dictionary<string, List<ParticipantFormModel>> club_posev = filterParticipantsForClubs(entry.Value);
-                    foreach (KeyValuePair<string, List<ParticipantFormModel>> participantsList in club_posev)
-                    {
-                        participantsList.Value.ForEach(participant =>
-                        {
-                            if (lastAddedGroup > _subgroups)
-                            {
-                                subgroups["1"].Add(participant);
-                                lastAddedGroup = 2;
-                            }
-                            else
-                            {
-                                subgroups[lastAddedGroup.ToString()].Add(participant);
-                                lastAddedGroup++;
-                            }
-                        }
-                        );
-                    }
+                    //Dictionary<string, List<ParticipantFormModel>> city_posev = filterParticipantsForCities(posevParticipants);
+                    //Dictionary<string, List<ParticipantFormModel>> city_not_posev = filterParticipantsForCities(not_posevParticipants);
+
+                    participantsSortWithRools(ref subgroups, ref posevParticipants, ref lastAddedGroup,_subgroups);
+
+                    participantsSortWithRools(ref subgroups, ref not_posevParticipants, ref lastAddedGroup, _subgroups);
+
+                    //foreach (KeyValuePair<string, List<ParticipantFormModel>> entry in city_posev)
+                    //{
+                    //    Dictionary<string, List<ParticipantFormModel>> club_posev = filterParticipantsForClubs(entry.Value);
+                    //    foreach (KeyValuePair<string, List<ParticipantFormModel>> participantsList in club_posev)
+                    //    {
+                    //        participantsList.Value.ForEach(participant =>
+                    //        {
+                    //            if (lastAddedGroup > _subgroups)
+                    //            {
+                    //                subgroups["1"].Add(participant);
+                    //                lastAddedGroup = 2;
+                    //            }
+                    //            else
+                    //            {
+                    //                subgroups[lastAddedGroup.ToString()].Add(participant);
+                    //                lastAddedGroup++;
+                    //            }
+                    //        }
+                    //        );
+                    //    }
+                    //}
+
+                    //foreach (KeyValuePair<string, List<ParticipantFormModel>> entry in city_not_posev)
+                    //{
+                    //    Dictionary<string, List<ParticipantFormModel>> club__not_posev = filterParticipantsForClubs(entry.Value);
+                    //    foreach (KeyValuePair<string, List<ParticipantFormModel>> participantsList in club__not_posev)
+                    //    {
+                    //        participantsList.Value.ForEach(participant =>
+                    //        {
+                    //            if (lastAddedGroup > _subgroups)
+                    //            {
+                    //                subgroups["1"].Add(participant);
+                    //                lastAddedGroup = 2;
+                    //            }
+                    //            else
+                    //            {
+                    //                subgroups[lastAddedGroup.ToString()].Add(participant);
+                    //                lastAddedGroup++;
+                    //            }
+                    //        }
+                    //        );
+                    //    }
+                    //}
                 }
-
-                foreach (KeyValuePair<string, List<ParticipantFormModel>> entry in city_not_posev)
+                else
                 {
-                    Dictionary<string, List<ParticipantFormModel>> club__not_posev = filterParticipantsForClubs(entry.Value);
-                    foreach (KeyValuePair<string, List<ParticipantFormModel>> participantsList in club__not_posev)
-                    {
-                        participantsList.Value.ForEach(participant =>
-                        {
-                            if (lastAddedGroup > _subgroups)
-                            {
-                                subgroups["1"].Add(participant);
-                                lastAddedGroup = 2;
-                            }
-                            else
-                            {
-                                subgroups[lastAddedGroup.ToString()].Add(participant);
-                                lastAddedGroup++;
-                            }
-                        }
-                        );
-                    }
+                    participantsSortWithRools(ref subgroups, ref participantsInKategory, ref lastAddedGroup, _subgroups);
+                    //Dictionary<string, List<ParticipantFormModel>> city = filterParticipantsForCities(participantsInKategory);
+
+                    //foreach (KeyValuePair<string, List<ParticipantFormModel>> entry in city)
+                    //{
+                    //    Dictionary<string, List<ParticipantFormModel>> club_posev = filterParticipantsForClubs(entry.Value);
+                    //    foreach (KeyValuePair<string, List<ParticipantFormModel>> participantsList in club_posev)
+                    //    {
+                    //        participantsList.Value.ForEach(participant =>
+                    //        {
+                    //            if (lastAddedGroup > _subgroups)
+                    //            {
+                    //                subgroups["1"].Add(participant);
+                    //                lastAddedGroup = 2;
+                    //            }
+                    //            else
+                    //            {
+                    //                subgroups[lastAddedGroup.ToString()].Add(participant);
+                    //                lastAddedGroup++;
+                    //            }
+                    //        }
+                    //        );
+                    //    }
+                    //}
                 }
 
                 setSubgroups(subgroups);
@@ -361,7 +463,7 @@ namespace TournamentSoftware
             }
         }
 
-        private Dictionary<string, List<ParticipantFormModel>> filterParticipantsForCities(List<ParticipantFormModel> participants)
+        private static Dictionary<string, List<ParticipantFormModel>> filterParticipantsForCities(List<ParticipantFormModel> participants)
         {
             Dictionary<string, List<ParticipantFormModel>> participantsForCities = new Dictionary<string, List<ParticipantFormModel>>();
             participants.ForEach(participant =>
@@ -381,7 +483,7 @@ namespace TournamentSoftware
             return participantsForCities;
         }
 
-        private Dictionary<string, List<ParticipantFormModel>> filterParticipantsForClubs(List<ParticipantFormModel> participants)
+        private static Dictionary<string, List<ParticipantFormModel>> filterParticipantsForClubs(List<ParticipantFormModel> participants)
         {
             Dictionary<string, List<ParticipantFormModel>> participantsForClubs = new Dictionary<string, List<ParticipantFormModel>>();
             participants.ForEach(participant =>
