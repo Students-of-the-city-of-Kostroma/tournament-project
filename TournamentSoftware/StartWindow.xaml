@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TournamentSoftware"
         mc:Ignorable="d"
-          Title="Турнирный софт"   Height="513.9" Width="1209.4" Loaded="startWindow_Loaded">
+          Title="Турнирный софт"   Height="513.9" Width="1209.4" Loaded="startWindow_Loaded" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid x:Name="startWindowGrid" HorizontalAlignment="Stretch" Margin="10,0,0,0" VerticalAlignment="Stretch"  ShowGridLines="True">
             <Grid.ColumnDefinitions>

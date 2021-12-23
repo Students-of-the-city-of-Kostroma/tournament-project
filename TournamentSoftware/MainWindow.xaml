@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TournamentSoftware"
         mc:Ignorable="d"
-        Title="Турнирный софт" Height="513.9" Width="1209.4" Loaded="mainWindow_Loaded" Closing="mainWindow_Closing">
+        Title="Турнирный софт" Height="513.9" Width="1209.4" Loaded="mainWindow_Loaded" Closing="mainWindow_Closing" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="692*"/>
@@ -26,7 +26,7 @@
                     Margin="0,366,0,0" VerticalAlignment="Top" Padding="5" Height="30" 
                     IsEnabled="true" Width="120" Click="goTournament_Click">
                 <Button.Background>
-                    <ImageBrush ImageSource="D:\ыыыыыы\tournament-project\images\button_tournament.png"/>
+                    <ImageBrush ImageSource="images/button_tournament.png"/>
                 </Button.Background>
             </Button>
             <Button x:Name="loadFromFile" 
@@ -37,17 +37,17 @@
                     Padding="5" Height="30" Width="120" 
                     Click="OpenExcel_Click">
                 <Button.Background>
-                    <ImageBrush ImageSource="D:\ыыыыыы\tournament-project\images\button_download.png"/>
+                    <ImageBrush ImageSource="images/button_download.png"/>
                 </Button.Background>
             </Button>
             <Button x:Name="add" Content="" Grid.Column="1" HorizontalAlignment="Center" Margin="0,156,0,0" VerticalAlignment="Top" Padding="5" Height="30" Width="120" Click="addParticipant">
                 <Button.Background>
-                    <ImageBrush ImageSource="D:\ыыыыыы\tournament-project\images\button_add.png"/>
+                    <ImageBrush ImageSource="images/button_add.png"/>
                 </Button.Background>
             </Button>
             <Button x:Name="delete" Content="" Grid.Column="1" HorizontalAlignment="Center" Margin="20,261,20,0" VerticalAlignment="Top" Padding="5" Height="30" Width="120" Click="deleteParticipant" Style="{DynamicResource DelStyle}" IsEnabled="False">
                 <Button.Background>
-                    <ImageBrush ImageSource="D:\ыыыыыы\tournament-project\images\button_del.png"/>
+                    <ImageBrush ImageSource="images/button_del.png"/>
                 </Button.Background>
             </Button>
             <DataGrid x:Name="registrationTable" 
@@ -356,7 +356,7 @@
                 HorizontalAlignment="Center" Margin="20,226,20,0" 
                     VerticalAlignment="Top" Padding="5" Height="30" Width="120">
                 <Button.Background>
-                    <ImageBrush ImageSource="D:\ыыыыыы\tournament-project\images\button_mainscreen.png"/>
+                    <ImageBrush ImageSource="images/button_mainscreen.png"/>
                 </Button.Background>
             </Button>
             <Button x:Name="exportButton" 
@@ -365,7 +365,7 @@
                     VerticalAlignment="Top" Padding="5" Height="30" Width="120" 
                     Click="saveFile" IsEnabled="False">
                 <Button.Background>
-                    <ImageBrush ImageSource="D:\ыыыыыы\tournament-project\images\button_savelist.png"/>
+                    <ImageBrush ImageSource="images/button_savelist.png"/>
                 </Button.Background>
             </Button>
             <Button x:Name="viewSettingsButton" 
@@ -392,7 +392,7 @@
                     </Style>
                 </Button.Resources>
                 <Button.Background>
-                    <ImageBrush ImageSource="D:\ыыыыыы\tournament-project\images\burger_menu.png"/>
+                    <ImageBrush ImageSource="images/burger_menu.png"/>
                 </Button.Background>
             </Button>
         </Grid >
