@@ -212,29 +212,30 @@ namespace TournamentSoftware
 
         private void readRegistrationFromBackup()
         {
-            if (File.Exists(registrationBackupPath))
+            if (!File.Exists(registrationBackupPath))
+                return;
+            
+            List<ParticipantFormModel> participants = registrator.getParticipantsFromBackup(registrationBackupPath);
+            if (participants != null && participants.Count > 0)
             {
-                List<ParticipantFormModel> participants = registrator.getParticipantsFromBackup(registrationBackupPath);
-                if (participants != null && participants.Count > 0)
+                foreach (ParticipantFormModel participant in participants)
                 {
-                    foreach (ParticipantFormModel participant in participants)
+                    participantsList.Add(participant);
+                    if (participant.Nominations.Count > 0)
                     {
-                        participantsList.Add(participant);
-                        if (participant.Nominations.Count > 0)
+                        foreach (string nomination in participant.Nominations.Keys)
                         {
-                            foreach (string nomination in participant.Nominations.Keys)
+                            addNominationColumn(nomination);
+                            if (!registrator.nominationsNames.Contains(nomination))
                             {
-                                addNominationColumn(nomination);
-                                if (!registrator.nominationsNames.Contains(nomination))
-                                {
-                                    registrator.nominationsNames.Add(nomination);
-                                }
+                                registrator.nominationsNames.Add(nomination);
                             }
                         }
                     }
-                    exportButton.IsEnabled = true;
                 }
+                exportButton.IsEnabled = true;
             }
+
         }
 
         private void mainWindow_Loaded(object sender, RoutedEventArgs e)
