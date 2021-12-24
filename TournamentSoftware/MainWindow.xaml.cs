@@ -235,33 +235,32 @@ namespace TournamentSoftware
                 }
                 exportButton.IsEnabled = true;
             }
-
         }
 
         private void mainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             participantsList = new ObservableCollection<ParticipantFormModel>();
 
-            if (File.Exists(appStateJsonPath))
-            {
-                // проверяем на каком этапе закрылось приложение в прошлый раз
-                StreamReader r = new StreamReader(appStateJsonPath);
-                string json = r.ReadToEnd();
-                appState = JsonConvert.DeserializeObject<ApplicationState>(json);
-                TournamentNameTextBox.Text = appState.TournamentName;
-                // если закончили на этапе регистрации
-                if (!appState.isRegistrationComplited)
-                {
-                    readRegistrationFromBackup();
-                    registrationTable.ItemsSource = participantsList;
-                }
-                // если остановились на турнирной сетке
-                else if (!appState.IsTournamentComplited)
-                {
+            if (!File.Exists(appStateJsonPath))
+                return;
 
-                }
-                r.Close();
+            // проверяем на каком этапе закрылось приложение в прошлый раз
+            StreamReader r = new StreamReader(appStateJsonPath);
+            string json = r.ReadToEnd();
+            appState = JsonConvert.DeserializeObject<ApplicationState>(json);
+            TournamentNameTextBox.Text = appState.TournamentName;
+            // если закончили на этапе регистрации
+            if (!appState.isRegistrationComplited)
+            {
+                readRegistrationFromBackup();
+                registrationTable.ItemsSource = participantsList;
             }
+            // если остановились на турнирной сетке
+            else if (!appState.IsTournamentComplited)
+            {
+
+            }
+            r.Close();
         }
 
         /// <summary>
