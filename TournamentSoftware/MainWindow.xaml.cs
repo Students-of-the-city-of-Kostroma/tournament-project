@@ -212,25 +212,28 @@ namespace TournamentSoftware
 
         private void readRegistrationFromBackup()
         {
-            List<ParticipantFormModel> participants = registrator.getParticipantsFromBackup(registrationBackupPath);
-            if (participants != null && participants.Count > 0)
+            if (File.Exists(registrationBackupPath))
             {
-                foreach (ParticipantFormModel participant in participants)
+                List<ParticipantFormModel> participants = registrator.getParticipantsFromBackup(registrationBackupPath);
+                if (participants != null && participants.Count > 0)
                 {
-                    participantsList.Add(participant);
-                    if (participant.Nominations.Count > 0)
+                    foreach (ParticipantFormModel participant in participants)
                     {
-                        foreach (string nomination in participant.Nominations.Keys)
+                        participantsList.Add(participant);
+                        if (participant.Nominations.Count > 0)
                         {
-                            addNominationColumn(nomination);
-                            if (!registrator.nominationsNames.Contains(nomination))
+                            foreach (string nomination in participant.Nominations.Keys)
                             {
-                                registrator.nominationsNames.Add(nomination);
+                                addNominationColumn(nomination);
+                                if (!registrator.nominationsNames.Contains(nomination))
+                                {
+                                    registrator.nominationsNames.Add(nomination);
+                                }
                             }
                         }
                     }
+                    exportButton.IsEnabled = true;
                 }
-                exportButton.IsEnabled = true;
             }
         }
 
@@ -238,23 +241,26 @@ namespace TournamentSoftware
         {
             participantsList = new ObservableCollection<ParticipantFormModel>();
 
-            // проверяем на каком этапе закрылось приложение в прошлый раз
-            StreamReader r = new StreamReader(appStateJsonPath);
-            string json = r.ReadToEnd();
-            appState = JsonConvert.DeserializeObject<ApplicationState>(json);
-            TournamentNameTextBox.Text = appState.TournamentName;
-            // если закончили на этапе регистрации
-            if (!appState.isRegistrationComplited)
+            if (File.Exists(appStateJsonPath))
             {
-                readRegistrationFromBackup();
-                registrationTable.ItemsSource = participantsList;
-            }
-            // если остановились на турнирной сетке
-            else if (!appState.IsTournamentComplited)
-            {
+                // проверяем на каком этапе закрылось приложение в прошлый раз
+                StreamReader r = new StreamReader(appStateJsonPath);
+                string json = r.ReadToEnd();
+                appState = JsonConvert.DeserializeObject<ApplicationState>(json);
+                TournamentNameTextBox.Text = appState.TournamentName;
+                // если закончили на этапе регистрации
+                if (!appState.isRegistrationComplited)
+                {
+                    readRegistrationFromBackup();
+                    registrationTable.ItemsSource = participantsList;
+                }
+                // если остановились на турнирной сетке
+                else if (!appState.IsTournamentComplited)
+                {
 
+                }
+                r.Close();
             }
-            r.Close();
         }
 
         /// <summary>
