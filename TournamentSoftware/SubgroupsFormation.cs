@@ -33,6 +33,7 @@ namespace TournamentSoftware
         private Button goNextButton = new Button();
         SolidColorBrush yellow = new SolidColorBrush(Color.FromRgb(255, 215, 0));
         SolidColorBrush white = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+        public Dictionary<string, List<ParticipantFormModel>> subgroups = new Dictionary<string, List<ParticipantFormModel>>();
 
         // получаем список катерогий
         public Dictionary<string, Dictionary<string, List<ParticipantFormModel>>> getKategories(ObservableCollection<ParticipantFormModel> participants)
@@ -354,7 +355,7 @@ namespace TournamentSoftware
             int _countInKategory = int.Parse(countInKategory.Content.ToString());
             if (_countInKategory > 0 && _subgroups > 0 && _countInKategory / _subgroups >= 2)
             {
-                Dictionary<string, List<ParticipantFormModel>> subgroups = new Dictionary<string, List<ParticipantFormModel>>();
+               
                 for (int i = 1; i <= _subgroups; i++)
                 {
                     subgroups.Add(i.ToString(), new List<ParticipantFormModel>());

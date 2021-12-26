@@ -92,6 +92,7 @@
     <Compile Include="ApplicationState.cs" />
     <Compile Include="Club.cs" />
     <Compile Include="DatabaseHandler.cs" />
+    <Compile Include="DbConnection.cs" />
     <Compile Include="ErrorListWindow.xaml.cs">
       <DependentUpon>ErrorListWindow.xaml</DependentUpon>
     </Compile>
@@ -165,6 +166,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="db.db" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

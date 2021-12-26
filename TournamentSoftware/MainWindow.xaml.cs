@@ -437,7 +437,7 @@ namespace TournamentSoftware
                 cellStyle.Setters.Add(new Setter()
                 {
                     Property = BackgroundProperty,
-                    Value = (Brush) new BrushConverter().ConvertFrom("#F5F1DA")
+                    Value = (Brush)new BrushConverter().ConvertFrom("#F5F1DA")
                 });
                 n.CellStyle = cellStyle;
 
@@ -446,7 +446,7 @@ namespace TournamentSoftware
                 checkBox.SetValue(CheckBox.HorizontalAlignmentProperty, HorizontalAlignment.Center);
                 checkBox.SetValue(CheckBox.VerticalAlignmentProperty, VerticalAlignment.Center);
                 DataTemplate checkBoxTemplate = new DataTemplate();
-               checkBoxTemplate.VisualTree = checkBox;
+                checkBoxTemplate.VisualTree = checkBox;
                 n.CellTemplate = checkBoxTemplate;
                 //n.CellTemplate.VisualTree.AppendChild(checkBox);
                 registrationTable.Columns.Add(n);
@@ -534,7 +534,8 @@ namespace TournamentSoftware
                     count++;
                 }
             }
-            else {
+            else
+            {
                 errors.Add("Добавьте хотябы 1 номинацию");
             }
             if (TournamentNameTextBox.Text.Equals(""))
@@ -618,7 +619,8 @@ namespace TournamentSoftware
                 goTournament.Visibility = Visibility.Hidden;
                 isPanelOpen = false;
             }
-            else {
+            else
+            {
                 appGrid.ColumnDefinitions[1].Width = new GridLength(160);
                 exportButton.Visibility = Visibility.Visible;
                 TournamentNameLabel.Visibility = Visibility.Visible;
@@ -671,6 +673,64 @@ namespace TournamentSoftware
 
         private void сreateTournamentGrid(object sender, RoutedEventArgs e)
         {
+            DataBaseHandler dataBaseHandler = new DataBaseHandler();
+
+            Dictionary<string, Dictionary<string, List<ParticipantFormModel>>> nominations = subgroupsFormation.kategoryGroups;
+
+            TournamentGrid tournamentGrid = new TournamentGrid();
+            tournamentGrid.Name = TournamentNameLabel.Content.ToString();
+            tournamentGrid.Type = "type";
+            DateTime today = DateTime.Today;
+            tournamentGrid.Date = today;
+
+            dataBaseHandler.AddTournamentGrid(tournamentGrid);
+
+
+            // номинации
+            foreach (KeyValuePair<string, Dictionary<string, List<ParticipantFormModel>>> keyValuePair in nominations)
+            {
+                Nomination nomination = new Nomination();
+                nomination.Name = keyValuePair.Key;
+                dataBaseHandler.AddNomination(nomination);
+            }
+
+
+            // категории
+            foreach (KeyValuePair<string, Dictionary<string, List<ParticipantFormModel>>> keyValuePair in nominations)
+            {
+                Dictionary<string, List<ParticipantFormModel>> kategory = keyValuePair.Value;
+                foreach (KeyValuePair<string, List<ParticipantFormModel>> keyValuePair1 in kategory)
+                {
+                    Category category = new Category();
+                    category.Name = keyValuePair1.Key;
+                    dataBaseHandler.AddCategory(category);
+                }
+            }
+
+            // добавление групп 
+            Dictionary<string, List<ParticipantFormModel>> subgroups = subgroupsFormation.subgroups;
+            foreach (KeyValuePair<string, List<ParticipantFormModel>> keyValue in subgroups) {
+                Group g = new Group();
+                g.Name = keyValue.Key;
+                dataBaseHandler.AddGroup(g);
+            }
+
+            // добавление клубов
+            for (int i = 0; i < participantsList.Count; i++)
+            {
+                Club c = new Club();
+                c.City = participantsList[i].City;
+                c.Name = participantsList[i].Club;
+                dataBaseHandler.AddClub(c);
+            }
+
+            // добавление участников
+            for (int i = 0; i < participantsList.Count; i++) {
+                Participant p = participantsList[i].Participant;
+                dataBaseHandler.AddParticipant(p);
+            }
+
+            
             TournamentGridWindow tournamentGridWindow = new TournamentGridWindow();
             tournamentGridWindow.Show(subgroupsFormation.kategoryGroups);
             this.Close();
