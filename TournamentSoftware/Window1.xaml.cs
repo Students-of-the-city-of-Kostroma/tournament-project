@@ -327,7 +327,7 @@ namespace TournamentSoftware
         {
             Name = "",
             Id = 0,
-            ParticipantId = 0,
+            //ParticipantId = 0,
         };
         private bool _isSelected;
 

@@ -81,12 +81,12 @@ namespace TournamentSoftware
             return participants;
         }
 
-        public List<Judge> getJudgesFromBackup(string path)
+        public List<JudgeFormModel> getJudgesFromBackup(string path)
         {
             StreamReader reader = new StreamReader(path);
             string json = reader.ReadToEnd();
-            var judges = new List<Judge>();
-            judges = JsonConvert.DeserializeObject<List<Judge>>(json);
+            var judges = new List<JudgeFormModel>();
+            judges = JsonConvert.DeserializeObject<List<JudgeFormModel>>(json);
             reader.Close();
             return judges;
         }
