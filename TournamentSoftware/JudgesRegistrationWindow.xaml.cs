@@ -10,7 +10,7 @@ namespace TournamentSoftware
     /// </summary>
     public partial class JudgesRegistrationWindow : Window
     {
-        public static ObservableCollection<Judge> judgesList = new ObservableCollection<Judge>();
+        public static ObservableCollection<JudgeFormModel> judgesList = new ObservableCollection<JudgeFormModel>();
         private ParticipantsReagistrator reagistrator = new ParticipantsReagistrator();
         private string judgesBackupPath = "..\\..\\judgesBackup.json";
         private bool isJudgesSaved = false;
@@ -34,7 +34,7 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void addJude (object sender, RoutedEventArgs e)
         {
-            Judge jude = new Judge
+            JudgeFormModel jude = new JudgeFormModel
             {
                 Name = "",
                 Surname = "",
@@ -91,10 +91,10 @@ namespace TournamentSoftware
             if (!isJudgesSaved)
             {
                 judgesList.Clear();
-                List<Judge> judges = reagistrator.getJudgesFromBackup(judgesBackupPath);
+                List<JudgeFormModel> judges = reagistrator.getJudgesFromBackup(judgesBackupPath);
                 if (judges != null)
                 {
-                    foreach (Judge j in judges)
+                    foreach (JudgeFormModel j in judges)
                     {
                         judgesList.Add(j);
                     }
