@@ -2,18 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace TournamentSoftware
 {
@@ -27,11 +20,12 @@ namespace TournamentSoftware
             InitializeComponent();
         }
 
-        private ObservableCollection<Nomination> nominationsList = new ObservableCollection<Nomination>();
-        private ObservableCollection<Nomination> deletedNominations = new ObservableCollection<Nomination>();
+        private ObservableCollection<NominationFormModel> nominationsList = new ObservableCollection<NominationFormModel>();
         private List<CheckBox> checkBoxes = new List<CheckBox>();
         ObservableCollection<DataGridColumn> mainWindowColumns = ((MainWindow)Application.Current.MainWindow).registrationTable.Columns;
-        ObservableCollection<DataGridCheckBoxColumn> mainNominationsColumns = ((MainWindow)Application.Current.MainWindow).nominationsColumn;
+        ObservableCollection<DataGridTemplateColumn> mainNominationsColumns = ((MainWindow)Application.Current.MainWindow).nominationsColumn;
+        ObservableCollection<ParticipantFormModel> participants = MainWindow.participantsList;
+        private List<NominationFormModel> nominationsForDelete = new List<NominationFormModel>();
 
         /// <summary>
         /// Закрываем окно настроек
@@ -58,7 +52,7 @@ namespace TournamentSoftware
                 {
                     if (mainWindowColumns[j].Header.Equals(checkBoxes[i].Content))
                     {
-                        if (checkBoxes[i].IsChecked == true)
+                        if (checkBoxes[i].IsChecked == false)
                         {
                             mainWindowColumns[j].Visibility = Visibility.Hidden;
                             break;
@@ -70,35 +64,49 @@ namespace TournamentSoftware
                         }
                     }
                 }
-
-                if (checkBoxes[i].IsChecked == true)
-                {
-                    for (int j = 1; j < mainWindowColumns.Count; j++)
-                    {
-                        if (mainWindowColumns[j].Header.Equals(checkBoxes[i].Content))
-                        {
-                            mainWindowColumns[j].Visibility = Visibility.Hidden;
-                            break;
-                        }
-                    }
-                }
             }
 
             // добавляем новые номинации в таблицу регистрации
             for (int i = 0; i < nominationsList.Count; i++)
             {
-                DataGridCheckBoxColumn dataGridCheckBoxColumn = new DataGridCheckBoxColumn();
-                string nominationName = nominationsList[i].NominationName;
-                // nominationsList.Remove(nominationsList[i]);
+                DataGridTemplateColumn nominationColumn = new DataGridTemplateColumn();
+                string nominationName = nominationsList[i].Nomination.Name;
                 if (checkNominationNameValid(nominationName))
                 {
                     if (!checkNominationAlreadyExists(nominationName))
                     {
-                        dataGridCheckBoxColumn.Header = nominationName;
-                        dataGridCheckBoxColumn.CanUserResize = false;
-                        dataGridCheckBoxColumn.Width = new DataGridLength(1,DataGridLengthUnitType.Star);
-                        mainNominationsColumns.Add(dataGridCheckBoxColumn);
-                        mainWindowColumns.Add(dataGridCheckBoxColumn);
+                        nominationColumn.Header = nominationName;
+                        nominationColumn.CanUserResize = false;
+                        nominationColumn.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
+
+                        Binding bind = new Binding("Nominations[" + nominationName + "]");
+                        bind.Mode = BindingMode.TwoWay;
+
+                        var cellStyle = new Style(typeof(DataGridCell));
+                        cellStyle.Setters.Add(new Setter()
+                        {
+                            Property = BackgroundProperty,
+                            Value = (Brush)new BrushConverter().ConvertFrom("#F5F1DA")
+                        });
+                        nominationColumn.CellStyle = cellStyle;
+
+                        FrameworkElementFactory checkBox = new FrameworkElementFactory(typeof(CheckBox));
+                        checkBox.SetBinding(CheckBox.IsCheckedProperty, bind);
+                        checkBox.SetValue(CheckBox.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+                        checkBox.SetValue(CheckBox.VerticalAlignmentProperty, VerticalAlignment.Center);
+                        DataTemplate checkBoxTemplate = new DataTemplate();
+                        checkBoxTemplate.VisualTree = checkBox;
+
+                        nominationColumn.CellTemplate = checkBoxTemplate;
+
+                        foreach (ParticipantFormModel p in participants)
+                        {
+                            p.Nominations.Add(nominationName, false);
+                        }
+
+                        mainNominationsColumns.Add(nominationColumn);
+                        mainWindowColumns.Add(nominationColumn);
+                        MainWindow.GetReagistrator.nominationsNames.Add(nominationName);
                     }
 
                 }
@@ -111,31 +119,38 @@ namespace TournamentSoftware
             }
 
             // удаляем номинации из таблицы регистрации
-            for (int i = 0; i < deletedNominations.Count; i++)
+            for (int i = 0; i < nominationsForDelete.Count; i++)
             {
                 for (int j = 0; j < mainNominationsColumns.Count; j++)
                 {
-                    if (deletedNominations[i].NominationName.Equals(mainNominationsColumns[j].Header))
+                    string nominationName = nominationsForDelete[i].Nomination.Name;
+                    // находим удаляемую колонку и удаляем из таблицы
+                    if (nominationName.Equals(mainNominationsColumns[j].Header))
                     {
-                        Console.WriteLine("delete " + deletedNominations[i].NominationName);
                         mainWindowColumns.Remove(mainNominationsColumns[j]);
-                        // mainNominationsColumns.Remove(mainNominationsColumns[j]);
+                        // удаляем номинации у участников
+                        foreach (ParticipantFormModel p in participants)
+                        {
+                            p.Nominations.Remove(nominationName);
+                        }
+                        MainWindow.GetReagistrator.nominationsNames.Remove(nominationName);
                     }
                 }
             }
 
-            for (int i = 0; i < deletedNominations.Count; i++)
+            for (int i = 0; i < nominationsForDelete.Count; i++)
             {
                 for (int j = 0; j < mainNominationsColumns.Count; j++)
                 {
-                    if (deletedNominations[i].NominationName.Equals(mainNominationsColumns[j].Header))
+                    if (nominationsForDelete[i].Nomination.Name.Equals(mainNominationsColumns[j].Header))
                     {
                         mainNominationsColumns.Remove(mainNominationsColumns[j]);
                     }
                 }
             }
 
-            deletedNominations.Clear();
+            nominationsList.Clear();
+            nominationsForDelete.Clear();
 
             this.Close();
         }
@@ -147,13 +162,6 @@ namespace TournamentSoftware
         /// <returns></returns>
         private bool checkNominationAlreadyExists(string nominationName)
         {
-            //for (int i = 0; i < nominationsList.Count; i++) 
-            //{
-            //    if (nominationsList[i].NominationName.Equals(nominationName)) {
-            //        return true;
-            //    }
-            //}
-
             for (int i = 0; i < mainNominationsColumns.Count; i++)
             {
                 if (mainNominationsColumns[i].Header.Equals(nominationName))
@@ -200,9 +208,8 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void addNomination(object sender, RoutedEventArgs e)
         {
-            Nomination nomination = new Nomination()
+            NominationFormModel nomination = new NominationFormModel()
             {
-                NominationName = "",
                 IsSelected = false,
             };
 
@@ -221,16 +228,15 @@ namespace TournamentSoftware
             {
                 if (nominationsList[i].IsSelected)
                 {
-                    Console.WriteLine("name = 6" + nominationsList[i].NominationName);
-                    deletedNominations.Add(nominationsList[i]);
+                    nominationsForDelete.Add(nominationsList[i]);
                     nominationsList.Remove(nominationsList[i]);
-                    
                 }
                 else
                 {
                     i++;
                 }
             }
+            nominationsGrid.ItemsSource = nominationsList;
         }
 
         /// <summary>
@@ -259,16 +265,6 @@ namespace TournamentSoftware
             }
         }
 
-        private void nominationUnchecked(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void nominationChecked(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void settingsWindow_Loaded(object sender, RoutedEventArgs e)
         {
             // загружаем чекбоксы для скрытия столбцов
@@ -277,43 +273,68 @@ namespace TournamentSoftware
                 CheckBox checkBox = new CheckBox();
                 checkBox.IsChecked = false;
                 checkBox.Content = mainWindowColumns[i].Header;
-                if (mainWindowColumns[i].Visibility == Visibility.Hidden)
+                if (mainWindowColumns[i].Visibility == Visibility.Visible)
                 {
                     checkBox.IsChecked = true;
                 }
-                checkBox.Checked += CheckBox_Checked;
                 checkBoxes.Add(checkBox);
                 columnsNames.Items.Add(checkBox);
             }
 
+            // загружаем столбцы номинаций
             for (int i = 0; i < mainNominationsColumns.Count; i++)
             {
                 Nomination nomination = new Nomination()
                 {
-                    NominationName = mainNominationsColumns[i].Header.ToString(),
-                    IsSelected = false,
+                    Name = mainNominationsColumns[i].Header.ToString(),
                 };
 
-                nominationsList.Add(nomination);
+                NominationFormModel nominationFormModel = new NominationFormModel()
+                {
+                    IsSelected = false,
+                    Nomination = nomination,
+                };
+
+                nominationsList.Add(nominationFormModel);
                 nominationsGrid.ItemsSource = nominationsList;
             }
         }
 
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Чекбокс у номинации установлен
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void nominationSelected(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// Чекбокс у номинации убран
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void nominationUnselected(object sender, RoutedEventArgs e)
         {
 
         }
     }
 
-    public class Nomination : INotifyPropertyChanged
+    public class NominationFormModel : INotifyPropertyChanged
     {
-        private string _nominationName;
+        private Nomination _nomination = new Nomination()
+        {
+            Name = "",
+            Id = 0,
+            ParticipantId = 0,
+        };
         private bool _isSelected;
 
-        public string NominationName
+        public Nomination Nomination
         {
-            get { return _nominationName; }
-            set { _nominationName = value; OnPropertyChanged("NominationName"); }
+            get { return _nomination; }
+            set { _nomination = value; OnPropertyChanged("Nomination"); }
         }
 
         public bool IsSelected
