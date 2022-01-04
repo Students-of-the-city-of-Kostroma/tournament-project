@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
+using static TournamentSoftware.ApplicationResourcesPaths;
 
 namespace TournamentSoftware
 {
@@ -12,7 +12,6 @@ namespace TournamentSoftware
     {
         public static ObservableCollection<Judge> judgesList = new ObservableCollection<Judge>();
         private ParticipantsReagistrator reagistrator = new ParticipantsReagistrator();
-        private string judgesBackupPath = "judgesBackup.json";
         private bool isJudgesSaved = false;
 
         public bool JudesSaved
