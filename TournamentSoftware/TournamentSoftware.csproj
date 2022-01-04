@@ -89,6 +89,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ApplicationResourcesPaths.cs" />
     <Compile Include="ApplicationState.cs" />
     <Compile Include="Club.cs" />
     <Compile Include="DatabaseHandler.cs" />

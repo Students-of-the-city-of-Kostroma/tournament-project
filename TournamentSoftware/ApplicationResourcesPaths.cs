@@ -2,9 +2,27 @@
 {
     public class ApplicationResourcesPaths
     {
-        public static string appStateJsonPath = "app.json";
-        public static string dataBasePath = "db.db";
-        public static string registrationBackupPath = "registrationBackup.json";
-        public static string judgesBackupPath = "judgesBackup.json";
+        public const string appStateJsonPath = "app.json";
+        public const string dataBasePath = "db.db";
+        public const string registrationBackupPath = "registrationBackup.json";
+        public const string judgesBackupPath = "judgesBackup.json";
+    }
+
+    public class ApplicationStringValues
+    {
+        public const string name = "Имя";
+        public const string surname = "Фамилия";
+        public const string patronymic = "Отчество";
+        public const string pseudonym = "Псевдоним";
+        public const string leader = "Посевной";
+        public const string sex = "Пол";
+        public const string height = "Рост";
+        public const string weight = "Вес";
+        public const string commonRating = "Рейтинг (общий)";
+        public const string clubRating = "Рейтинг (клубный)";
+        public const string club = "Клуб";
+        public const string city = "Город";
+        public const string category = "Категория";
+        public const string dateOfBirth = "Год рождения";
     }
 }

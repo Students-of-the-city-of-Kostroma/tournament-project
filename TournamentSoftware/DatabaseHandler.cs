@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite;
+using static TournamentSoftware.ApplicationResourcesPaths;
 
 namespace TournamentSoftware
 {
@@ -13,7 +14,7 @@ namespace TournamentSoftware
 
         public DataBaseHandler()
         {
-            _db = new SQLiteConnection(MainWindow.dataBasePath);
+            _db = new SQLiteConnection(dataBasePath);
             _db.CreateTable<Participant>();
             _db.CreateTable<Club>();
             _db.CreateTable<TournamentGrid>();
