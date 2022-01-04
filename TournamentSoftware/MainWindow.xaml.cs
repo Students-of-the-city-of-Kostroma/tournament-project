@@ -19,9 +19,9 @@ namespace TournamentSoftware
     {
         public static ObservableCollection<ParticipantFormModel> participantsList = new ObservableCollection<ParticipantFormModel>();
         public ObservableCollection<DataGridTemplateColumn> nominationsColumn = new ObservableCollection<DataGridTemplateColumn>();
-        public static string appStateJsonPath = "..\\..\\app.json";
-        public static string dataBasePath = "..\\..\\db.db";
-        public static string registrationBackupPath = "..\\..\\registrationBackup.json";
+        public static string appStateJsonPath = "app.json";
+        public static string dataBasePath = "db.db";
+        public static string registrationBackupPath = "registrationBackup.json";
         private SubgroupsFormation subgroupsFormation;
         private static ParticipantsReagistrator registrator = new ParticipantsReagistrator();
         public ApplicationState appState = new ApplicationState();

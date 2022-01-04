@@ -12,7 +12,7 @@ namespace TournamentSoftware
     {
         public static ObservableCollection<Judge> judgesList = new ObservableCollection<Judge>();
         private ParticipantsReagistrator reagistrator = new ParticipantsReagistrator();
-        private string judgesBackupPath = "..\\..\\judgesBackup.json";
+        private string judgesBackupPath = "judgesBackup.json";
         private bool isJudgesSaved = false;
 
         public bool JudesSaved
