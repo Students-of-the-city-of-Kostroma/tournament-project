@@ -141,7 +141,7 @@ namespace TournamentSoftware
                 exportButton.IsEnabled = false;
             }
 
-            delete.IsEnabled = false;
+            deleteParticipantButton.IsEnabled = false;
             selectorAllForDelete_Unchecked(sender, e);
         }
 
@@ -167,7 +167,7 @@ namespace TournamentSoftware
             {
                 participantsList[i].IsSelected = false;
             }
-            delete.IsEnabled = false;
+            deleteParticipantButton.IsEnabled = false;
             DataGridColumn newCol = checkboxCol;
             registrationTable.Columns.Remove(checkboxCol);
             registrationTable.Columns.Insert(0, newCol);
@@ -184,7 +184,7 @@ namespace TournamentSoftware
             {
                 participantsList[i].IsSelected = true;
             }
-            delete.IsEnabled = true;
+            deleteParticipantButton.IsEnabled = true;
         }
 
         /// <summary>
@@ -265,7 +265,7 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void participantChecked(object sender, RoutedEventArgs e)
         {
-            delete.IsEnabled = true;
+            deleteParticipantButton.IsEnabled = true;
         }
 
         /// <summary>
@@ -287,7 +287,7 @@ namespace TournamentSoftware
 
             if (selectedCount == 0)
             {
-                delete.IsEnabled = false;
+                deleteParticipantButton.IsEnabled = false;
             }
         }
 
@@ -610,11 +610,11 @@ namespace TournamentSoftware
                 exportButton.Visibility = Visibility.Hidden;
                 TournamentNameLabel.Visibility = Visibility.Hidden;
                 TournamentNameTextBox.Visibility = Visibility.Hidden;
-                add.Visibility = Visibility.Hidden;
+                addParticipantButton.Visibility = Visibility.Hidden;
                 loadFromFile.Visibility = Visibility.Hidden;
-                delete.Visibility = Visibility.Hidden;
+                deleteParticipantButton.Visibility = Visibility.Hidden;
                 viewSettingsButton.Visibility = Visibility.Hidden;
-                goHome.Visibility = Visibility.Hidden;
+                goHomeButton.Visibility = Visibility.Hidden;
                 goTournament.Visibility = Visibility.Hidden;
                 isPanelOpen = false;
             }
@@ -623,11 +623,11 @@ namespace TournamentSoftware
                 exportButton.Visibility = Visibility.Visible;
                 TournamentNameLabel.Visibility = Visibility.Visible;
                 TournamentNameTextBox.Visibility = Visibility.Visible;
-                add.Visibility = Visibility.Visible;
+                addParticipantButton.Visibility = Visibility.Visible;
                 loadFromFile.Visibility = Visibility.Visible;
-                delete.Visibility = Visibility.Visible;
+                deleteParticipantButton.Visibility = Visibility.Visible;
                 viewSettingsButton.Visibility = Visibility.Visible;
-                goHome.Visibility = Visibility.Visible;
+                goHomeButton.Visibility = Visibility.Visible;
                 goTournament.Visibility = Visibility.Visible;
                 isPanelOpen = true;
             }
