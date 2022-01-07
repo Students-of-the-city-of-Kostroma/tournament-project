@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:TournamentSoftware"
         mc:Ignorable="d"
         Title="Турнирный софт"
-        Height="513.9" 
-        Width="1209.4" 
+        Height="513" 
+        Width="1209" 
         Loaded="mainWindow_Loaded" 
         Closing="mainWindow_Closing">
     <Grid>
@@ -29,7 +29,7 @@
                     Height="30" 
                     IsEnabled="true" 
                     Width="120" 
-                    Click="goTournament_Click">
+                    Click="GoTournament_Click">
                 <Button.Background>
                     <ImageBrush ImageSource="/Arrow 3.png" Stretch="Uniform"/>
                 </Button.Background>
@@ -423,11 +423,11 @@
             <Button x:Name="hideInstrumentPanelButton" 
                     Grid.Column="1" 
                     HorizontalAlignment="Left" 
-                    Margin="10,10,0,0" 
+                    Margin="5,5,0,0" 
                     VerticalAlignment="Top" 
-                    Width="35"
-                    Height="35"
-                    Click="hideInstrumentsPanel">
+                    Width="30"
+                    Height="30"
+                    Click="HideInstrumentsPanel">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="100"/>
@@ -467,7 +467,7 @@
                     HorizontalAlignment="Left" 
                     Margin="5.2,0,0,0" 
                     VerticalAlignment="Top" 
-                    Click="hideInstrimentsPanelButtonSubgroups"
+                    Click="HideInstrimentsPanelButtonSubgroups"
                     Grid.Row="0"
                     Grid.Column="1" 
                     Width="20" 
@@ -573,14 +573,14 @@
                             Content="регистрация"
                             Margin="5"
                             Grid.Row="0" 
-                            Click="backToRegistratioinTable"/>
+                            Click="BackToRegistratioinTable"/>
                     <Button x:Name="goCreateTournamentGrid" 
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             Content="сетка"
                             Margin="5"
                             Grid.Row="1"
-                            Click="сreateTournamentGrid"/>
+                            Click="СreateTournamentGrid"/>
                 </Grid>
             </Grid>
         </Grid>

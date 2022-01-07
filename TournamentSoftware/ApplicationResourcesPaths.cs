@@ -1,4 +1,6 @@
-﻿namespace TournamentSoftware
+﻿using System.Collections.Generic;
+
+namespace TournamentSoftware
 {
     public class ApplicationResourcesPaths
     {
@@ -24,5 +26,21 @@
         public const string city = "Город";
         public const string category = "Категория";
         public const string dateOfBirth = "Год рождения";
+
+        public static readonly List<string> stringsConstantsValues = new List<string> {
+            name,
+            surname,
+            patronymic,
+            pseudonym,
+            leader,
+            sex,
+            height,
+            weight,
+            commonRating,
+            clubRating,
+            club,
+            city,
+            category,
+            dateOfBirth };
     }
 }

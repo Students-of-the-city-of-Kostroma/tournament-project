@@ -72,7 +72,7 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            reagistrator.backupRegistrationTable(judgesList, judgesBackupPath);
+            reagistrator.BackupRegistrationTable(judgesList, judgesBackupPath);
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace TournamentSoftware
             if (!isJudgesSaved)
             {
                 judgesList.Clear();
-                List<Judge> judges = reagistrator.getJudgesFromBackup(judgesBackupPath);
+                List<Judge> judges = reagistrator.GetJudgesFromBackup(judgesBackupPath);
                 if (judges != null)
                 {
                     foreach (Judge j in judges)
