@@ -12,12 +12,12 @@ using System.Windows.Media;
 using static TournamentSoftware.ApplicationResourcesPaths;
 using static TournamentSoftware.ApplicationStringValues;
 using static TournamentSoftware.TournamentData;
+using System.Linq;
 
 namespace TournamentSoftware
 {
     public partial class MainWindow : Window
     {
-        public ObservableCollection<DataGridTemplateColumn> nominationsColumn = new ObservableCollection<DataGridTemplateColumn>();
         private SubgroupsFormation subgroupsFormation;
         private static ParticipantsReagistrator registrator = new ParticipantsReagistrator();
         public ApplicationState appState = new ApplicationState();
@@ -134,23 +134,11 @@ namespace TournamentSoftware
             // если удалены все участники удаляем колонки с номинациями
             if (participantsList.Count == 0)
             {
-                deleteNominationsColumns();
                 exportButton.IsEnabled = false;
             }
 
             deleteParticipantButton.IsEnabled = false;
             selectorAllForDelete_Unchecked(sender, e);
-        }
-
-        /// <summary>
-        /// Удаление всех колонок с номинациями
-        /// </summary>
-        private void deleteNominationsColumns()
-        {
-            foreach (DataGridTemplateColumn column in nominationsColumn)
-            {
-                registrationTable.Columns.Remove(column);
-            }
         }
 
         /// <summary>
@@ -331,11 +319,6 @@ namespace TournamentSoftware
         private DataTable toDataTable(ObservableCollection<ParticipantFormModel> participants)
         {
             DataTable dataTable = new DataTable();
-            List<string> nominationsArray = new List<string>();
-            for (int i = 0; i < nominationsColumn.Count; i++)
-            {
-                nominationsArray.Add(nominationsColumn[i].Header.ToString());
-            }
 
             for (int i = 1; i < registrationTable.Columns.Count; i++)
             {
@@ -349,7 +332,7 @@ namespace TournamentSoftware
                 for (int i = 0; i < dataTable.Columns.Count; i++)
                 {
                     string columnHeader = dataTable.Columns[i].Caption;
-                    if (nominationsArray.Contains(columnHeader))
+                    if (IsNominationExists(columnHeader))
                     {
                         row[i] = participant.Nominations[columnHeader];
                     }
@@ -434,23 +417,13 @@ namespace TournamentSoftware
             }
         }
 
-        private bool checkNominationExists(string nominationName)
-        {
-            foreach (DataGridTemplateColumn column in nominationsColumn)
-            {
-                if (column.Header.Equals(nominationName)) return true;
-
-            }
-            return false;
-        }
-
         /// <summary>
         /// Добавление колонки номинации
         /// </summary>
         /// <param name="nominationName"></param>
         private void AddNominationColumn(string nominationName)
         {
-            if (!checkNominationExists(nominationName))
+            if (!IsNominationExists(nominationName))
             {
                 Binding bind = new Binding("Nominations[" + nominationName + "]");
                 bind.Mode = BindingMode.TwoWay;
@@ -476,7 +449,6 @@ namespace TournamentSoftware
                 checkBoxTemplate.VisualTree = checkBox;
                 n.CellTemplate = checkBoxTemplate;
                 registrationTable.Columns.Add(n);
-                nominationsColumn.Add(n);
             }
         }
 
@@ -497,7 +469,7 @@ namespace TournamentSoftware
         {
             List<string> errors = new List<string>();
             int count = 1;
-            if (nominationsColumn.Count != 0)
+            if (nominations.Count != 0)
             {
                 foreach (ParticipantFormModel participant in participantsList)
                 {
