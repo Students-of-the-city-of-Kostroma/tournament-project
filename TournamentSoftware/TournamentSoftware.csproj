@@ -101,6 +101,7 @@
       <DependentUpon>JudgesRegistrationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Nomination.cs" />
+    <Compile Include="NominationFormModel.cs" />
     <Compile Include="ParticipantFormModel.cs" />
     <Compile Include="ParticipantsReagistrator.cs" />
     <Compile Include="StartWindow.xaml.cs">

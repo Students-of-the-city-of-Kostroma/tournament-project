@@ -12,7 +12,7 @@
             <RowDefinition Height="247*"/>
         </Grid.RowDefinitions>
         <Button Content="OK" HorizontalAlignment="Left" Margin="281,193.8,0,0" VerticalAlignment="Top" Width="93" Height="43" Grid.Row="1" Click="SetNewSettings"/>
-        <Button Content="Отмена" HorizontalAlignment="Left" Margin="418,193.8,0,0" VerticalAlignment="Top" Width="92" RenderTransformOrigin="2.563,1.109" Height="43" Click="CloseSettingsWindow" Grid.Row="1"/>
+        <Button Content="Отмена" HorizontalAlignment="Left" Margin="418,193.8,0,0" VerticalAlignment="Top" Width="92" RenderTransformOrigin="2.563,1.109" Height="43" Grid.Row="1"/>
         <Grid HorizontalAlignment="Left" Height="354" Margin="10,10,0,0" Grid.RowSpan="2" VerticalAlignment="Top" Width="774">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -43,9 +43,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding IsSelected,UpdateSourceTrigger=PropertyChanged, 
-                        Mode=TwoWay}" 
-                                          Unchecked="NominationUnselected"
-                                          Checked="NominationSelected"/>
+                        Mode=TwoWay}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

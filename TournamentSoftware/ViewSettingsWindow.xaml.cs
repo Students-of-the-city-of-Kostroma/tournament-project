@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -17,49 +19,34 @@ namespace TournamentSoftware
         }
 
         private List<CheckBox> checkBoxes = new List<CheckBox>();
-        ObservableCollection<DataGridColumn> mainWindowColumns = ((MainWindow)Application.Current.MainWindow).registrationTable.Columns;
-        ObservableCollection<DataGridTemplateColumn> mainNominationsColumns = ((MainWindow)Application.Current.MainWindow).nominationsColumn;
-        private List<NominationFormModel> newNominations = new List<NominationFormModel>();
+        private ObservableCollection<DataGridColumn> mainWindowColumns = ((MainWindow)Application.Current.MainWindow).registrationTable.Columns;
+        private ObservableCollection<DataGridTemplateColumn> mainNominationsColumns = ((MainWindow)Application.Current.MainWindow).nominationsColumn;
+        private ObservableCollection<NominationFormModel> newNominations = new ObservableCollection<NominationFormModel>();
         private List<NominationFormModel> nominationsForDelete = new List<NominationFormModel>();
 
-        /// <summary>
-        /// Закрываем окно настроек
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void CloseSettingsWindow(object sender, RoutedEventArgs e)
+        private void setColumnsVisibility()
         {
-            Close();
-        }
-
-        /// <summary>
-        /// Применить настройки
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void SetNewSettings(object sender, RoutedEventArgs e)
-        {
-            // скрываем ненужные столбцы или наоборот делаем их видимыми
             for (int i = 0; i < checkBoxes.Count; i++)
             {
-
-                for (int j = 1; j < mainWindowColumns.Count; j++)
-                {
-                    if (mainWindowColumns[j].Header.Equals(checkBoxes[i].Content))
-                    {
-                        if (checkBoxes[i].IsChecked == false)
-                        {
-                            mainWindowColumns[j].Visibility = Visibility.Hidden;
-                            break;
-                        }
-                        else
-                        {
-                            mainWindowColumns[j].Visibility = Visibility.Visible;
-                            break;
-                        }
-                    }
-                }
+                setColumnVisibility(checkBoxes[i].Content.ToString(), checkBoxes[i].IsChecked == true);
             }
+        }
+
+        private void setColumnVisibility(string columnName, bool visibility)
+        {
+            try
+            {
+                mainWindowColumns.Single(predicate: column => column.Header == columnName).Visibility = visibility ? Visibility.Visible : Visibility.Hidden;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        private void SetNewSettings(object sender, RoutedEventArgs e)
+        {
+            setColumnsVisibility();
 
             // добавляем новые номинации в таблицу регистрации
             for (int i = 0; i < newNominations.Count; i++)
@@ -149,45 +136,30 @@ namespace TournamentSoftware
             Close();
         }
 
-        /// <summary>
-        /// Проверка что название номинации не совпадает с названием обязательных столбцов
-        /// </summary>
-        /// <param name="nominationName"></param>
-        /// <returns></returns>
         private bool CheckNominationNameValid(string nominationName)
         {
             return !(stringsConstantsValues.Contains(nominationName) || nominationName.Equals(nominationName));
         }
 
-        /// <summary>
-        /// Добавление новой номинации
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void AddNomination(object sender, RoutedEventArgs e)
         {
             NominationFormModel nomination = new NominationFormModel()
             {
-                IsSelected = false,
+                IsSelected = false
             };
 
             newNominations.Add(nomination);
             nominationsGrid.ItemsSource = newNominations;
         }
 
-        /// <summary>
-        /// Удаление выбранных номинаций
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void DeleteSelectedNominations(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < nominations.Count;)
+            for (int i = 0; i < newNominations.Count;)
             {
-                if (nominations[i].IsSelected)
+                if (newNominations[i].IsSelected)
                 {
-                    nominationsForDelete.Add(nominations[i]);
-                    nominations.Remove(nominations[i]);
+                    nominationsForDelete.Add(newNominations[i]);
+                    newNominations.RemoveAt(i);
                 }
                 else
                 {
@@ -197,11 +169,6 @@ namespace TournamentSoftware
             nominationsGrid.ItemsSource = newNominations;
         }
 
-        /// <summary>
-        /// Выбираем все номинации на удаление
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void SelectAllForDelete_Checked(object sender, RoutedEventArgs e)
         {
             for (int i = 0; i < nominations.Count; i++)
@@ -210,11 +177,6 @@ namespace TournamentSoftware
             }
         }
 
-        /// <summary>
-        /// Убираем все чеки у номинаций
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void SelectAllForDelete_Unchecked(object sender, RoutedEventArgs e)
         {
             for (int i = 0; i < nominations.Count; i++)
@@ -254,26 +216,6 @@ namespace TournamentSoftware
                 newNominations.Add(nominations[i]);
             }
             nominationsGrid.ItemsSource = newNominations;
-        }
-
-        /// <summary>
-        /// Чекбокс у номинации установлен
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void NominationSelected(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        /// <summary>
-        /// Чекбокс у номинации убран
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void NominationUnselected(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

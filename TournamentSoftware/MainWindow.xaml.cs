@@ -224,7 +224,6 @@ namespace TournamentSoftware
                             AddNominationColumn(nomination);
                             if (!IsNominationExists(nomination))
                             {
-                                Console.WriteLine("Нет номинации " + nomination);
                                 AddNomination(nomination);
                             }
                         }
