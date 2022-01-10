@@ -116,6 +116,7 @@ namespace TournamentSoftware
         }
         private bool checkTableHeadersValid(string fileName, List<string> requiredColumnHeaders)
         {
+            nominationsNames.Clear();
             FileStream stream = File.Open(fileName, FileMode.Open, FileAccess.Read);
             var reader = ExcelReaderFactory.CreateReader(stream);
             DataSet dataSet = reader.AsDataSet();
