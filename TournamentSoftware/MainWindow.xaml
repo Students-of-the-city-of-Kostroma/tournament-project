@@ -23,6 +23,7 @@
             </Grid.ColumnDefinitions>
 
             <Button x:Name="goTournament"
+                    ToolTip="Турнир"
                     Grid.Column="1" 
                     Margin="0,366,0,0"
                     VerticalAlignment="Top" 
@@ -32,11 +33,11 @@
                     Width="120" 
                     Click="goTournament_Click">
                 <Button.Background>
-                    <ImageBrush ImageSource="images/button_tournament.png"/>
+                    <ImageBrush ImageSource="Resources/Button_tournament.png"/>
                 </Button.Background>
             </Button>
             <Button x:Name="loadFromFile" 
-                    Content="" 
+                    ToolTip="Загрузить из файла"
                     Grid.Column="1" 
                     HorizontalAlignment="Center"
                     Margin="0,191,0,0" 
@@ -46,11 +47,11 @@
                     Width="120" 
                     Click="OpenExcel_Click">
                 <Button.Background>
-                    <ImageBrush ImageSource="images/button_download.png"/>
+                    <ImageBrush ImageSource="Resources/button_download.png"/>
                 </Button.Background>
             </Button>
             <Button x:Name="add" 
-                    Content="" 
+                    ToolTip="Добавить" 
                     Grid.Column="1" 
                     HorizontalAlignment="Center" 
                     Margin="0,156,0,0" 
@@ -60,11 +61,11 @@
                     Width="120" 
                     Click="addParticipant">
                 <Button.Background>
-                    <ImageBrush ImageSource="images/button_add.png"/>
+                    <ImageBrush ImageSource="Resources/button_add.png"/>
                 </Button.Background>
             </Button>
             <Button x:Name="delete" 
-                    Content="" 
+                    ToolTip="Удалить"
                     Grid.Column="1" 
                     HorizontalAlignment="Center" 
                     Margin="20,261,20,0" 
@@ -72,11 +73,10 @@
                     Padding="5" 
                     Height="30" 
                     Width="120" 
-                    Click="deleteParticipant" 
-                    Style="{DynamicResource DelStyle}" 
+                    Click="deleteParticipant"
                     IsEnabled="False">
                 <Button.Background>
-                    <ImageBrush ImageSource="images/button_del.png"/>
+                    <ImageBrush ImageSource="Resources/button_del.png"/>
                 </Button.Background>
             </Button>
             <DataGrid x:Name="registrationTable" 
@@ -399,7 +399,7 @@
                     Margin="20,226,20,0" 
                     VerticalAlignment="Top" Padding="5" Height="30" Width="120">
                 <Button.Background>
-                    <ImageBrush ImageSource="images/button_mainscreen.png"/>
+                    <ImageBrush ImageSource="Resources/button_mainscreen.png"/>
                 </Button.Background>
             </Button>
             <Button x:Name="exportButton" 
@@ -414,7 +414,7 @@
                     Click="saveFile" 
                     IsEnabled="False">
                 <Button.Background>
-                    <ImageBrush ImageSource="images/button_savelist.png"/>
+                    <ImageBrush ImageSource="Resources/button_savelist.png"/>
                 </Button.Background>
             </Button>
             <Button x:Name="viewSettingsButton" 
@@ -455,7 +455,7 @@
                     </Style>
                 </Button.Resources>
                 <Button.Background>
-                    <ImageBrush ImageSource="images/burger_menu.png"/>
+                    <ImageBrush ImageSource="Resources/burger_menu.png"/>
                 </Button.Background>
             </Button>
         </Grid >

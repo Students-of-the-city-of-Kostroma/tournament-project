@@ -70,6 +70,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -184,6 +185,51 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\burger_menu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Button_Add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Button_Add_Hidden.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Button_Del.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Button_Del_Hidden.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Button_Download.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Button_Download_Hidden.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Button_MainScreen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Button_MainScreen_Hidden.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Button_SaveList.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Button_SaveList_Hidden.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Button_Tournament.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Button_Tournament_Hidden.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Hide_Instrument_Button_Close.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Hide_Instrument_Button_Open.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.14\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.14\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets')" />
