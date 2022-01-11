@@ -32,7 +32,7 @@ namespace TournamentSoftware
         }
         private void startWindow_Loaded(object sender, RoutedEventArgs e)
         {
-
+            goRegistrateButton.Focus();
         }
         private void HideInstrumentPanel (object sender, RoutedEventArgs e)
         {

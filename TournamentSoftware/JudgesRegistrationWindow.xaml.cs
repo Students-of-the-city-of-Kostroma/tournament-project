@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
+using static TournamentSoftware.ApplicationResourcesPaths;
 
 namespace TournamentSoftware
 {
@@ -12,7 +12,6 @@ namespace TournamentSoftware
     {
         public static ObservableCollection<Judge> judgesList = new ObservableCollection<Judge>();
         private ParticipantsReagistrator reagistrator = new ParticipantsReagistrator();
-        private string judgesBackupPath = "..\\..\\judgesBackup.json";
         private bool isJudgesSaved = false;
 
         public bool JudesSaved
@@ -73,7 +72,7 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            reagistrator.backupRegistrationTable(judgesList, judgesBackupPath);
+            reagistrator.BackupRegistrationTable(judgesList, judgesBackupPath);
         }
 
         /// <summary>
@@ -91,7 +90,7 @@ namespace TournamentSoftware
             if (!isJudgesSaved)
             {
                 judgesList.Clear();
-                List<Judge> judges = reagistrator.getJudgesFromBackup(judgesBackupPath);
+                List<Judge> judges = reagistrator.GetJudgesFromBackup(judgesBackupPath);
                 if (judges != null)
                 {
                     foreach (Judge j in judges)
