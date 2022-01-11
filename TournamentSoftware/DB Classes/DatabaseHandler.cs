@@ -8,17 +8,18 @@ namespace TournamentSoftware
     {
         private SQLiteConnection _db;
 
-        public DataBaseHandler()
+        public DataBaseHandler(string dataBasePath)
         {
-            _db = new SQLiteConnection(MainWindow.dataBasePath);
+            _db = new SQLiteConnection(dataBasePath);
+
             _db.CreateTable<TournamentGrid>();
             _db.CreateTable<Nomination>();
             _db.CreateTable<Category>();
             _db.CreateTable<Group>();
+            _db.CreateTable<Subgroup>();
             _db.CreateTable<Club>();
             _db.CreateTable<Participant>();
             _db.CreateTable<Judge>();
-            _db.CreateTable<Group_Participant>();
             _db.CreateTable<Fighter>();
             _db.CreateTable<BattleProtocol>();
             _db.CreateTable<Round>();
@@ -26,6 +27,11 @@ namespace TournamentSoftware
             _db.CreateTable<FighterRoundResult>();
             _db.CreateTable<FighterRoundResult_Punishment>();
             _db.CreateTable<Punishment>();
+        }
+
+        public dynamic GetData(string request)
+        {
+            return _db.Query<TournamentGrid>(request);
         }
 
         public void AddTournamentGrid(TournamentGrid tournamentGrid)
@@ -84,6 +90,20 @@ namespace TournamentSoftware
             }
         }
 
+        public void AddSubgroup(Subgroup subgroup)
+        {
+            _db.Insert(subgroup);
+        }
+
+        public void GetSubgroups()
+        {
+            var subgroups = _db.Query<Subgroup>("SELECT * FROM Subgroup");
+            foreach (var subgroup in subgroups)
+            {
+                Console.WriteLine(subgroup.ToString());
+            }
+        }
+
         public void AddClub(Club club)
         {
             _db.Insert(club);
@@ -123,20 +143,6 @@ namespace TournamentSoftware
             foreach (var judge in judges)
             {
                 Console.WriteLine(judge.ToString());
-            }
-        }
-
-        public void AddGroup_Participant(Group_Participant group_Participant)
-        {
-            _db.Insert(group_Participant);
-        }
-
-        public void GetGroup_Participants()
-        {
-            var group_Participants = _db.Query<Group_Participant>("SELECT * FROM Group_Participant");
-            foreach (var group_Participant in group_Participants)
-            {
-                Console.WriteLine(group_Participant.ToString());
             }
         }
 

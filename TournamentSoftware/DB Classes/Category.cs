@@ -10,8 +10,5 @@ namespace TournamentSoftware
 
         [Column("name")]
         public string Name { get; set; }
-
-        [Column("nomination_id"), Indexed]
-        public int NominationId { get; set; }
     }
 }

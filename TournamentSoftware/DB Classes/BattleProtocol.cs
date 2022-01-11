@@ -14,10 +14,10 @@ namespace TournamentSoftware.DB_Classes
         [Column("system")]
         public string System { get; set; }
 
-        [Column("group_id"), Indexed]
-        public int GroupId { get; set; }
+        [Column("red_fighter_id"), Indexed]
+        public int RedFighterId { get; set; }
 
-        [Column("fighter_id"), Indexed]
-        public int FighterId { get; set; }
+        [Column("blue_fighter_id"), Indexed]
+        public int BlueFighterId { get; set; }
     }
 }
