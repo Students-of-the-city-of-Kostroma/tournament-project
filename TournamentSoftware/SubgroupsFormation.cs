@@ -270,43 +270,6 @@ namespace TournamentSoftware
             return array;
         }
 
-        private static void checkRool(Dictionary<string, List<ParticipantFormModel>> subgroups, string roolName, ParticipantFormModel controlPartisipant)
-        {
-            switch (roolName)
-            {
-                case "Правило города":
-                    Console.WriteLine("Проверка правила города");
-                    foreach (KeyValuePair<string, List<ParticipantFormModel>> keyValuePair in subgroups)
-                    {
-                        if (keyValuePair.Value.FindAll(p => p.City.Equals(controlPartisipant.City)).Count > 0)
-                        {
-                            errorsInSubgroups.Add(keyValuePair.Key, "Нарушено правило города");
-                        }
-                    }
-                    break;
-                case "Правило посевных бойцов":
-                    foreach (KeyValuePair<string, List<ParticipantFormModel>> keyValuePair in subgroups)
-                    {
-                        if (keyValuePair.Value.FindAll(p => p.Participant.Leader.Equals(controlPartisipant.Participant.Leader)).Count > 0)
-                        {
-                            errorsInSubgroups.Add(keyValuePair.Key, "Нарушено правило посевных бойцов");
-                        }
-                    }
-                    break;
-                case "Правило одноклубников":
-                    foreach (KeyValuePair<string, List<ParticipantFormModel>> keyValuePair in subgroups)
-                    {
-                        if (keyValuePair.Value.FindAll(p => p.Club.Equals(controlPartisipant.Club)).Count > 0)
-                        {
-                            errorsInSubgroups.Add(keyValuePair.Key, "Нарушено правило одноклубников");
-                        }
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-
         private static void ParticipantsSort(ref Dictionary<string, List<ParticipantFormModel>> subgroups,
             ref List<ParticipantFormModel> participants, ref int lastAddedGroup, int _subgroups, string roolName,
             Dictionary<string, List<ParticipantFormModel>> filtered = null)
@@ -327,7 +290,6 @@ namespace TournamentSoftware
                         subgroupsCopy[lastAddedGroup1.ToString()].Add(participant);
                         lastAddedGroup1++;
                     }
-                    checkRool(subgroupsCopy, roolName, participant);
                 });
             }
             else
@@ -346,7 +308,6 @@ namespace TournamentSoftware
                             subgroupsCopy[lastAddedGroup1.ToString()].Add(participant);
                             lastAddedGroup1++;
                         }
-                        checkRool(subgroupsCopy, roolName, participant);
                     });
                     
                 }
