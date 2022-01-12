@@ -34,6 +34,7 @@ namespace TournamentSoftware
         private Button goNextButton = new Button();
         SolidColorBrush yellow = new SolidColorBrush(Color.FromRgb(255, 215, 0));
         SolidColorBrush white = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+        private static Dictionary<string, string> errorsInSubgroups = new Dictionary<string, string>(); // нормер подгруппы - ошибка
 
         // получаем список катерогий
         public Dictionary<string, Dictionary<string, List<ParticipantFormModel>>> getCategories(ObservableCollection<ParticipantFormModel> participants)
@@ -269,26 +270,64 @@ namespace TournamentSoftware
             return array;
         }
 
+        private static void checkRool(Dictionary<string, List<ParticipantFormModel>> subgroups, string roolName, ParticipantFormModel controlPartisipant)
+        {
+            switch (roolName)
+            {
+                case "Правило города":
+                    Console.WriteLine("Проверка правила города");
+                    foreach (KeyValuePair<string, List<ParticipantFormModel>> keyValuePair in subgroups)
+                    {
+                        if (keyValuePair.Value.FindAll(p => p.City.Equals(controlPartisipant.City)).Count > 0)
+                        {
+                            errorsInSubgroups.Add(keyValuePair.Key, "Нарушено правило города");
+                        }
+                    }
+                    break;
+                case "Правило посевных бойцов":
+                    foreach (KeyValuePair<string, List<ParticipantFormModel>> keyValuePair in subgroups)
+                    {
+                        if (keyValuePair.Value.FindAll(p => p.Participant.Leader.Equals(controlPartisipant.Participant.Leader)).Count > 0)
+                        {
+                            errorsInSubgroups.Add(keyValuePair.Key, "Нарушено правило посевных бойцов");
+                        }
+                    }
+                    break;
+                case "Правило одноклубников":
+                    foreach (KeyValuePair<string, List<ParticipantFormModel>> keyValuePair in subgroups)
+                    {
+                        if (keyValuePair.Value.FindAll(p => p.Club.Equals(controlPartisipant.Club)).Count > 0)
+                        {
+                            errorsInSubgroups.Add(keyValuePair.Key, "Нарушено правило одноклубников");
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
         private static void ParticipantsSort(ref Dictionary<string, List<ParticipantFormModel>> subgroups,
-            ref List<ParticipantFormModel> participants, ref int lastAddedGroup, int _subgroups,
+            ref List<ParticipantFormModel> participants, ref int lastAddedGroup, int _subgroups, string roolName,
             Dictionary<string, List<ParticipantFormModel>> filtered = null)
         {
             int lastAddedGroup1 = lastAddedGroup;
-            Dictionary<string, List<ParticipantFormModel>> subgroups1 = subgroups;
+            Dictionary<string, List<ParticipantFormModel>> subgroupsCopy = subgroups;
             if (filtered == null)
             {
                 participants.ForEach(participant =>
                 {
                     if (lastAddedGroup1 > _subgroups)
                     {
-                        subgroups1["1"].Add(participant);
+                        subgroupsCopy["1"].Add(participant);
                         lastAddedGroup1 = 2;
                     }
                     else
                     {
-                        subgroups1[lastAddedGroup1.ToString()].Add(participant);
+                        subgroupsCopy[lastAddedGroup1.ToString()].Add(participant);
                         lastAddedGroup1++;
                     }
+                    checkRool(subgroupsCopy, roolName, participant);
                 });
             }
             else
@@ -299,18 +338,20 @@ namespace TournamentSoftware
                     {
                         if (lastAddedGroup1 > _subgroups)
                         {
-                            subgroups1["1"].Add(participant);
+                            subgroupsCopy["1"].Add(participant);
                             lastAddedGroup1 = 2;
                         }
                         else
                         {
-                            subgroups1[lastAddedGroup1.ToString()].Add(participant);
+                            subgroupsCopy[lastAddedGroup1.ToString()].Add(participant);
                             lastAddedGroup1++;
                         }
+                        checkRool(subgroupsCopy, roolName, participant);
                     });
+                    
                 }
             }
-            subgroups = subgroups1;
+            subgroups = subgroupsCopy;
             lastAddedGroup = lastAddedGroup1;
         }
 
@@ -324,11 +365,11 @@ namespace TournamentSoftware
                     if (selectedRools.Contains("Правило одноклубников"))
                     {
                         Dictionary<string, List<ParticipantFormModel>> club = FilterParticipantsForClubs(entry.Value);
-                        ParticipantsSort(ref subgroups, ref participants, ref lastAddedGroup, _subgroups, club);
+                        ParticipantsSort(ref subgroups, ref participants, ref lastAddedGroup, _subgroups, "Правило одноклубников", club);
                     }
                     else
                     {
-                        ParticipantsSort(ref subgroups, ref participants, ref lastAddedGroup, _subgroups);
+                        ParticipantsSort(ref subgroups, ref participants, ref lastAddedGroup, _subgroups, "Правило города");
                     }
                 }
             }
@@ -337,11 +378,11 @@ namespace TournamentSoftware
                 if (selectedRools.Contains("Правило одноклубников"))
                 {
                     Dictionary<string, List<ParticipantFormModel>> club = FilterParticipantsForClubs(participants);
-                    ParticipantsSort(ref subgroups, ref participants, ref lastAddedGroup, _subgroups, club);
+                    ParticipantsSort(ref subgroups, ref participants, ref lastAddedGroup, _subgroups, "Правило одноклубников", club);
                 }
                 else
                 {
-                    ParticipantsSort(ref subgroups, ref participants, ref lastAddedGroup, _subgroups);
+                    ParticipantsSort(ref subgroups, ref participants, ref lastAddedGroup, _subgroups, "");
                 }
             }
         }
@@ -366,7 +407,6 @@ namespace TournamentSoftware
 
                 int lastAddedGroup = 1; // группа в которую последний раз добавляли участника
 
-                Button button = categoriesButtons.Find(btn => btn.Tag.ToString().Equals(selectedCategory));
                 var rand = new Random();
 
                 participantsInKategory = Shuffle(rand, participantsInKategory);
@@ -377,7 +417,7 @@ namespace TournamentSoftware
                 // учет правила посевных бойцов
                 if (selectedRools.Contains("Правило посевных бойцов"))
                 {
-                    ParticipantsSortWithRools(ref subgroups, ref posevParticipants, ref lastAddedGroup,_subgroups);
+                    ParticipantsSortWithRools(ref subgroups, ref posevParticipants, ref lastAddedGroup, _subgroups);
 
                     ParticipantsSortWithRools(ref subgroups, ref not_posevParticipants, ref lastAddedGroup, _subgroups);
                 }
