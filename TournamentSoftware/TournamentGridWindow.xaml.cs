@@ -10,16 +10,14 @@ namespace TournamentSoftware
 
         private bool isPanelOpen = true;
         private string selectedNomination = "";
-        private Dictionary<string, Dictionary<string, List<ParticipantFormModel>>> nominationsDictionary;
         public TournamentGridWindow()
         {
             InitializeComponent();
             WindowState = WindowState.Maximized;
         }
 
-        public void Show(Dictionary<string, Dictionary<string, List<ParticipantFormModel>>> nominationsDictionary)
+        public void Show()
         {
-            this.nominationsDictionary = nominationsDictionary;
             Show();
         }
 
@@ -47,7 +45,7 @@ namespace TournamentSoftware
         private void ShowNominationsList()
         {
             ParticipantsReagistrator participantsReagistrator = MainWindow.GetReagistrator;
-            foreach (NominationFormModel nomination in nominations) 
+            foreach (NominationWrapper nomination in nominations) 
             {
                 string nominationName = nomination.Nomination.Name;
                 Button button = new Button();
@@ -74,17 +72,17 @@ namespace TournamentSoftware
 
         private void CreateKategoriesTabs()
         {
-            Dictionary<string, List<ParticipantFormModel>> kategories = nominationsDictionary[selectedNomination];
             tabsGridRow.Children.Clear();
             tabsGridRow.ColumnDefinitions.Clear();
-            foreach (KeyValuePair<string, List<ParticipantFormModel>> keyValuePair in kategories)
+            List<string> categoryNames = GetCategoryNames();
+            foreach (string category in categoryNames)
             {
                 Grid kategoryGrid = new Grid();
                 RowDefinition row1 = new RowDefinition();
                 Button button = new Button();
                 button.HorizontalAlignment = HorizontalAlignment.Stretch;
                 button.VerticalAlignment = VerticalAlignment.Stretch;
-                button.Content = keyValuePair.Key;
+                button.Content = category;
                 button.Click += Button_Click;
                 kategoryGrid.RowDefinitions.Add(row1);
                 kategoryGrid.Children.Add(button);
