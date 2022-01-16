@@ -3,14 +3,14 @@ using System.Runtime.CompilerServices;
 
 namespace TournamentSoftware
 {
-    public class NominationFormModel : INotifyPropertyChanged
+    public class NominationWrapper : INotifyPropertyChanged
     {
-        public NominationFormModel(string nominationName)
+        public NominationWrapper(string nominationName)
         {
             Nomination.Name = nominationName;
         }
 
-        public NominationFormModel()
+        public NominationWrapper()
         {
         }
 

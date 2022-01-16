@@ -19,9 +19,9 @@ namespace TournamentSoftware
 
         private List<CheckBox> checkBoxes = new List<CheckBox>();
         private ObservableCollection<DataGridColumn> mainWindowColumns = ((MainWindow)Application.Current.MainWindow).registrationTable.Columns;
-        private ObservableCollection<NominationFormModel> allNominations = new ObservableCollection<NominationFormModel>();
-        private List<NominationFormModel> newNominations = new List<NominationFormModel>();
-        private List<NominationFormModel> deletedNominations = new List<NominationFormModel>();
+        private ObservableCollection<NominationWrapper> allNominations = new ObservableCollection<NominationWrapper>();
+        private List<NominationWrapper> newNominations = new List<NominationWrapper>();
+        private List<NominationWrapper> deletedNominations = new List<NominationWrapper>();
 
         private void SetColumnsVisibility()
         {
@@ -97,7 +97,7 @@ namespace TournamentSoftware
 
         private void AddNominations()
         {
-            foreach (NominationFormModel nomination in newNominations)
+            foreach (NominationWrapper nomination in newNominations)
             {
                 string nominationName = nomination.Nomination.Name;
                 if (CheckNominationNameValid(nominationName) && !IsNominationExists(nominationName))
@@ -117,7 +117,7 @@ namespace TournamentSoftware
 
         private void DeleteNominatios()
         {
-            foreach (NominationFormModel nominationForDelete in deletedNominations)
+            foreach (NominationWrapper nominationForDelete in deletedNominations)
             {
                 DeleteNomination(nominationForDelete.Nomination.Name);
             }
@@ -142,7 +142,7 @@ namespace TournamentSoftware
 
         private void AddNomination(object sender, RoutedEventArgs e)
         {
-            NominationFormModel nomination = new NominationFormModel()
+            NominationWrapper nomination = new NominationWrapper()
             {
                 IsSelected = false
             };
@@ -171,7 +171,7 @@ namespace TournamentSoftware
 
         private void SelectAllForDelete_Checked(object sender, RoutedEventArgs e)
         {
-            foreach (NominationFormModel nomination in allNominations)
+            foreach (NominationWrapper nomination in allNominations)
             {
                 nomination.IsSelected = true;
             }
@@ -179,7 +179,7 @@ namespace TournamentSoftware
 
         private void SelectAllForDelete_Unchecked(object sender, RoutedEventArgs e)
         {
-            foreach (NominationFormModel nomination in allNominations)
+            foreach (NominationWrapper nomination in allNominations)
             {
                 nomination.IsSelected = false;
             }
@@ -214,7 +214,7 @@ namespace TournamentSoftware
 
         private void LoadNominations()
         {
-            foreach (NominationFormModel nomination in nominations)
+            foreach (NominationWrapper nomination in nominations)
             {
                 allNominations.Add(nomination);
             }

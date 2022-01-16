@@ -305,7 +305,7 @@
                     <DataGridTemplateColumn Header="Категория" >
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding Kategory,
+                                <TextBox Text="{Binding Category,
                                         UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
                                          BorderThickness="0" >
                                     <TextBox.Style>

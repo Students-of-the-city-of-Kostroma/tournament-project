@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -10,7 +9,6 @@ namespace TournamentSoftware
 {
     public class SubgroupsFormation
     {
-        public Dictionary<string, Dictionary<string, List<ParticipantFormModel>>> kategoryGroups = new Dictionary<string, Dictionary<string, List<ParticipantFormModel>>>();
         private Grid categoriesGrid = new Grid();
         private Grid categorySettingsGrid = new Grid();
         private Grid subgroupsSettingsGrid = new Grid { AllowDrop = true };
@@ -25,49 +23,14 @@ namespace TournamentSoftware
             VerticalContentAlignment = VerticalAlignment.Center
         };
         private string selectedNomination = "";
+        private string selectedCategory = "";
         public bool isPanelOpen = true;
         private List<string> rools = new List<string> { "Правило посевных бойцов", "Правило одноклубников", "Правило города" };
+        private static List<string> selectedRools = new List<string> { "Правило посевных бойцов", "Правило одноклубников", "Правило города" };
         private List<Button> categoriesButtons = new List<Button>();
         private int lastClickedCategory = -1;
-        private static List<string> selectedRools = new List<string> { "Правило посевных бойцов", "Правило одноклубников", "Правило города" };
-        private string selectedCategory = "";
         private Button goNextButton = new Button();
-        SolidColorBrush yellow = new SolidColorBrush(Color.FromRgb(255, 215, 0));
-        SolidColorBrush white = new SolidColorBrush(Color.FromRgb(255, 255, 255));
         private static Dictionary<string, string> errorsInSubgroups = new Dictionary<string, string>(); // нормер подгруппы - ошибка
-
-        // получаем список катерогий
-        public Dictionary<string, Dictionary<string, List<ParticipantFormModel>>> getCategories(ObservableCollection<ParticipantFormModel> participants)
-        {
-            foreach (ParticipantFormModel participant in participants)
-            {
-                foreach (KeyValuePair<string, bool> nomination in participant.Nominations)
-                {
-                    if (nomination.Value)
-                    {
-                        string nominationName = nomination.Key;
-                        if (!kategoryGroups.ContainsKey(nominationName))
-                        {
-                            Dictionary<string, List<ParticipantFormModel>> dictionary = new Dictionary<string, List<ParticipantFormModel>>();
-                            kategoryGroups.Add(nominationName, dictionary);
-                        }
-
-                        string kategory = participant.Kategory;
-                        if (kategoryGroups[nominationName].ContainsKey(kategory))
-                        {
-                            kategoryGroups[nominationName][kategory].Add(participant);
-                        }
-                        else
-                        {
-                            List<ParticipantFormModel> list = new List<ParticipantFormModel>();
-                            list.Add(participant);
-                            kategoryGroups[nominationName].Add(kategory, list);
-                        }
-                    }
-                }
-            }
-            return kategoryGroups;
-        }
 
         private Label CreateLabel(string content, int fontSize = 24)
         {
@@ -87,7 +50,7 @@ namespace TournamentSoftware
 
             int rowsCount = 0;
 
-            foreach (NominationFormModel nomination in nominations)
+            foreach (NominationWrapper nomination in nominations)
             {
                 string nominationName = nomination.Nomination.Name;
                 RowDefinition row = new RowDefinition();
@@ -113,52 +76,53 @@ namespace TournamentSoftware
             string nomination = button.Tag.ToString();
             selectedNomination = nomination;
             ((MainWindow)Application.Current.MainWindow).SubgroupFormationLabel.Content = "Формирование групп. Номинация " + nomination;
-            ShowKategoriesForNomination(kategoryGroups[nomination]);
+            ShowCategoriesForNomination(selectedNomination);
         }
 
-        private void ShowKategoriesForNomination(Dictionary<string, List<ParticipantFormModel>> kategories)
+        private void ShowCategoriesForNomination(string nominationName)
         {
             categoriesGrid.Children.Clear();
             categoriesGrid.RowDefinitions.Clear();
 
             int rowsCount = 0;
 
-            foreach (string kategory in kategoryGroups[selectedNomination].Keys)
+            foreach (Category category in GetCategoriesFromNomination(nominationName))
             {
                 RowDefinition row = new RowDefinition();
-                Button kategoryButton = new Button
+                Button categoryButton = new Button
                 {
                     Margin = new Thickness(5),
                     Height = 30,
                     FontSize = 15,
-                    Content = kategory,
-                    Tag = kategory
+                    Content = category.Name,
+                    Tag = category.Name
                 };
 
-                if (kategoryGroups[selectedNomination][kategory].Count == 1)
+                if (category.ParticipantsCount() == 1)
                 {
-                    kategoryButton.ToolTip = "В этой категории всего 1 участник";
-                    kategoryButton.Click += CategoryButton_Click;
+                    categoryButton.ToolTip = "В этой категории всего 1 участник";
+                    categoryButton.Click += SelectCategory;
                 }
                 else
                 {
-                    kategoryButton.Click += CategoryButton_Click;
+                    categoryButton.Click += SelectCategory;
                 }
-                categoriesButtons.Add(kategoryButton);
+                categoriesButtons.Add(categoryButton);
                 categoriesGrid.RowDefinitions.Add(row);
-                categoriesGrid.Children.Add(kategoryButton);
-                Grid.SetRow(kategoryButton, rowsCount);
+                categoriesGrid.Children.Add(categoryButton);
+                Grid.SetRow(categoryButton, rowsCount);
                 rowsCount++;
             }
-
         }
 
-        public UIElement KategoryList()
+        public UIElement CategoryList()
         {
-            categoriesGrid = new Grid();
-            categoriesGrid.Margin = new Thickness(5);
-            categoriesGrid.VerticalAlignment = VerticalAlignment.Stretch;
-            categoriesGrid.HorizontalAlignment = HorizontalAlignment.Stretch;
+            categoriesGrid = new Grid
+            {
+                Margin = new Thickness(5),
+                VerticalAlignment = VerticalAlignment.Stretch,
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
             RowDefinition row1 = new RowDefinition();
             RowDefinition row2 = new RowDefinition();
 
@@ -178,13 +142,13 @@ namespace TournamentSoftware
             return categoriesGrid;
         }
 
-        private void CategoryButton_Click(object sender, RoutedEventArgs e)
+        private void SelectCategory(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             button.Background = yellow;
             string kategory = button.Tag.ToString();
             selectedCategory = kategory;
-            countInCategory.Content = kategoryGroups[selectedNomination][kategory].Count;
+            countInCategory.Content = GetCategoryFromNomination(selectedNomination, kategory).ParticipantsCount();
             ShowCategorySettings();
             if (lastClickedCategory != -1)
             {
@@ -254,29 +218,29 @@ namespace TournamentSoftware
         /// Тасование массива
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="rng"></param>
+        /// <param name="random"></param>
         /// <param name="array"></param>
-        public List<T> Shuffle<T>(Random rng, List<T> array)
+        /// <returns></returns>
+        public List<T> Shuffle<T>(Random random, List<T> array)
         {
-            int n = array.Count;
-            while (n > 1)
+            int count = array.Count;
+            while (count > 1)
             {
-                int k = rng.Next(n--);
-                T temp = array[n];
-                array[n] = array[k];
-                array[k] = temp;
+                int randomNumber = random.Next(count--);
+                T temp = array[count];
+                array[count] = array[randomNumber];
+                array[randomNumber] = temp;
             }
-
             return array;
         }
 
-        private static void checkRool(Dictionary<string, List<ParticipantFormModel>> subgroups, string roolName, ParticipantFormModel controlPartisipant)
+        private static void CheckRool(Dictionary<string, List<ParticipantWrapper>> subgroups, string roolName, ParticipantWrapper controlPartisipant)
         {
             switch (roolName)
             {
                 case "Правило города":
                     Console.WriteLine("Проверка правила города");
-                    foreach (KeyValuePair<string, List<ParticipantFormModel>> keyValuePair in subgroups)
+                    foreach (KeyValuePair<string, List<ParticipantWrapper>> keyValuePair in subgroups)
                     {
                         if (keyValuePair.Value.FindAll(p => p.City.Equals(controlPartisipant.City)).Count > 0)
                         {
@@ -285,7 +249,7 @@ namespace TournamentSoftware
                     }
                     break;
                 case "Правило посевных бойцов":
-                    foreach (KeyValuePair<string, List<ParticipantFormModel>> keyValuePair in subgroups)
+                    foreach (KeyValuePair<string, List<ParticipantWrapper>> keyValuePair in subgroups)
                     {
                         if (keyValuePair.Value.FindAll(p => p.Participant.Leader.Equals(controlPartisipant.Participant.Leader)).Count > 0)
                         {
@@ -294,7 +258,7 @@ namespace TournamentSoftware
                     }
                     break;
                 case "Правило одноклубников":
-                    foreach (KeyValuePair<string, List<ParticipantFormModel>> keyValuePair in subgroups)
+                    foreach (KeyValuePair<string, List<ParticipantWrapper>> keyValuePair in subgroups)
                     {
                         if (keyValuePair.Value.FindAll(p => p.Club.Equals(controlPartisipant.Club)).Count > 0)
                         {
@@ -307,12 +271,12 @@ namespace TournamentSoftware
             }
         }
 
-        private static void ParticipantsSort(ref Dictionary<string, List<ParticipantFormModel>> subgroups,
-            ref List<ParticipantFormModel> participants, ref int lastAddedGroup, int _subgroups, string roolName,
-            Dictionary<string, List<ParticipantFormModel>> filtered = null)
+        private static void ParticipantsSort(ref Dictionary<string, List<ParticipantWrapper>> subgroups,
+            ref List<ParticipantWrapper> participants, ref int lastAddedGroup, int _subgroups, string roolName,
+            Dictionary<string, List<ParticipantWrapper>> filtered = null)
         {
             int lastAddedGroup1 = lastAddedGroup;
-            Dictionary<string, List<ParticipantFormModel>> subgroupsCopy = subgroups;
+            Dictionary<string, List<ParticipantWrapper>> subgroupsCopy = subgroups;
             if (filtered == null)
             {
                 participants.ForEach(participant =>
@@ -327,12 +291,12 @@ namespace TournamentSoftware
                         subgroupsCopy[lastAddedGroup1.ToString()].Add(participant);
                         lastAddedGroup1++;
                     }
-                    checkRool(subgroupsCopy, roolName, participant);
+                    CheckRool(subgroupsCopy, roolName, participant);
                 });
             }
             else
             {
-                foreach (KeyValuePair<string, List<ParticipantFormModel>> participantsList in filtered)
+                foreach (KeyValuePair<string, List<ParticipantWrapper>> participantsList in filtered)
                 {
                     participantsList.Value.ForEach(participant =>
                     {
@@ -346,25 +310,25 @@ namespace TournamentSoftware
                             subgroupsCopy[lastAddedGroup1.ToString()].Add(participant);
                             lastAddedGroup1++;
                         }
-                        checkRool(subgroupsCopy, roolName, participant);
+                        CheckRool(subgroupsCopy, roolName, participant);
                     });
-                    
+
                 }
             }
             subgroups = subgroupsCopy;
             lastAddedGroup = lastAddedGroup1;
         }
 
-        private static void ParticipantsSortWithRools(ref Dictionary<string, List<ParticipantFormModel>> subgroups, ref List<ParticipantFormModel> participants, ref int lastAddedGroup, int _subgroups)
+        private static void ParticipantsSortWithRools(ref Dictionary<string, List<ParticipantWrapper>> subgroups, ref List<ParticipantWrapper> participants, ref int lastAddedGroup, int _subgroups)
         {
             if (selectedRools.Contains("Правило города"))
             {
-                Dictionary<string, List<ParticipantFormModel>> city = FilterParticipantsForCities(participants);
-                foreach (KeyValuePair<string, List<ParticipantFormModel>> entry in city)
+                Dictionary<string, List<ParticipantWrapper>> city = FilterParticipantsForCities(participants);
+                foreach (KeyValuePair<string, List<ParticipantWrapper>> entry in city)
                 {
                     if (selectedRools.Contains("Правило одноклубников"))
                     {
-                        Dictionary<string, List<ParticipantFormModel>> club = FilterParticipantsForClubs(entry.Value);
+                        Dictionary<string, List<ParticipantWrapper>> club = FilterParticipantsForClubs(entry.Value);
                         ParticipantsSort(ref subgroups, ref participants, ref lastAddedGroup, _subgroups, "Правило одноклубников", club);
                     }
                     else
@@ -377,7 +341,7 @@ namespace TournamentSoftware
             {
                 if (selectedRools.Contains("Правило одноклубников"))
                 {
-                    Dictionary<string, List<ParticipantFormModel>> club = FilterParticipantsForClubs(participants);
+                    Dictionary<string, List<ParticipantWrapper>> club = FilterParticipantsForClubs(participants);
                     ParticipantsSort(ref subgroups, ref participants, ref lastAddedGroup, _subgroups, "Правило одноклубников", club);
                 }
                 else
@@ -398,12 +362,12 @@ namespace TournamentSoftware
             int _countInKategory = int.Parse(countInCategory.Content.ToString());
             if (_countInKategory > 0 && _subgroups > 0 && _countInKategory / _subgroups >= 2)
             {
-                Dictionary<string, List<ParticipantFormModel>> subgroups = new Dictionary<string, List<ParticipantFormModel>>();
+                Dictionary<string, List<ParticipantWrapper>> subgroups = new Dictionary<string, List<ParticipantWrapper>>();
                 for (int i = 1; i <= _subgroups; i++)
                 {
-                    subgroups.Add(i.ToString(), new List<ParticipantFormModel>());
+                    subgroups.Add(i.ToString(), new List<ParticipantWrapper>());
                 }
-                List<ParticipantFormModel> participantsInKategory = kategoryGroups[selectedNomination][selectedCategory];
+                List<ParticipantWrapper> participantsInKategory = GetParticipantsInCategoryAndNomination(selectedNomination, selectedCategory);
 
                 int lastAddedGroup = 1; // группа в которую последний раз добавляли участника
 
@@ -411,8 +375,8 @@ namespace TournamentSoftware
 
                 participantsInKategory = Shuffle(rand, participantsInKategory);
 
-                List<ParticipantFormModel> posevParticipants = participantsInKategory.FindAll(p => p.Participant.Leader == true);
-                List<ParticipantFormModel> not_posevParticipants = participantsInKategory.FindAll(p => p.Participant.Leader == false);
+                List<ParticipantWrapper> posevParticipants = participantsInKategory.FindAll(p => p.Participant.Leader == true);
+                List<ParticipantWrapper> not_posevParticipants = participantsInKategory.FindAll(p => p.Participant.Leader == false);
 
                 // учет правила посевных бойцов
                 if (selectedRools.Contains("Правило посевных бойцов"))
@@ -430,9 +394,9 @@ namespace TournamentSoftware
             }
         }
 
-        private static Dictionary<string, List<ParticipantFormModel>> FilterParticipantsForCities(List<ParticipantFormModel> participants)
+        private static Dictionary<string, List<ParticipantWrapper>> FilterParticipantsForCities(List<ParticipantWrapper> participants)
         {
-            Dictionary<string, List<ParticipantFormModel>> participantsForCities = new Dictionary<string, List<ParticipantFormModel>>();
+            Dictionary<string, List<ParticipantWrapper>> participantsForCities = new Dictionary<string, List<ParticipantWrapper>>();
             participants.ForEach(participant =>
             {
                 string city = participant.City;
@@ -442,7 +406,7 @@ namespace TournamentSoftware
                 }
                 else
                 {
-                    List<ParticipantFormModel> list = new List<ParticipantFormModel>();
+                    List<ParticipantWrapper> list = new List<ParticipantWrapper>();
                     list.Add(participant);
                     participantsForCities.Add(city, list);
                 }
@@ -450,9 +414,9 @@ namespace TournamentSoftware
             return participantsForCities;
         }
 
-        private static Dictionary<string, List<ParticipantFormModel>> FilterParticipantsForClubs(List<ParticipantFormModel> participants)
+        private static Dictionary<string, List<ParticipantWrapper>> FilterParticipantsForClubs(List<ParticipantWrapper> participants)
         {
-            Dictionary<string, List<ParticipantFormModel>> participantsForClubs = new Dictionary<string, List<ParticipantFormModel>>();
+            Dictionary<string, List<ParticipantWrapper>> participantsForClubs = new Dictionary<string, List<ParticipantWrapper>>();
             participants.ForEach(participant =>
             {
                 string club = participant.Club;
@@ -462,7 +426,7 @@ namespace TournamentSoftware
                 }
                 else
                 {
-                    List<ParticipantFormModel> list = new List<ParticipantFormModel>();
+                    List<ParticipantWrapper> list = new List<ParticipantWrapper>();
                     list.Add(participant);
                     participantsForClubs.Add(club, list);
                 }
@@ -470,7 +434,7 @@ namespace TournamentSoftware
             return participantsForClubs;
         }
 
-        private void SetSubgroups(Dictionary<string, List<ParticipantFormModel>> subgroups)
+        private void SetSubgroups(Dictionary<string, List<ParticipantWrapper>> subgroups)
         {
             subgroupsSettingsGrid.Children.Clear();
             subgroupsSettingsGrid.ShowGridLines = true;
@@ -487,6 +451,7 @@ namespace TournamentSoftware
                 grid.DragOver += Grid_DragOver;
                 grid.Margin = new Thickness(5);
                 RowDefinition r = new RowDefinition();
+
                 Label label = CreateLabel("Подгруппа" + i, 25);
                 label.HorizontalAlignment = HorizontalAlignment.Left;
                 grid.RowDefinitions.Add(r);

@@ -68,11 +68,11 @@ namespace TournamentSoftware
             excelapp.Quit();
         }
 
-        public List<ParticipantFormModel> GetParticipantsFromBackup(string path)
+        public List<ParticipantWrapper> GetParticipantsFromBackup(string path)
         {
             StreamReader reader = new StreamReader(path);
             string json = reader.ReadToEnd();
-            var participants = JsonConvert.DeserializeObject<List<ParticipantFormModel>>(json);
+            var participants = JsonConvert.DeserializeObject<List<ParticipantWrapper>>(json);
             reader.Close();
             return participants;
         }
@@ -90,7 +90,7 @@ namespace TournamentSoftware
         public void LoadParticipantsFromFile(List<string> requiredColumnHeaders)
         {
             MessageBoxResult result = new MessageBoxResult();
-            if (participantsList.Count > 0)
+            if (participants.Count > 0)
             {
                result = MessageBox.Show("Все предыдущие записи в таблице регистрации будут удалены. Вы хотите продолжить?",
                    "Предупреждение",
@@ -98,7 +98,7 @@ namespace TournamentSoftware
                MessageBoxImage.Warning, MessageBoxResult.Cancel);
             }
 
-            if (participantsList.Count == 0 || MessageBoxResult.OK == result)
+            if (participants.Count == 0 || MessageBoxResult.OK == result)
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog();
                 openFileDialog.Filter = "EXCEL Files (*.xlsx)|*.xlsx|EXCEL Files 2003 (*.xls)|*.xls|All files (*.*)|*.*";
@@ -155,12 +155,12 @@ namespace TournamentSoftware
             // если нашлись все обязательные столбцы
             if (requredColumnExists == requiredColumnHeaders.Count)
             {
-                participantsList.Clear();
+                participants.Clear();
                 
                 foreach (int i in loadedNominationsIndexes)
                 {
                     string nominationName = loadedRows[0].ItemArray[i].ToString();
-                    NominationFormModel nomination = new NominationFormModel(nominationName);
+                    NominationWrapper nomination = new NominationWrapper(nominationName);
                     nominations.Add(nomination);
                 }
 
@@ -180,7 +180,7 @@ namespace TournamentSoftware
             for (int i = 1; i < loadedRows.Count; i++)
             {
                 DataRow row = loadedRows[i];
-                ParticipantFormModel newParticipant = new ParticipantFormModel();
+                ParticipantWrapper newParticipant = new ParticipantWrapper();
 
                 // идем по столбцам
                 for (int j = 0; j < loadedColumns.Count; j++)
@@ -268,7 +268,7 @@ namespace TournamentSoftware
 
                         if (loadedRows[0].ItemArray[j].Equals("Категория"))
                         {
-                            newParticipant.Kategory = row.ItemArray[j].ToString();
+                            newParticipant.Category = row.ItemArray[j].ToString();
                         }
 
                         if (loadedRows[0].ItemArray[j].Equals("Рост"))
@@ -315,7 +315,7 @@ namespace TournamentSoftware
                     }
                 }
 
-                participantsList.Add(newParticipant);
+                participants.Add(newParticipant);
             }
         }
     }
