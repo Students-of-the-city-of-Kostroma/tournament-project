@@ -5,14 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TournamentSoftware"
         mc:Ignorable="d"
-        Title="Турнирный софт" Height="513.9" Width="1209.4" Loaded="mainWindow_Loaded" Closing="mainWindow_Closing">
+        Title="Турнирный софт"
+        Height="513" 
+        Width="1209" 
+        Loaded="mainWindow_Loaded" 
+        Closing="mainWindow_Closing">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="692*"/>
-            <ColumnDefinition Width="511*"/>
-        </Grid.ColumnDefinitions>
-        <Grid x:Name="appGrid" HorizontalAlignment="Stretch" 
-              Margin="3,3,-0.8,3" 
+        <Grid x:Name="appGrid"
+              HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch"  
               Grid.ColumnSpan="2"
               >
@@ -21,10 +21,15 @@
                 <ColumnDefinition Width="160"/>
             </Grid.ColumnDefinitions>
 
-            <Button x:Name="goTournament" Content="" 
+            <Button x:Name="goTournament"
                     Grid.Column="1" 
-                    Margin="0,366,0,0" VerticalAlignment="Top" Padding="5" Height="30" 
-                    IsEnabled="true" Width="120" Click="goTournament_Click">
+                    Margin="0,366,0,0"
+                    VerticalAlignment="Top" 
+                    Padding="5"
+                    Height="30" 
+                    IsEnabled="true" 
+                    Width="120" 
+                    Click="GoTournament_Click">
                 <Button.Background>
                     <ImageBrush ImageSource="/Arrow 3.png" Stretch="Uniform"/>
                 </Button.Background>
@@ -33,11 +38,33 @@
                     Content="Загрузить из файла" 
                     Grid.Column="1" 
                     HorizontalAlignment="Center"
-                    Margin="0,191,0,0" VerticalAlignment="Top" 
-                    Padding="5" Height="30" Width="120" 
+                    Margin="0,191,0,0" 
+                    VerticalAlignment="Top" 
+                    Padding="5"
+                    Height="30" 
+                    Width="120" 
                     Click="OpenExcel_Click"/>
-            <Button x:Name="add" Content="Добавить участника" Grid.Column="1" HorizontalAlignment="Center" Margin="0,156,0,0" VerticalAlignment="Top" Padding="5" Height="30" Width="120" Click="addParticipant"/>
-            <Button x:Name="delete" Content="Удалить участника" Grid.Column="1" HorizontalAlignment="Center" Margin="0,226,0,0" VerticalAlignment="Top" Padding="5" Height="30" Width="120" Click="deleteParticipant" IsEnabled="False"/>
+            <Button x:Name="addParticipantButton"
+                    Content="Добавить участника"
+                    Grid.Column="1" 
+                    HorizontalAlignment="Center"
+                    Margin="0,156,0,0"
+                    VerticalAlignment="Top" 
+                    Padding="5"
+                    Height="30"
+                    Width="120"
+                    Click="addParticipant"/>
+            <Button x:Name="deleteParticipantButton"
+                    Content="Удалить участника"
+                    Grid.Column="1"
+                    HorizontalAlignment="Center" 
+                    Margin="0,226,0,0" 
+                    VerticalAlignment="Top"
+                    Padding="5"
+                    Height="30"
+                    Width="120"
+                    Click="deleteParticipant"
+                    IsEnabled="False"/>
             <DataGrid x:Name="registrationTable" 
                       x:FieldModifier="public" 
                       GridLinesVisibility="All" 
@@ -58,7 +85,10 @@
                 </DataGrid.DataContext>
                 <DataGrid.Columns>
 
-                    <DataGridTemplateColumn x:Name="checkboxCol" CanUserResize="False" MaxWidth="20" Width="20">
+                    <DataGridTemplateColumn x:Name="checkboxCol"
+                                            CanUserResize="False" 
+                                            MaxWidth="20" 
+                                            Width="20">
                         <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>
                                 <CheckBox Checked="selectorAllForDelete_Checked" Unchecked="selectorAllForDelete_Unchecked"/>
@@ -68,8 +98,10 @@
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding IsSelected, 
                                     UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
-                                          Checked="participantChecked" Unchecked="participantUnchecked"
-                                          VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                          Checked="participantChecked"
+                                          Unchecked="participantUnchecked"
+                                          VerticalAlignment="Center" 
+                                          HorizontalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.CellStyle>
@@ -161,10 +193,12 @@
                     <DataGridTemplateColumn Header="Пол">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <ComboBox ItemsSource="{Binding AvailableSex}" SelectedItem="{Binding Participant.Sex, 
+                                <ComboBox ItemsSource="{Binding AvailableSex}"
+                                          SelectedItem="{Binding Participant.Sex, 
                                     UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"
                                          Background="#FFF5F1DA" 
-                                         BorderThickness="0" IsTextSearchEnabled="False" />
+                                         BorderThickness="0"
+                                          IsTextSearchEnabled="False" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.CellStyle>
@@ -181,7 +215,8 @@
                                     UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
                                          PreviewTextInput="NumericOnly" 
                                          MaxLength="4"  
-                                         BorderThickness="0" TextChanged="TextBox_TextChanged" >
+                                         BorderThickness="0"
+                                         TextChanged="TextBox_TextChanged" >
                                     <TextBox.Style>
                                         <Style TargetType="TextBox">
                                             <Setter Property="Background" Value="#FFF5F1DA"/>
@@ -270,7 +305,7 @@
                     <DataGridTemplateColumn Header="Категория" >
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding Kategory,
+                                <TextBox Text="{Binding Category,
                                         UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
                                          BorderThickness="0" >
                                     <TextBox.Style>
@@ -333,37 +368,66 @@
                 </DataGrid.Resources>
             </DataGrid>
 
-            <Label x:Name="TournamentNameLabel" Content="Название турнира:" 
+            <Label x:Name="TournamentNameLabel" 
+                   Content="Название турнира:" 
                    Grid.Column="1" 
                    HorizontalAlignment="Center" 
                    Margin="0,75,0,0" 
-                   VerticalAlignment="Top" Width="120" Height="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <Button x:Name="goHome" 
-                    Content="Домой" Grid.Column="1" 
-                    HorizontalAlignment="Center" Margin="0,331,0,0" 
-                    VerticalAlignment="Top" Padding="5" Height="30" Width="120"/>
+                   VerticalAlignment="Top"
+                   Width="120"
+                   Height="30"
+                   HorizontalContentAlignment="Center"
+                   VerticalContentAlignment="Center"/>
+            <Button x:Name="goHomeButton" 
+                    Content="Домой"
+                    Grid.Column="1" 
+                    HorizontalAlignment="Center"
+                    Margin="0,331,0,0" 
+                    VerticalAlignment="Top"
+                    Padding="5"
+                    Height="30" 
+                    Width="120"/>
             <Button x:Name="exportButton" 
-                    Content="В файл" Grid.Column="1" 
-                    HorizontalAlignment="Center" Margin="0,261,0,0"
-                    VerticalAlignment="Top" Padding="5" Height="30" Width="120" 
-                    Click="saveFile" IsEnabled="False"/>
+                    Content="В файл"
+                    Grid.Column="1" 
+                    HorizontalAlignment="Center" 
+                    Margin="0,261,0,0"
+                    VerticalAlignment="Top"
+                    Padding="5" 
+                    Height="30"
+                    Width="120" 
+                    Click="saveFile"
+                    IsEnabled="False"/>
             <Button x:Name="viewSettingsButton" 
                     Content="Настроить вид" 
                     Grid.Column="1" 
                     HorizontalAlignment="Center" 
-                    Margin="0,296,0,0" VerticalAlignment="Top"
-                    Padding="5" Height="30" Width="120" 
+                    Margin="0,296,0,0" 
+                    VerticalAlignment="Top"
+                    Padding="5" 
+                    Height="30"
+                    Width="120" 
                     Click="showRegistrationModuleSettings"/>
-            <TextBox x:Name="TournamentNameTextBox" Grid.Column="1" 
-                     HorizontalAlignment="Center" Margin="0,110,0,0" TextWrapping="Wrap" 
-                     VerticalAlignment="Top" Width="120" Height="25" FontSize="16" LostFocus="TournamentNameTextBox_LostFocus" BorderBrush="#FFF5F1DA" BorderThickness="3,3,3,3"/>
-            <Button x:Name="hideInstrumentPanelButton" Content="" 
+            <TextBox x:Name="TournamentNameTextBox" 
+                     Grid.Column="1" 
+                     HorizontalAlignment="Center"
+                     Margin="0,110,0,0"
+                     TextWrapping="Wrap" 
+                     VerticalAlignment="Top" 
+                     Width="120" 
+                     Height="25" 
+                     FontSize="16"
+                     LostFocus="TournamentNameTextBox_LostFocus"
+                     BorderBrush="#FFF5F1DA" 
+                     BorderThickness="3,3,3,3"/>
+            <Button x:Name="hideInstrumentPanelButton" 
                     Grid.Column="1" 
                     HorizontalAlignment="Left" 
-                    Margin="10,10,0,0" 
+                    Margin="5,5,0,0" 
                     VerticalAlignment="Top" 
-                    Width="35"
-                    Height="35" Click="hideInstrumentsPanel">
+                    Width="30"
+                    Height="30"
+                    Click="HideInstrumentsPanel">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="100"/>
@@ -391,7 +455,8 @@
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Label x:Name="SubgroupFormationLabel" Content="Формирование групп"
+            <Label x:Name="SubgroupFormationLabel"
+                   Content="Формирование групп"
                    HorizontalAlignment="Center"
                    FontSize="30"
                    Grid.Column="0"
@@ -402,7 +467,7 @@
                     HorizontalAlignment="Left" 
                     Margin="5.2,0,0,0" 
                     VerticalAlignment="Top" 
-                    Click="hideInstrimentsPanelButtonSubgroups"
+                    Click="HideInstrimentsPanelButtonSubgroups"
                     Grid.Row="0"
                     Grid.Column="1" 
                     Width="20" 
@@ -444,15 +509,25 @@
                     <StackPanel x:Name="kategoriesStackPanel"></StackPanel>
                 </ScrollViewer>
 
-                <Grid x:Name="subgroupsGrid" Margin="5" Grid.Column="2" Grid.Row="1" ShowGridLines="True">
+                <Grid x:Name="subgroupsGrid"
+                      Margin="5"
+                      Grid.Column="2"
+                      Grid.Row="1"
+                      ShowGridLines="True">
                     <Grid.RowDefinitions>
                         <RowDefinition/>
                         <RowDefinition Height="40px"/>
                     </Grid.RowDefinitions>
-                    <ScrollViewer x:Name="scrollViewer2" Grid.Row="0" VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer x:Name="scrollViewer2" 
+                                  Grid.Row="0"
+                                  VerticalScrollBarVisibility="Auto">
                         <StackPanel x:Name="subgroupsStackPanel"></StackPanel>
                     </ScrollViewer>
-                    <Button x:Name="saveSubgroups" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1">Сохранить</Button>
+                    <Button x:Name="saveSubgroups"
+                            Content="Сохранить" 
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center" 
+                            Grid.Row="1"/>
                 </Grid>
 
             </Grid>
@@ -478,7 +553,8 @@
                            HorizontalAlignment="Stretch"
                            VerticalAlignment="Stretch"
                            HorizontalContentAlignment="Center"/>
-                    <ScrollViewer x:Name="nominationsScrollViewer" Grid.Row="1" 
+                    <ScrollViewer x:Name="nominationsScrollViewer" 
+                                  Grid.Row="1" 
                                   VerticalScrollBarVisibility="Auto"
                                   Margin="5">
                         <StackPanel x:Name="nominationsStackPanel"/>
@@ -496,17 +572,17 @@
                             VerticalAlignment="Stretch"
                             Content="регистрация"
                             Margin="5"
-                            Grid.Row="0" Click="backToRegistratioinTable"/>
+                            Grid.Row="0" 
+                            Click="BackToRegistratioinTable"/>
                     <Button x:Name="goCreateTournamentGrid" 
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             Content="сетка"
                             Margin="5"
-                            Grid.Row="1" Click="сreateTournamentGrid"/>
+                            Grid.Row="1"
+                            Click="СreateTournamentGrid"/>
                 </Grid>
-
             </Grid>
-
         </Grid>
     </Grid>
 </Window>
