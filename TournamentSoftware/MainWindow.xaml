@@ -403,7 +403,7 @@
                 </Button.Background>
             </Button>
             <Button x:Name="exportButton" 
-                    ToolTip="В файл" 
+                    ToolTip="Экспортировать в Excel" 
                     Grid.Column="1" 
                     HorizontalAlignment="Center" 
                     Margin="20,296,20,0"
@@ -441,7 +441,6 @@
                      BorderBrush="#FFF5F1DA" 
                      BorderThickness="3,3,3,3"/>
             <Button x:Name="hideInstrumentPanelButton" 
-                    Content="" 
                     Grid.Column="1" 
                     HorizontalAlignment="Left" 
                     Margin="10,10,0,0" 
