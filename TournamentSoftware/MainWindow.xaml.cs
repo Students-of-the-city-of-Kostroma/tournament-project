@@ -199,6 +199,9 @@ namespace TournamentSoftware
 
         private void ReadRegistrationFromBackup()
         {
+            if (!File.Exists(registrationBackupPath))
+                return;
+            
             List<ParticipantWrapper> participants = registrator.GetParticipantsFromBackup(registrationBackupPath);
             if (participants != null && participants.Count > 0)
             {
@@ -249,6 +252,9 @@ namespace TournamentSoftware
         private void mainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             participants = new ObservableCollection<ParticipantWrapper>();
+
+            if (!File.Exists(appStateJsonPath))
+                return;
 
             // проверяем на каком этапе закрылось приложение в прошлый раз
             StreamReader r = new StreamReader(appStateJsonPath);

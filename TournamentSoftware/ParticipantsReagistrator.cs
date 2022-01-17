@@ -79,9 +79,12 @@ namespace TournamentSoftware
 
         public List<Judge> GetJudgesFromBackup(string path)
         {
+            var judges = new List<Judge>();
+            if (!File.Exists(path))
+                return judges;
+
             StreamReader reader = new StreamReader(path);
             string json = reader.ReadToEnd();
-            var judges = new List<Judge>();
             judges = JsonConvert.DeserializeObject<List<Judge>>(json);
             reader.Close();
             return judges;
