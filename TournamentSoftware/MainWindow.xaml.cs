@@ -18,7 +18,7 @@ namespace TournamentSoftware
 {
     public partial class MainWindow : Window
     {
-        private SubgroupsFormation subgroupsFormation;
+        private Subgrouping subgroupsFormation;
         private static ParticipantsReagistrator registrator = new ParticipantsReagistrator();
         public ApplicationState appState = new ApplicationState();
         private bool isPanelOpen = true;
@@ -572,7 +572,7 @@ namespace TournamentSoftware
                 subgroupsStackPanel.Children.Clear();
                 SubgroupFormationLabel.Content = "Формирование групп";
                 SubgroupsFormationGridParent.Visibility = Visibility.Visible;
-                subgroupsFormation = new SubgroupsFormation();
+                subgroupsFormation = new Subgrouping();
 
                 SetGroups();
 
