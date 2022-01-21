@@ -64,7 +64,7 @@ namespace TournamentSoftware
                     Content = nominationName,
                     Tag = nominationName
                 };
-                nominationButton.Click += NominationButton_Click;
+                nominationButton.Click += SelectNomination;
                 categoriesButtons.Add(nominationButton);
                 grid.RowDefinitions.Add(row);
                 grid.Children.Add(nominationButton);
@@ -74,7 +74,7 @@ namespace TournamentSoftware
             return grid;
         }
 
-        private void NominationButton_Click(object sender, RoutedEventArgs e)
+        private void SelectNomination(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
             string nomination = button.Tag.ToString();
@@ -240,12 +240,12 @@ namespace TournamentSoftware
 
         private static void CheckRoolAndLogErrors(string subgroupName, string roolName, ParticipantWrapper controlPartisipant)
         {
-            Console.WriteLine("Проверка правила "+ roolName + " для подгруппы " + subgroupName);
+            Console.WriteLine("Проверка правила " + roolName + " для подгруппы " + subgroupName);
             List<ParticipantWrapper> participants = GetCategoryFromNomination(selectedNomination, selectedCategory).GetParticipantsBySubgroup(subgroupName);
             switch (roolName)
             {
                 case "Правило города":
-                    if (participants.Exists(participant => participant.City.Equals(controlPartisipant.City)))
+                    if (participants.Exists(participant => participant.City.Equals(controlPartisipant.City) && !participant.Equals(controlPartisipant)))
                     {
                         errorsLogger.AddError(GetGroupByNomination(selectedNomination), subgroupName, "Нарушено правило города");
                     }
@@ -257,7 +257,7 @@ namespace TournamentSoftware
                     }
                     break;
                 case "Правило одноклубников":
-                    if (participants.Exists(participant => participant.Club.Equals(controlPartisipant.Club)))
+                    if (participants.Exists(participant => participant.Club.Equals(controlPartisipant.Club) && !participant.Equals(controlPartisipant)))
                     {
                         errorsLogger.AddError(GetGroupByNomination(selectedNomination), subgroupName, "Нарушено правило одноклубников");
                     }
@@ -267,11 +267,10 @@ namespace TournamentSoftware
             }
         }
 
-        private static void ParticipantsSort(List<ParticipantWrapper> participants, ref int lastAddedGroup, string roolName, Dictionary<string, List<ParticipantWrapper>> filteredParticipants = null)
+        private static void ParticipantsSort(List<ParticipantWrapper> participants, ref int lastAddedGroup, Dictionary<string, List<ParticipantWrapper>> filteredParticipants = null)
         {
             Category category = GetCategoryFromNomination(selectedNomination, selectedCategory);
             int subgroupsCount = category.Subgroups.Count;
-            Console.WriteLine("количество подгрупп = " + subgroupsCount);
             int lastAddedGroup1 = lastAddedGroup;
 
             if (filteredParticipants == null)
@@ -291,9 +290,9 @@ namespace TournamentSoftware
                         category.GetSubgroupByName(subgroupName).AddParticipant(participant);
                         lastAddedGroup1++;
                     }
-                    foreach (string str in selectedRools)
+                    foreach (string roolName in selectedRools)
                     {
-                        CheckRoolAndLogErrors(subgroupName, str, participant);
+                        CheckRoolAndLogErrors(subgroupName, roolName, participant);
                     }
                 });
             }
@@ -316,12 +315,11 @@ namespace TournamentSoftware
                             category.GetSubgroupByName(subgroupName).AddParticipant(participant);
                             lastAddedGroup1++;
                         }
-                        foreach (string str in selectedRools)
+                        foreach (string roolName in selectedRools)
                         {
-                            CheckRoolAndLogErrors(subgroupName, str, participant);
+                            CheckRoolAndLogErrors(subgroupName, roolName, participant);
                         }
                     });
-
                 }
             }
             lastAddedGroup = lastAddedGroup1;
@@ -338,11 +336,11 @@ namespace TournamentSoftware
                     if (selectedRools.Contains("Правило одноклубников"))
                     {
                         Dictionary<string, List<ParticipantWrapper>> club = FilterParticipantsForClubs(entry.Value);
-                        ParticipantsSort(participants, ref lastAddedGroup, "Правило одноклубников", club);
+                        ParticipantsSort(entry.Value, ref lastAddedGroup, club);
                     }
                     else
                     {
-                        ParticipantsSort(participants, ref lastAddedGroup, "Правило города");
+                        ParticipantsSort(entry.Value, ref lastAddedGroup);
                     }
                 }
             }
@@ -351,12 +349,21 @@ namespace TournamentSoftware
                 if (selectedRools.Contains("Правило одноклубников"))
                 {
                     Dictionary<string, List<ParticipantWrapper>> club = FilterParticipantsForClubs(participants);
-                    ParticipantsSort(participants, ref lastAddedGroup, "Правило одноклубников", club);
+                    ParticipantsSort(participants, ref lastAddedGroup, club);
                 }
                 else
                 {
-                    ParticipantsSort(participants, ref lastAddedGroup, "");
+                    ParticipantsSort(participants, ref lastAddedGroup);
                 }
+            }
+        }
+
+        private void PrepareCategoryForSubgrouping()
+        {
+            Category category = GetCategoryFromNomination(selectedNomination, selectedCategory);
+            if (category.ContainsSubgroups)
+            {
+                category.RemoveAllSubgroups();
             }
         }
 
@@ -369,6 +376,7 @@ namespace TournamentSoftware
         {
             int _subgroups = int.Parse(countSubgroups.Text);
             int _countInKategory = int.Parse(countInCategory.Content.ToString());
+            PrepareCategoryForSubgrouping();
             if (_countInKategory > 0 && _subgroups > 0 && _countInKategory / _subgroups >= 2)
             {
                 for (int i = 1; i <= _subgroups; i++)
@@ -389,6 +397,11 @@ namespace TournamentSoftware
                     ParticipantsSortWithRools(posevParticipants, ref lastAddedGroup);
 
                     ParticipantsSortWithRools(not_posevParticipants, ref lastAddedGroup);
+                }
+                else
+                {
+                    // без учета посевных бойцов
+                    ParticipantsSortWithRools(participantsInCategory, ref lastAddedGroup);
                 }
 
                 ShowSubgroups();
@@ -456,13 +469,15 @@ namespace TournamentSoftware
                 grid.ShowGridLines = true;
                 grid.DragOver += Grid_DragOver;
                 grid.Margin = new Thickness(5);
-                RowDefinition r = new RowDefinition();
 
-                ColumnDefinition col1 = new ColumnDefinition();
-                ColumnDefinition col2 = new ColumnDefinition();
+                Grid headerSubgroup = new Grid();
+                ColumnDefinition headerSubgroupCol1 = new ColumnDefinition();
+                ColumnDefinition headerSubgroupCol2 = new ColumnDefinition();
 
-                Label label = CreateLabel(subgroups[i].Name, 25);
-                label.HorizontalAlignment = HorizontalAlignment.Left;
+                RowDefinition gridFirstRow = new RowDefinition();
+
+                Label subgroupName = CreateLabel(subgroups[i].Name, 25);
+                subgroupName.HorizontalAlignment = HorizontalAlignment.Left;
 
                 string errors = "";
                 List<string> errorsBySubgroup = errorsLogger.GetErrorsBySubgroup(GetGroupByNomination(selectedNomination), subgroups[i].Name);
@@ -470,20 +485,20 @@ namespace TournamentSoftware
                 {
                     errors += str + "\n";
                 }
-
                 Label errorList = CreateLabel(errors, 10);
                 errorList.HorizontalAlignment = HorizontalAlignment.Right;
 
-                grid.RowDefinitions.Add(r);
-                grid.ColumnDefinitions.Add(col1);
-                grid.ColumnDefinitions.Add(col2);
-                grid.Children.Add(label);
-                Grid.SetRow(label, grid.RowDefinitions.Count - 1);
-                Grid.SetColumn(label, 0);
+                headerSubgroup.ColumnDefinitions.Add(headerSubgroupCol1);
+                headerSubgroup.ColumnDefinitions.Add(headerSubgroupCol2);
+                headerSubgroup.Children.Add(subgroupName);
+                Grid.SetColumn(subgroupName, 0);
 
-                grid.Children.Add(errorList);
-                Grid.SetRow(errorList, grid.RowDefinitions.Count - 1);
+                headerSubgroup.Children.Add(errorList);
                 Grid.SetColumn(errorList, 1);
+
+                grid.RowDefinitions.Add(gridFirstRow);
+                grid.Children.Add(headerSubgroup);
+                Grid.SetRow(headerSubgroup, grid.RowDefinitions.Count - 1);
 
                 SolidColorBrush solidBG = new SolidColorBrush(Color.FromRgb(255, 215, 0));
 
@@ -698,12 +713,6 @@ namespace TournamentSoftware
             {
                 goNextButton.IsEnabled = true;
             }
-        }
-
-        public void SelectNomination(object sender, RoutedEventArgs e)
-        {
-            selectedNomination = ((Button)e.Source).Content.ToString();
-            ((MainWindow)Application.Current.MainWindow).SubgroupFormationLabel.Content = "Формирование групп. " + selectedNomination;
         }
     }
 }

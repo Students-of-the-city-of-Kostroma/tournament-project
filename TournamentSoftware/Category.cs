@@ -7,6 +7,7 @@ namespace TournamentSoftware
     {
         private List<ParticipantWrapper> participantsBuffer = new List<ParticipantWrapper>();
         private List<Subgroup> subgroups = new List<Subgroup>();
+        public bool ContainsSubgroups { get { return subgroups.Count > 0; } }
         public string Name { get; set; }
         public List<Subgroup> Subgroups { get { return subgroups; } set { subgroups = value; } }
         public Category() { Subgroups = new List<Subgroup>(); }
@@ -70,7 +71,6 @@ namespace TournamentSoftware
         {
             if (!IsSubgroupExists(subgroupName))
             {
-                Console.WriteLine("Создание подгруппы " + subgroupName);
                 subgroups.Add(new Subgroup() { Name = subgroupName });
             }
         }
@@ -82,13 +82,17 @@ namespace TournamentSoftware
 
         public Subgroup GetSubgroupByName(string subgroupName)
         {
-            Console.WriteLine(subgroupName);
             return subgroups.Find(subgroup => subgroup.Name.Equals(subgroupName));
         }
 
         public List<ParticipantWrapper> GetParticipantsBySubgroup(string subgroupName)
         {
             return GetSubgroupByName(subgroupName).Participants;
+        }
+
+        public void RemoveAllSubgroups()
+        {
+            subgroups.Clear();
         }
     }
 }
