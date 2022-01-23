@@ -589,8 +589,7 @@ namespace TournamentSoftware
                 kategoriesStackPanel.Children.Add(kategories);
 
                 UIElement kategorySettingsPanel = subgroupsFormation.kategorySettingsPanel();
-                SubgroupsFormationGrid.Children.Add(kategorySettingsPanel);
-                Grid.SetColumn(kategorySettingsPanel, 1);
+                categorySettingsGrid.Children.Add(kategorySettingsPanel);
                 Grid.SetRow(kategorySettingsPanel, 1);
 
                 UIElement subgroupSettingsPanel = subgroupsFormation.subgroupSettings();

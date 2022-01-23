@@ -152,7 +152,6 @@ namespace TournamentSoftware
         public UIElement kategoryList()
         {
             kategoriesGrid = new Grid();
-            kategoriesGrid.Margin = new Thickness(5);
             kategoriesGrid.VerticalAlignment = VerticalAlignment.Stretch;
             kategoriesGrid.HorizontalAlignment = HorizontalAlignment.Stretch;
             RowDefinition row1 = new RowDefinition();
@@ -194,7 +193,6 @@ namespace TournamentSoftware
         {
             subgroupsSettingsGrid.Children.Clear();
             kategorySettingsGrid.Children.Clear();
-            kategorySettingsGrid.ShowGridLines = true;
             var parent = VisualTreeHelper.GetParent(countInKategory);
             var parentGrid = parent as Grid;
             if (parentGrid != null)
@@ -504,7 +502,6 @@ namespace TournamentSoftware
         private void setSubgroups(Dictionary<string, List<ParticipantFormModel>> subgroups)
         {
             subgroupsSettingsGrid.Children.Clear();
-            subgroupsSettingsGrid.ShowGridLines = true;
             subgroupsSettingsGrid.RowDefinitions.Clear();
             subgroupsSettingsGrid.Drop += SubgroupsSettingsGrid_Drop;
             subgroupsSettingsGrid.DragOver += SubgroupsSettingsGrid_DragOver;
@@ -514,7 +511,6 @@ namespace TournamentSoftware
                 RowDefinition row = new RowDefinition();
 
                 Grid grid = new Grid();
-                grid.ShowGridLines = true;
                 grid.DragOver += Grid_DragOver;
                 grid.Margin = new Thickness(5);
                 RowDefinition r = new RowDefinition();
@@ -713,10 +709,11 @@ namespace TournamentSoftware
             {
                 Content = "Введите кол-во подгрупп",
                 FontSize = 15,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Stretch,
-                VerticalContentAlignment = VerticalAlignment.Center,
-                HorizontalContentAlignment = HorizontalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                //HorizontalContentAlignment = HorizontalAlignment.Center,
+                //VerticalContentAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, 45, 0, 0)
             };
             subgroupsSettingsGrid.Children.Add(startMessage);
             Grid.SetRow(startMessage, 1);
