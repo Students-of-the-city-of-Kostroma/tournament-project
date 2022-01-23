@@ -5,38 +5,67 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TournamentSoftware"
         mc:Ignorable="d"
-          Title="Турнирный софт"   Height="513.9" Width="1209.4" Loaded="startWindow_Loaded">
+          Title="Турнирный софт" 
+        Height="513.9" 
+        Width="1209.4"
+        Loaded="startWindow_Loaded">
     <Grid>
-        <Grid x:Name="startWindowGrid" HorizontalAlignment="Stretch" Margin="10,0,0,0" VerticalAlignment="Stretch"  ShowGridLines="True">
+        <Grid x:Name="startWindowGrid"
+              HorizontalAlignment="Stretch" 
+              Margin="10,0,0,0"
+              VerticalAlignment="Stretch"
+              ShowGridLines="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="300"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="goRegistrateButton" Content="Начать турнир"  Padding="5" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="35" Click="goRegistrate" RenderTransformOrigin="-1.451,-5.185" Width="423" Height="186" FontFamily="Roboto" Background="#FFF5F1DA" Grid.Column="0">
+            <Button x:Name="goRegistrateButton"
+                    Content="Начать турнир"
+                    Padding="5"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center" 
+                    FontSize="35"
+                    Click="goRegistrate" 
+                    Width="423" 
+                    Height="186"
+                    FontFamily="Roboto" 
+                    Background="#FFF5F1DA" 
+                    Grid.Column="0" TabIndex="0">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="58"/>
                     </Style>
                 </Button.Resources>
             </Button>
-            <Label Content="История турниров" Grid.Column="1" Margin="0,75,0,0" FontSize="15" FontFamily="Roboto" IsEnabled="False" Foreground="Gray" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Height="59" VerticalAlignment="Top" />
-            <ListBox x:Name="ListBoxOfTournaments" Grid.Column="1" HorizontalAlignment="Stretch"  Margin="5, 100, 5, 0 " VerticalAlignment="Top"/>
+            <Label Content="История турниров" 
+                   Grid.Column="1"
+                   Margin="0,75,0,0"
+                   FontSize="15"
+                   FontFamily="Roboto"
+                   IsEnabled="False"
+                   Foreground="Gray"
+                   HorizontalContentAlignment="Center"
+                   VerticalContentAlignment="Top"
+                   Height="59" 
+                   VerticalAlignment="Top" />
+            <ListBox x:Name="ListBoxOfTournaments" Grid.Column="1"
+                     HorizontalAlignment="Stretch"  
+                     Margin="5, 100, 5, 0 " 
+                     VerticalAlignment="Top"/>
             <Button x:Name="HideInstrumentPanelButton" 
-                    Grid.Column="1" Content="" 
+                    Grid.Column="1" 
                     Margin="10" VerticalAlignment="Top" 
                     HorizontalAlignment="Right"
                     Height="30" Width="30"
-                    RenderTransformOrigin="-0.337,0.468" 
                     Click="HideInstrumentPanel"/>
             <Button x:Name="HideInstrumentPanelButton2" 
-                    Grid.Column="0" Content="" 
+                    Grid.Column="0"
                     Margin="10" VerticalAlignment="Top" 
                     HorizontalAlignment="Right"
                     Height="30" Width="30"
                     RenderTransformOrigin="-0.337,0.468" 
                     Click="HideInstrumentPanel"
                     Visibility="Hidden"/>
-
         </Grid>
     </Grid>
 </Window>

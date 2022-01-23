@@ -133,11 +133,6 @@
                                 <TextBox.Style>
                                     <Style TargetType="TextBox">
                                         <Setter Property="Background" Value="#FFF5F1DA"/>
-                                        <Style.Triggers>
-                                            <Trigger Property="Text" Value="">
-                                                <Setter Property="Background" Value="#FFFFDDDB"/>
-                                            </Trigger>
-                                        </Style.Triggers>
                                     </Style>
                                 </TextBox.Style>
                             </TextBox>
@@ -155,11 +150,6 @@
                                 <TextBox.Style>
                                     <Style TargetType="TextBox">
                                         <Setter Property="Background" Value="#FFF5F1DA"/>
-                                        <Style.Triggers>
-                                            <Trigger Property="Text" Value="">
-                                                <Setter Property="Background" Value="#FFFFDDDB"/>
-                                            </Trigger>
-                                        </Style.Triggers>
                                     </Style>
                                 </TextBox.Style>
                             </TextBox>

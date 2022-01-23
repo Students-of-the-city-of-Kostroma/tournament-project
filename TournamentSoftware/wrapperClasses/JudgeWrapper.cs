@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace TournamentSoftware
 {
-    public class JudgeFormModel : INotifyPropertyChanged
+    public class JudgeWrapper : INotifyPropertyChanged
     {
         private string name;
         private string surname;

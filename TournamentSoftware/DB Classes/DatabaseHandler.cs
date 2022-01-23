@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using SQLite;
 using TournamentSoftware.DB_Classes;
 
@@ -15,7 +16,7 @@ namespace TournamentSoftware
             _db.CreateTable<TournamentGrid>();
             _db.CreateTable<Nomination>();
             _db.CreateTable<Category>();
-            _db.CreateTable<Group>();
+            _db.CreateTable<TournamentGroup>();
             _db.CreateTable<Subgroup>();
             _db.CreateTable<Club>();
             _db.CreateTable<Participant>();
@@ -29,23 +30,20 @@ namespace TournamentSoftware
             _db.CreateTable<Punishment>();
         }
 
-        public dynamic GetData(string request)
-        {
-            return _db.Query<TournamentGrid>(request);
-        }
+        //public dynamic GetData(string request)
+        //{
+        //    return _db.Query(request);
+        //}
 
         public void AddTournamentGrid(TournamentGrid tournamentGrid)
         {
             _db.Insert(tournamentGrid);
         }
 
-        public void GetTournamentGrids()
+        public List<TournamentGrid> GetTournamentGridsData(string request)
         {
-            var tournamentGrids = _db.Query<TournamentGrid>("SELECT * FROM TournamentGrid");
-            foreach (var tournamentGrid in tournamentGrids)
-            {
-                Console.WriteLine(tournamentGrid.ToString());
-            }
+            List<TournamentGrid> tournamentGrids = _db.Query<TournamentGrid>(request);
+            return tournamentGrids;
         }
 
         public void AddNomination(Nomination nomination)
@@ -53,13 +51,10 @@ namespace TournamentSoftware
             _db.Insert(nomination);
         }
 
-        public void GetNominations()
+        public List<Nomination> GetNominationsData(string request)
         {
-            var nominations = _db.Query<Nomination>("SELECT * FROM Nomination");
-            foreach (var nomination in nominations)
-            {
-                Console.WriteLine(nomination.ToString());
-            }
+            List<Nomination> nominations = _db.Query<Nomination>(request);
+            return nominations;
         }
 
         public void AddCategory(Category category)
@@ -67,27 +62,21 @@ namespace TournamentSoftware
             _db.Insert(category);
         }
 
-        public void GetCategorys()
+        public List<Category> GetCategorysData(string request)
         {
-            var categorys = _db.Query<Category>("SELECT * FROM Category");
-            foreach (var category in categorys)
-            {
-                Console.WriteLine(category.ToString());
-            }
+            List<Category> categorys = _db.Query<Category>(request);
+            return categorys;
         }
 
-        public void AddGroup(Group group)
+        public void AddGroup(TournamentGroup group)
         {
             _db.Insert(group);
         }
 
-        public void GetGroups()
+        public List<TournamentGroup> GetGroupsData(string request)
         {
-            var groups = _db.Query<Group>("SELECT * FROM Group");
-            foreach (var group in groups)
-            {
-                Console.WriteLine(group.ToString());
-            }
+            List<TournamentGroup> groups = _db.Query<TournamentGroup>(request);
+            return groups;
         }
 
         public void AddSubgroup(Subgroup subgroup)
@@ -95,13 +84,10 @@ namespace TournamentSoftware
             _db.Insert(subgroup);
         }
 
-        public void GetSubgroups()
+        public List<Subgroup> GetSubgroupsData(string request)
         {
-            var subgroups = _db.Query<Subgroup>("SELECT * FROM Subgroup");
-            foreach (var subgroup in subgroups)
-            {
-                Console.WriteLine(subgroup.ToString());
-            }
+            List<Subgroup> subgroups = _db.Query<Subgroup>(request);
+            return subgroups;
         }
 
         public void AddClub(Club club)
@@ -109,13 +95,10 @@ namespace TournamentSoftware
             _db.Insert(club);
         }
 
-        public void GetClubs()
+        public List<Club> GetClubsData(string request)
         {
-            var clubs = _db.Query<Club>("SELECT * FROM Club");
-            foreach (var club in clubs)
-            {
-                Console.WriteLine(club.ToString());
-            }
+            List<Club> clubs = _db.Query<Club>(request);
+            return clubs;
         }
 
         public void AddParticipant(Participant participant)
@@ -123,13 +106,10 @@ namespace TournamentSoftware
             _db.Insert(participant);
         }
 
-        public void GetParticipants()
+        public List<Participant> GetParticipantsData(string request)
         {
-            var participants = _db.Query<Participant>("SELECT * FROM Participant");
-            foreach (var participant in participants)
-            {
-                Console.WriteLine(participant.ToString());
-            }
+            List<Participant> participants = _db.Query<Participant>(request);
+            return participants;
         }
 
         public void AddJudge(Judge judge)
@@ -137,13 +117,10 @@ namespace TournamentSoftware
             _db.Insert(judge);
         }
 
-        public void GetJudges()
+        public List<Judge> GetJudgesData(string request)
         {
-            var judges = _db.Query<Judge>("SELECT * FROM Judge");
-            foreach (var judge in judges)
-            {
-                Console.WriteLine(judge.ToString());
-            }
+            List<Judge> judges = _db.Query<Judge>(request);
+            return judges;
         }
 
         public void AddFighter(Fighter fighter)
@@ -151,13 +128,10 @@ namespace TournamentSoftware
             _db.Insert(fighter);
         }
 
-        public void GetFighters()
+        public List<Fighter> GetFightersData(string request)
         {
-            var fighters = _db.Query<Fighter>("SELECT * FROM Fighter");
-            foreach (var fighter in fighters)
-            {
-                Console.WriteLine(fighter.ToString());
-            }
+            List<Fighter> fighters = _db.Query<Fighter>(request);
+            return fighters;
         }
 
         public void AddBattleProtocol(BattleProtocol tournamentGrid)
@@ -165,13 +139,10 @@ namespace TournamentSoftware
             _db.Insert(tournamentGrid);
         }
 
-        public void GetBattleProtocols()
+        public List<BattleProtocol> GetBattleProtocolsData(string request)
         {
-            var battleProtocols = _db.Query<BattleProtocol>("SELECT * FROM BattleProtocol");
-            foreach (var battleProtocol in battleProtocols)
-            {
-                Console.WriteLine(battleProtocol.ToString());
-            }
+            List<BattleProtocol> battleProtocols = _db.Query<BattleProtocol>(request);
+            return battleProtocols;
         }
 
         public void AddRound(Round round)
@@ -179,13 +150,10 @@ namespace TournamentSoftware
             _db.Insert(round);
         }
 
-        public void GetRounds()
+        public List<Round> GetRoundsData(string request)
         {
-            var rounds = _db.Query<Round>("SELECT * FROM Round");
-            foreach (var round in rounds)
-            {
-                Console.WriteLine(round.ToString());
-            }
+            List<Round> rounds = _db.Query<Round>(request);
+            return rounds;
         }
 
         public void AddJudgeNote(JudgeNote judgeNote)
@@ -193,13 +161,10 @@ namespace TournamentSoftware
             _db.Insert(judgeNote);
         }
 
-        public void GetJudgeNotes()
+        public List<JudgeNote> GetJudgeNotesData(string request)
         {
-            var judgeNotes = _db.Query<JudgeNote>("SELECT * FROM JudgeNote");
-            foreach (var judgeNote in judgeNotes)
-            {
-                Console.WriteLine(judgeNote.ToString());
-            }
+            List<JudgeNote> judgeNotes = _db.Query<JudgeNote>(request);
+            return judgeNotes;
         }
 
         public void AddFighterRoundResult(FighterRoundResult fighterRoundResult)
@@ -207,13 +172,10 @@ namespace TournamentSoftware
             _db.Insert(fighterRoundResult);
         }
 
-        public void GetFighterRoundResults()
+        public List<FighterRoundResult> GetFighterRoundResultsData(string request)
         {
-            var fighterRoundResults = _db.Query<FighterRoundResult>("SELECT * FROM FighterRoundResult");
-            foreach (var fighterRoundResult in fighterRoundResults)
-            {
-                Console.WriteLine(fighterRoundResult.ToString());
-            }
+            List<FighterRoundResult> fighterRoundResults = _db.Query<FighterRoundResult>(request);
+            return fighterRoundResults;
         }
 
         public void AddFighterRoundResult_Punishment(FighterRoundResult_Punishment fighterRoundResult_Punishment)
@@ -221,13 +183,10 @@ namespace TournamentSoftware
             _db.Insert(fighterRoundResult_Punishment);
         }
 
-        public void GetFighterRoundResult_Punishments()
+        public List<FighterRoundResult_Punishment> GetFighterRoundResult_PunishmentsData(string request)
         {
-            var fighterRoundResult_Punishments = _db.Query<FighterRoundResult_Punishment>("SELECT * FROM FighterRoundResult_Punishment");
-            foreach (var fighterRoundResult_Punishment in fighterRoundResult_Punishments)
-            {
-                Console.WriteLine(fighterRoundResult_Punishment.ToString());
-            }
+            List<FighterRoundResult_Punishment> fighterRoundResult_Punishments = _db.Query<FighterRoundResult_Punishment>(request);
+            return fighterRoundResult_Punishments; 
         }
 
         public void AddPunishment(Punishment punishment)
@@ -235,13 +194,10 @@ namespace TournamentSoftware
             _db.Insert(punishment);
         }
 
-        public void GetPunishments()
+        public List<Punishment> GetPunishmentsData(string request)
         {
-            var punishments = _db.Query<Punishment>("SELECT * FROM Punishment");
-            foreach (var punishment in punishments)
-            {
-                Console.WriteLine(punishment.ToString());
-            }
+            List<Punishment> punishments = _db.Query<Punishment>(request);
+            return punishments;
         }
     }
 }

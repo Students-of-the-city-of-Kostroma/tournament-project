@@ -89,30 +89,33 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ApplicationState.cs" />
-    <Compile Include="Club.cs" />
-    <Compile Include="DatabaseHandler.cs" />
-    <Compile Include="DbConnection.cs" />
+    <Compile Include="appState\ApplicationResourcesPaths.cs" />
+    <Compile Include="appState\ApplicationState.cs" />
+    <Compile Include="wrappers\CategoryWrapper.cs" />
     <Compile Include="ErrorListWindow.xaml.cs">
       <DependentUpon>ErrorListWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Judge.cs" />
+    <Compile Include="wrappers\GroupWrapper.cs" />
+    <Compile Include="wrappers\JudgeWrapper.cs" />
     <Compile Include="JudgesRegistrationWindow.xaml.cs">
       <DependentUpon>JudgesRegistrationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Nomination.cs" />
-    <Compile Include="ParticipantFormModel.cs" />
-    <Compile Include="ParticipantsReagistrator.cs" />
+    <Compile Include="wrappers\NominationWrapper.cs" />
+    <Compile Include="wrappers\ParticipantWrapper.cs" />
+    <Compile Include="appState\ParticipantsReagistrator.cs" />
     <Compile Include="StartWindow.xaml.cs">
       <DependentUpon>StartWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SubgroupsFormation.cs" />
+    <Compile Include="wrappers\SubgroupWrapper.cs" />
+    <Compile Include="Subgrouping.cs" />
+    <Compile Include="appState\TournamentData.cs" />
     <Compile Include="TournamentGrid.cs" />
     <Compile Include="TournamentGridWindow.xaml.cs">
       <DependentUpon>TournamentGridWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Window1.xaml.cs">
-      <DependentUpon>Window1.xaml</DependentUpon>
+    <Compile Include="ViewSettingsWindow.xaml.cs">
+      <DependentUpon>ViewSettingsWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="ErrorListWindow.xaml">
       <SubType>Designer</SubType>
@@ -142,7 +145,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Window1.xaml">
+    <Page Include="ViewSettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

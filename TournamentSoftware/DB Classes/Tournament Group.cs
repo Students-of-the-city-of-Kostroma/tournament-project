@@ -2,8 +2,8 @@
 
 namespace TournamentSoftware
 {
-    [Table("Group")]
-    public class Group
+    [Table("TournamentGroup")]
+    public class TournamentGroup
     {
         [Column("id"), PrimaryKey, AutoIncrement]
         public int Id { get; set; }

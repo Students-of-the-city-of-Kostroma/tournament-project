@@ -8,16 +8,16 @@ using Excel = Microsoft.Office.Interop.Excel;
 using System.Data;
 using ExcelDataReader;
 using System.Collections.ObjectModel;
+using static TournamentSoftware.TournamentData;
 
 namespace TournamentSoftware
 {
     public class ParticipantsReagistrator
     {
-        public List<string> nominationsNames = new List<string>();
         /// <summary>
         /// Записываем информацию о всех участнниках в файл
         /// </summary>
-        public void backupRegistrationTable<T>(ObservableCollection<T> elements, string path)
+        public void BackupRegistrationTable<T>(ObservableCollection<T> elements, string path)
         {
             List<T> participantsArray = new List<T>();
             foreach (T participant in elements)
@@ -28,7 +28,7 @@ namespace TournamentSoftware
             File.WriteAllText(path, participantsArrayJson);
         }
 
-        public void saveFile(DataTable table)
+        public void SaveFile(DataTable table)
         {
             SaveFileDialog SaveFileDialog = new SaveFileDialog();
 
@@ -59,10 +59,6 @@ namespace TournamentSoftware
             // Data Rows
             for (int Idx = 0; Idx < table.Rows.Count; Idx++)
             {
-                for (int i = 0; i < table.Rows[Idx].ItemArray.Length; i++)
-                {
-                    Console.WriteLine(i + " " + table.Rows[Idx].ItemArray[i]);
-                }
                 worksheet.Range["A2"].Offset[Idx].Resize[1, table.Columns.Count].Value = table.Rows[Idx].ItemArray;
             }
 
@@ -72,50 +68,55 @@ namespace TournamentSoftware
             excelapp.Quit();
         }
 
-        public List<ParticipantFormModel> getParticipantsFromBackup(string path)
+        public List<ParticipantWrapper> GetParticipantsFromBackup(string path)
         {
             StreamReader reader = new StreamReader(path);
             string json = reader.ReadToEnd();
-            var participants = JsonConvert.DeserializeObject<List<ParticipantFormModel>>(json);
+            var participants = JsonConvert.DeserializeObject<List<ParticipantWrapper>>(json);
             reader.Close();
             return participants;
         }
 
-        public List<JudgeFormModel> getJudgesFromBackup(string path)
+        public List<JudgeWrapper> GetJudgesFromBackup(string path)
         {
+            var judges = new List<JudgeWrapper>();
+            if (!File.Exists(path))
+                return judges;
+
             StreamReader reader = new StreamReader(path);
             string json = reader.ReadToEnd();
-            var judges = new List<JudgeFormModel>();
-            judges = JsonConvert.DeserializeObject<List<JudgeFormModel>>(json);
+            judges = JsonConvert.DeserializeObject<List<JudgeWrapper>>(json);
             reader.Close();
             return judges;
         }
 
-        public void loadParticipantsFromFile(List<string> requiredColumnHeaders)
+        public void LoadParticipantsFromFile(List<string> requiredColumnHeaders)
         {
             MessageBoxResult result = new MessageBoxResult();
-            if (MainWindow.participantsList.Count > 0)
+            if (participants.Count > 0)
             {
-                result = MessageBox.Show("Все предыдущие записи в таблице регистрации будут удалены. Вы хотите продолжить?", "Предупреждение",
+               result = MessageBox.Show("Все предыдущие записи в таблице регистрации будут удалены. Вы хотите продолжить?",
+                   "Предупреждение",
                MessageBoxButton.OKCancel,
                MessageBoxImage.Warning, MessageBoxResult.Cancel);
             }
 
-            if (MainWindow.participantsList.Count == 0 || MessageBoxResult.OK == result)
+            if (participants.Count == 0 || MessageBoxResult.OK == result)
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog();
                 openFileDialog.Filter = "EXCEL Files (*.xlsx)|*.xlsx|EXCEL Files 2003 (*.xls)|*.xls|All files (*.*)|*.*";
                 if (openFileDialog.ShowDialog() != true)
                     return;
 
-                if (!checkTableHeadersValid(openFileDialog.FileName, requiredColumnHeaders))
+                if (!CheckTableHeadersValid(openFileDialog.FileName, requiredColumnHeaders))
                 {
                     MessageBox.Show("Не удалось прочитать таблицу! Попробуйте загрузить другой файл", "Ошибка");
                 }
             }
         }
-        private bool checkTableHeadersValid(string fileName, List<string> requiredColumnHeaders)
+        private bool CheckTableHeadersValid(string fileName, List<string> requiredColumnHeaders)
         {
+            nominations.Clear();
             FileStream stream = File.Open(fileName, FileMode.Open, FileAccess.Read);
             var reader = ExcelReaderFactory.CreateReader(stream);
             DataSet dataSet = reader.AsDataSet();
@@ -157,22 +158,23 @@ namespace TournamentSoftware
             // если нашлись все обязательные столбцы
             if (requredColumnExists == requiredColumnHeaders.Count)
             {
-                MainWindow.participantsList.Clear();
+                participants.Clear();
                 
                 foreach (int i in loadedNominationsIndexes)
                 {
                     string nominationName = loadedRows[0].ItemArray[i].ToString();
-                    nominationsNames.Add(nominationName);
+                    NominationWrapper nomination = new NominationWrapper(nominationName);
+                    nominations.Add(nomination);
                 }
 
-                getParticipants(loadedColumns, loadedRows, loadedNominationsIndexes);
+                GetParticipants(loadedColumns, loadedRows, loadedNominationsIndexes);
                 return true;
             }
 
             return false;
         }
 
-        private void getParticipants(
+        private void GetParticipants(
             DataColumnCollection loadedColumns, 
             DataRowCollection loadedRows, 
             List<int> loadedNominationsIndexes)
@@ -181,7 +183,7 @@ namespace TournamentSoftware
             for (int i = 1; i < loadedRows.Count; i++)
             {
                 DataRow row = loadedRows[i];
-                ParticipantFormModel newParticipant = new ParticipantFormModel();
+                ParticipantWrapper newParticipant = new ParticipantWrapper();
 
                 // идем по столбцам
                 for (int j = 0; j < loadedColumns.Count; j++)
@@ -269,7 +271,7 @@ namespace TournamentSoftware
 
                         if (loadedRows[0].ItemArray[j].Equals("Категория"))
                         {
-                            newParticipant.Kategory = row.ItemArray[j].ToString();
+                            newParticipant.Category = row.ItemArray[j].ToString();
                         }
 
                         if (loadedRows[0].ItemArray[j].Equals("Рост"))
@@ -316,7 +318,7 @@ namespace TournamentSoftware
                     }
                 }
 
-                MainWindow.participantsList.Add(newParticipant);
+                participants.Add(newParticipant);
             }
         }
     }

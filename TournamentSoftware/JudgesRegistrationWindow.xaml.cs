@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
+using static TournamentSoftware.ApplicationResourcesPaths;
 
 namespace TournamentSoftware
 {
@@ -10,9 +10,8 @@ namespace TournamentSoftware
     /// </summary>
     public partial class JudgesRegistrationWindow : Window
     {
-        public static ObservableCollection<JudgeFormModel> judgesList = new ObservableCollection<JudgeFormModel>();
+        public static ObservableCollection<JudgeWrapper> judgesList = new ObservableCollection<JudgeWrapper>();
         private ParticipantsReagistrator reagistrator = new ParticipantsReagistrator();
-        private string judgesBackupPath = "..\\..\\judgesBackup.json";
         private bool isJudgesSaved = false;
 
         public bool JudesSaved
@@ -34,7 +33,7 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void addJude (object sender, RoutedEventArgs e)
         {
-            JudgeFormModel jude = new JudgeFormModel
+            JudgeWrapper jude = new JudgeWrapper
             {
                 Name = "",
                 Surname = "",
@@ -73,7 +72,7 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            reagistrator.backupRegistrationTable(judgesList, judgesBackupPath);
+            reagistrator.BackupRegistrationTable(judgesList, judgesBackupPath);
         }
 
         /// <summary>
@@ -91,10 +90,10 @@ namespace TournamentSoftware
             if (!isJudgesSaved)
             {
                 judgesList.Clear();
-                List<JudgeFormModel> judges = reagistrator.getJudgesFromBackup(judgesBackupPath);
+                List<JudgeWrapper> judges = reagistrator.GetJudgesFromBackup(judgesBackupPath);
                 if (judges != null)
                 {
-                    foreach (JudgeFormModel j in judges)
+                    foreach (JudgeWrapper j in judges)
                     {
                         judgesList.Add(j);
                     }
