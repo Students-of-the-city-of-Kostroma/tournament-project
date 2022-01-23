@@ -22,6 +22,7 @@ namespace TournamentSoftware
         private static ParticipantsReagistrator registrator = new ParticipantsReagistrator();
         public ApplicationState appState = new ApplicationState();
         private bool isPanelOpen = true;
+        private DataBaseHandler dataBaseHandler;
 
         public static ParticipantsReagistrator GetReagistrator { get { return registrator; } }
         public static ObservableCollection<ParticipantWrapper> GetPartisipants { get { return participants; } }
@@ -50,6 +51,7 @@ namespace TournamentSoftware
             StartWindow startWindow = new StartWindow();
             startWindow.Show();
             startWindow.Closed += StartWindow_Closed;
+            dataBaseHandler = new DataBaseHandler(dataBasePath);
         }
 
         private void StartWindow_Closed(object sender, EventArgs e)
@@ -684,6 +686,94 @@ namespace TournamentSoftware
 
         private void СreateTournamentGrid(object sender, RoutedEventArgs e)
         {
+            if (dataBaseHandler.GetTournamentGridsData("SELECT * FROM TournamentGrid WHERE name=\"" + TournamentNameTextBox.Text + "\";").Count != 0)
+            {
+                MessageBox.Show("Имя турнира " + TournamentNameTextBox.Text + " неуникально.", "Ошибка");
+                return;
+            }
+            TournamentGrid tournamentGrid = new TournamentGrid();
+            tournamentGrid.Name = TournamentNameTextBox.Text;
+            tournamentGrid.Type = "type";
+            tournamentGrid.Date = new DateTime();
+            dataBaseHandler.AddTournamentGrid(tournamentGrid);
+            tournamentGrid = dataBaseHandler.GetTournamentGridsData("SELECT id FROM TournamentGrid WHERE name=\"" + tournamentGrid.Name + "\";")[0];
+
+            // номинации
+            foreach (GroupWrapper groupWrapper in groups)
+            {
+                Nomination nomination = new Nomination();
+                if (dataBaseHandler.GetNominationsData("SELECT * FROM Nomination WHERE name=\"" + groupWrapper.NominationWrapper.Nomination.Name + "\";").Count == 0)
+                {
+                    nomination.Name = groupWrapper.NominationWrapper.Nomination.Name;
+                    dataBaseHandler.AddNomination(nomination);
+                }
+                nomination = dataBaseHandler.GetNominationsData("SELECT id FROM Nomination WHERE name=\"" + groupWrapper.NominationWrapper.Nomination.Name + "\";")[0];
+
+                // категории
+                List<CategoryWrapper> categories = groupWrapper.Categories;
+                foreach (CategoryWrapper categoryWrapper in categories)
+                {
+                    Category category = new Category();
+                    if (dataBaseHandler.GetCategorysData("SELECT * FROM Category WHERE name=\"" + categoryWrapper.Name + "\";").Count == 0)
+                    {
+                        category.Name = categoryWrapper.Name;
+                        dataBaseHandler.AddCategory(category);
+                    }
+                    category = dataBaseHandler.GetCategorysData("SELECT * FROM Category WHERE name=\"" + categoryWrapper.Name + "\";")[0];
+
+
+                    // добавление групп 
+                    TournamentGroup group = new TournamentGroup();
+                    group.TournamentGridId = tournamentGrid.Id;
+                    group.NominationId = nomination.Id;
+                    group.CategoryId = category.Id;
+                    dataBaseHandler.AddGroup(group);
+                    group = dataBaseHandler.GetGroupsData("SELECT * FROM TournamentGroup WHERE tournament_grid_id=" + group.TournamentGridId + " AND nomination_id=" + group.NominationId + " AND category_id=" + group.CategoryId + ";")[0];
+
+                    // добавление подгрупп 
+                    List<SubgroupWrapper> subgroups = categoryWrapper.Subgroups;
+                    foreach (SubgroupWrapper subgroupWrapper in subgroups)
+                    {
+                        Subgroup subgroup = new Subgroup();
+                        subgroup.Name = subgroupWrapper.Name;
+                        subgroup.GroupId = group.Id;
+                        dataBaseHandler.AddSubgroup(subgroup);
+                    }
+                }
+            }
+
+            // добавление участников
+            for (int i = 0; i < participants.Count; i++)
+            {
+                Club club = new Club();
+                if (dataBaseHandler.GetClubsData("SELECT * FROM Club WHERE name=\"" + participants[i].Club + "\" AND city=\"" + participants[i].City + "\";").Count == 0)
+                {
+                    club.Name = participants[i].Club;
+                    club.City = participants[i].City;
+                    dataBaseHandler.AddClub(club);
+                }
+                club.Id = dataBaseHandler.GetClubsData("SELECT * FROM Club WHERE name=\"" + participants[i].Club + "\" AND city=\"" + participants[i].City + "\";")[0].Id;
+
+                if (dataBaseHandler.GetParticipantsData("SELECT * FROM Participant WHERE surname=\"" + participants[i].Participant.Surname + "\" AND name=\"" + participants[i].Participant.Name + "\" AND date_of_birth=\"" + participants[i].Participant.DateOfBirth + "\";").Count != 0)
+                {
+                    continue;
+                }
+                Participant participant = new Participant();
+                participant.Surname = participants[i].Participant.Surname;
+                participant.Name = participants[i].Participant.Name;
+                participant.Patronymic = participants[i].Participant.Patronymic;
+                participant.Pseudonym = participants[i].Participant.Pseudonym;
+                participant.Leader = participants[i].Participant.Leader;
+                participant.Sex = participants[i].Participant.Sex;
+                participant.DateOfBirth = participants[i].Participant.DateOfBirth;
+                participant.Height = participants[i].Participant.Height;
+                participant.Weight = participants[i].Participant.Weight;
+                participant.CommonRating = participants[i].Participant.CommonRating;
+                participant.ClubRating = participants[i].Participant.ClubRating;
+                participant.ClubId = club.Id;
+                dataBaseHandler.AddParticipant(participant);
+            }
+
             TournamentGridWindow tournamentGridWindow = new TournamentGridWindow();
             tournamentGridWindow.Show();
             Close();
