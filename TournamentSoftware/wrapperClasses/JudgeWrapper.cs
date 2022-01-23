@@ -1,11 +1,9 @@
-﻿using SQLite;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace TournamentSoftware
 {
-    [Table("Judes")]
-    public class Judge : INotifyPropertyChanged
+    public class JudgeWrapper : INotifyPropertyChanged
     {
         private string name;
         private string surname;

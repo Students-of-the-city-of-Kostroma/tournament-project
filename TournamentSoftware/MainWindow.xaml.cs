@@ -582,7 +582,7 @@ namespace TournamentSoftware
                     }
                 }
                 nominationsStackPanel.Children.Clear();
-                kategoriesStackPanel.Children.Clear();
+                categoriesStackPanel.Children.Clear();
                 subgroupsStackPanel.Children.Clear();
                 SubgroupFormationLabel.Content = "Формирование групп";
                 SubgroupsFormationGridParent.Visibility = Visibility.Visible;
@@ -591,9 +591,9 @@ namespace TournamentSoftware
                 SetGroups();
 
                 UIElement kategories = subgroupsFormation.CategoryList();
-                kategoriesStackPanel.Children.Add(kategories);
+                categoriesStackPanel.Children.Add(kategories);
 
-                UIElement categorySettingsPanel = subgroupsFormation.categorySettingsPanel();
+                UIElement categorySettingsPanel = subgroupsFormation.CategorySettingsPanel();
                 categorySettingsGrid.Children.Add(categorySettingsPanel);
                 Grid.SetRow(categorySettingsPanel, 1);
 

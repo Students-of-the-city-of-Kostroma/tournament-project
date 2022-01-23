@@ -2,17 +2,17 @@
 
 namespace TournamentSoftware
 {
-    public class Subgroup
+    public class SubgroupWrapper
     {
         private string name = "";
         private List<ParticipantWrapper> participants = new List<ParticipantWrapper>();
         private List<string> errors = new List<string>();
-        public Subgroup() { }
-        public Subgroup(ParticipantWrapper participant) {
+        public SubgroupWrapper() { }
+        public SubgroupWrapper(ParticipantWrapper participant) {
             participants = new List<ParticipantWrapper>() { participant };
         }
 
-        public Subgroup(string subgroupName)
+        public SubgroupWrapper(string subgroupName)
         {
             Name = subgroupName;
         }

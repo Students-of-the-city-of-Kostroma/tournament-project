@@ -2,15 +2,15 @@
 
 namespace TournamentSoftware
 {
-    public class Group
+    public class GroupWrapper
     {
         public NominationWrapper NominationWrapper { get; set; }
-        public List<Category> Categories { get; set; }
-        public Group() { }
-        public Group(NominationWrapper nomination, ParticipantWrapper participant)
+        public List<CategoryWrapper> Categories { get; set; }
+        public GroupWrapper() { }
+        public GroupWrapper(NominationWrapper nomination, ParticipantWrapper participant)
         {
             NominationWrapper = nomination;
-            Categories = new List<Category>() { new Category(participant) };
+            Categories = new List<CategoryWrapper>() { new CategoryWrapper(participant) };
         }
 
         public bool IsCategoryExists(string categoryName)
@@ -22,7 +22,7 @@ namespace TournamentSoftware
         {
             if (!IsCategoryExists(categoryName))
             {
-                Categories.Add(new Category(categoryName));
+                Categories.Add(new CategoryWrapper(categoryName));
             }
         }
 
@@ -33,7 +33,7 @@ namespace TournamentSoftware
             Categories.Find(category => category.Name.Equals(categoryName)).AddParticipant(participant);
         }
 
-        public Category GetCategory(string categoryName)
+        public CategoryWrapper GetCategory(string categoryName)
         {
             return Categories.Find(category => category.Name.Equals(categoryName));
         }
@@ -41,7 +41,7 @@ namespace TournamentSoftware
         public List<string> GetCategoryNames()
         {
             List<string> categories = new List<string>();
-            foreach (Category category in Categories)
+            foreach (CategoryWrapper category in Categories)
             {
                 if (!categories.Contains(category.Name))
                 {
@@ -51,7 +51,7 @@ namespace TournamentSoftware
             return categories;
         }
 
-        public Subgroup GetSubgroupByCategory(string categoryName, string subgroupName)
+        public SubgroupWrapper GetSubgroupByCategory(string categoryName, string subgroupName)
         {
             return GetCategory(categoryName).GetSubgroupByName(subgroupName);
         }

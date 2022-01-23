@@ -90,7 +90,7 @@ namespace TournamentSoftware
 
             int rowsCount = 0;
 
-            foreach (Category category in GetCategoriesFromNomination(nominationName))
+            foreach (CategoryWrapper category in GetCategoriesFromNomination(nominationName))
             {
                 RowDefinition row = new RowDefinition();
                 Button categoryButton = new Button
@@ -242,7 +242,7 @@ namespace TournamentSoftware
         {
             Console.WriteLine("Проверка правила " + roolName + " для подгруппы " + subgroupName);
             List<ParticipantWrapper> participants = GetCategoryFromNomination(selectedNomination, selectedCategory).GetParticipantsBySubgroup(subgroupName);
-            Subgroup subgroup = GetGroupByNomination(selectedNomination).GetSubgroupByCategory(selectedCategory, subgroupName);
+            SubgroupWrapper subgroup = GetGroupByNomination(selectedNomination).GetSubgroupByCategory(selectedCategory, subgroupName);
             switch (roolName)
             {
                 case "Правило города":
@@ -270,7 +270,7 @@ namespace TournamentSoftware
 
         private static void ParticipantsSort(List<ParticipantWrapper> participants, ref int lastAddedGroup, Dictionary<string, List<ParticipantWrapper>> filteredParticipants = null)
         {
-            Category category = GetCategoryFromNomination(selectedNomination, selectedCategory);
+            CategoryWrapper category = GetCategoryFromNomination(selectedNomination, selectedCategory);
             int subgroupsCount = category.Subgroups.Count;
             int lastAddedGroup1 = lastAddedGroup;
 
@@ -361,7 +361,7 @@ namespace TournamentSoftware
 
         private void PrepareCategoryForSubgrouping()
         {
-            Category category = GetCategoryFromNomination(selectedNomination, selectedCategory);
+            CategoryWrapper category = GetCategoryFromNomination(selectedNomination, selectedCategory);
             if (category.ContainsSubgroups)
             {
                 category.RemoveAllSubgroups();
@@ -461,7 +461,7 @@ namespace TournamentSoftware
             subgroupsSettingsGrid.Drop += SubgroupsSettingsGrid_Drop;
             subgroupsSettingsGrid.DragOver += SubgroupsSettingsGrid_DragOver;
             int subgroupsCount = GetCategoryFromNomination(selectedNomination, selectedCategory).Subgroups.Count;
-            List<Subgroup> subgroups = GetCategoryFromNomination(selectedNomination, selectedCategory).Subgroups;
+            List<SubgroupWrapper> subgroups = GetCategoryFromNomination(selectedNomination, selectedCategory).Subgroups;
             for (int i = 0; i < subgroupsCount; i++)
             {
                 RowDefinition row = new RowDefinition();
