@@ -688,10 +688,9 @@ namespace TournamentSoftware
             {
                 Content = "Введите кол-во подгрупп",
                 FontSize = 15,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Stretch,
-                VerticalContentAlignment = VerticalAlignment.Center,
-                HorizontalContentAlignment = HorizontalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0,45,0,0)
             };
             subgroupsSettingsGrid.Children.Add(startMessage);
             Grid.SetRow(startMessage, 1);

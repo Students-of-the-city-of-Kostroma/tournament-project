@@ -91,17 +91,27 @@
                                             Width="20">
                         <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>
-                                <CheckBox Checked="selectorAllForDelete_Checked" Unchecked="selectorAllForDelete_Unchecked"/>
+                                <CheckBox Checked="selectorAllForDelete_Checked" Unchecked="selectorAllForDelete_Unchecked">
+                                    <CheckBox.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="3"/>
+                                        </Style>
+                                    </CheckBox.Resources>
+                                </CheckBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.HeaderTemplate>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding IsSelected, 
                                     UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
-                                          Checked="participantChecked"
-                                          Unchecked="participantUnchecked"
-                                          VerticalAlignment="Center" 
-                                          HorizontalAlignment="Center"/>
+                                          Checked="participantChecked" Unchecked="participantUnchecked"
+                                          VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <CheckBox.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="3"/>
+                                        </Style>
+                                    </CheckBox.Resources>
+                                </CheckBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.CellStyle>
@@ -180,7 +190,13 @@
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding Participant.Leader, 
                                     UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"
-                                          HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                          HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <CheckBox.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="3"/>
+                                        </Style>
+                                    </CheckBox.Resources>
+                                </CheckBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.CellStyle>
@@ -440,7 +456,6 @@
         </Grid >
 
         <Grid x:Name="SubgroupsFormationGridParent"
-              ShowGridLines="True"
               Visibility="Hidden"
               HorizontalAlignment="Stretch" 
               VerticalAlignment="Stretch"
@@ -473,63 +488,85 @@
                     Width="20" 
                     Height="20"/>
 
-            <Grid x:Name="SubgroupsFormationGrid" 
-              Grid.Row="1"
-              Grid.Column="0"
-                  ShowGridLines="True"
-              Margin="0,0,0,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="40"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+            <Grid x:Name="SubgroupsFormationGrid" Grid.Row="1" Grid.Column="0" Margin="0,0,0,0" >
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition/>
                     <ColumnDefinition Width="1.5*"/>
                 </Grid.ColumnDefinitions>
-                <Label Content="Группы номинации" 
-                       HorizontalAlignment="Stretch" 
-                       VerticalAlignment="Stretch" 
-                       HorizontalContentAlignment="Center"
-                       FontSize="20" Grid.Column="0" 
-                       Grid.Row="0"/>
-                <Label Content="Параметры группы" 
-                       HorizontalAlignment="Stretch" 
-                       HorizontalContentAlignment="Center"
-                       VerticalAlignment="Stretch" 
-                       FontSize="20" Grid.Column="1" 
-                       Grid.Row="0"/>
-                <Label Content="Подгруппы" 
-                       HorizontalContentAlignment="Center"
-                       HorizontalAlignment="Stretch" 
-                       VerticalAlignment="Stretch" 
-                       FontSize="20" Grid.Column="2" 
-                       Grid.Row="0"/>
-                <ScrollViewer x:Name="scrollViewer1" Margin="5" Grid.Column="0" Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                    <StackPanel x:Name="kategoriesStackPanel"></StackPanel>
-                </ScrollViewer>
 
-                <Grid x:Name="subgroupsGrid"
-                      Margin="5"
-                      Grid.Column="2"
-                      Grid.Row="1"
-                      ShowGridLines="True">
+                <Grid Grid.Column="0" Background="#FFF5F1DA" Margin="15,0,15,0" >
+                    
                     <Grid.RowDefinitions>
-                        <RowDefinition/>
                         <RowDefinition Height="40px"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <ScrollViewer x:Name="scrollViewer2" 
-                                  Grid.Row="0"
-                                  VerticalScrollBarVisibility="Auto">
-                        <StackPanel x:Name="subgroupsStackPanel"></StackPanel>
+                    
+                    <Label Grid.Row="0" 
+                       Content="Группы номинации" 
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       FontSize="20" 
+                       Foreground="Black" />
+                    
+                    <ScrollViewer x:Name="scrollViewer1" Margin="5,0,5,0" Grid.Column="0" Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel x:Name="categoriesStackPanel"></StackPanel>
                     </ScrollViewer>
-                    <Button x:Name="saveSubgroups"
-                            Content="Сохранить" 
-                            HorizontalAlignment="Center" 
-                            VerticalAlignment="Center" 
-                            Grid.Row="1"/>
+                    
                 </Grid>
 
+                <Grid x:Name="categorySettingsGrid"  Grid.Column="1" Background="#808C6C" Margin="15,0,15,0" >
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40px"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Label Content="Параметры группы" 
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       FontSize="20" 
+                       Grid.Row="0" 
+                       Foreground="White" />
+
+                </Grid>
+
+                <Grid x:Name="subgroupsGrid" Grid.Column="2" Background="#FFF5F1DA" Margin="15,0,15,0">
+                    
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40px"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="40px"/>
+                    </Grid.RowDefinitions>
+                    
+                    <Label Content="Подгруппы"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       FontSize="20" 
+                       Grid.Row="0" 
+                       Foreground="Black" />
+                    
+                    <ScrollViewer x:Name="scrollViewer2" Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="5,0,5,0">
+                        <StackPanel x:Name="subgroupsStackPanel"></StackPanel>
+                    </ScrollViewer>
+
+                    <Button x:Name="saveSubgroups" 
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center" 
+                            Grid.Row="2" 
+                            Background="#FFFDAC61" 
+                            Content="Сохранить" 
+                            Width="100" 
+                            Height="30" >
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                    
+                </Grid>
             </Grid>
 
             <Grid x:Name="instrumentsPanelGrid"
