@@ -12,7 +12,7 @@ namespace TournamentSoftware
     {
         public static ObservableCollection<ParticipantWrapper> participants = new ObservableCollection<ParticipantWrapper>();
         public static ObservableCollection<NominationWrapper> nominations = new ObservableCollection<NominationWrapper>();
-        public static List<Group> groups = new List<Group>();
+        public static List<GroupWrapper> groups = new List<GroupWrapper>();
         public static string cellsColor = "#F5F1DA";
         public static SolidColorBrush yellow = new SolidColorBrush(Color.FromRgb(255, 215, 0));
         public static SolidColorBrush white = new SolidColorBrush(Color.FromRgb(255, 255, 255));
@@ -97,12 +97,12 @@ namespace TournamentSoftware
 
         private static void AddNewGroup(NominationWrapper nomination, ParticipantWrapper participant)
         {
-            groups.Add(new Group(nomination, participant));
+            groups.Add(new GroupWrapper(nomination, participant));
         }
 
         private static void AddParticipantWithCategoryToGroup(NominationWrapper nomination, ParticipantWrapper participant)
         {
-            Group group = groups.Find(g => g.NominationWrapper.Equals(nomination));
+            GroupWrapper group = groups.Find(g => g.NominationWrapper.Equals(nomination));
             group.AddCategory(participant.Category);
             group.AddParticipantToCategory(participant);
         }
@@ -112,30 +112,30 @@ namespace TournamentSoftware
             return groups.Exists(group => group.NominationWrapper.Equals(nomination));
         }
 
-        public static List<Category> GetCategoriesFromNomination(string nominationName)
+        public static List<CategoryWrapper> GetCategoriesFromNomination(string nominationName)
         {
             return GetGroupByNomination(nominationName).Categories;
         }
 
-        public static Category GetCategoryFromNomination(string nominationName, string categoryName)
+        public static CategoryWrapper GetCategoryFromNomination(string nominationName, string categoryName)
         {
             return GetGroupByNomination(nominationName).GetCategory(categoryName);
         }
 
-        public static Group GetGroupByNomination(string nominationName) {
+        public static GroupWrapper GetGroupByNomination(string nominationName) {
             return groups.Find(group => group.NominationWrapper.Nomination.Name.Equals(nominationName));
         }
 
         public static List<ParticipantWrapper> GetParticipantsInCategoryAndNomination(string nominationName, string categoryName)
         {
-            Category category = GetCategoryFromNomination(nominationName, categoryName);
+            CategoryWrapper category = GetCategoryFromNomination(nominationName, categoryName);
             return category.GetAllParticipants();
         }
 
         public static List<string> GetCategoryNames()
         {
             List<string> categories = new List<string>();
-            foreach (Group group in groups)
+            foreach (GroupWrapper group in groups)
             {
                 List<string> categoriesFromGroup = group.GetCategoryNames();
                 foreach (string category in categoriesFromGroup)

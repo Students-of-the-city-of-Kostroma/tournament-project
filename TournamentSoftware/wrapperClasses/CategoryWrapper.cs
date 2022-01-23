@@ -3,21 +3,21 @@ using System.Collections.Generic;
 
 namespace TournamentSoftware
 {
-    public class Category
+    public class CategoryWrapper
     {
         private List<ParticipantWrapper> participantsBuffer = new List<ParticipantWrapper>();
-        private List<Subgroup> subgroups = new List<Subgroup>();
+        private List<SubgroupWrapper> subgroups = new List<SubgroupWrapper>();
         public bool ContainsSubgroups { get { return subgroups.Count > 0; } }
         public string Name { get; set; }
-        public List<Subgroup> Subgroups { get { return subgroups; } set { subgroups = value; } }
-        public Category() { Subgroups = new List<Subgroup>(); }
-        public Category(ParticipantWrapper participant)
+        public List<SubgroupWrapper> Subgroups { get { return subgroups; } set { subgroups = value; } }
+        public CategoryWrapper() { Subgroups = new List<SubgroupWrapper>(); }
+        public CategoryWrapper(ParticipantWrapper participant)
         {
             Name = participant.Category;
             participantsBuffer.Add(participant);
         }
 
-        public Category(string categoryName)
+        public CategoryWrapper(string categoryName)
         {
             Name = categoryName;
         }
@@ -25,7 +25,7 @@ namespace TournamentSoftware
         public int ParticipantsCount()
         {
             int count = 0;
-            foreach (Subgroup subgroup in Subgroups)
+            foreach (SubgroupWrapper subgroup in Subgroups)
             {
                 count += subgroup.Participants.Count;
             }
@@ -39,7 +39,7 @@ namespace TournamentSoftware
         public List<ParticipantWrapper> GetAllParticipants()
         {
             List<ParticipantWrapper> participants = new List<ParticipantWrapper>();
-            foreach (Subgroup subgroup in Subgroups)
+            foreach (SubgroupWrapper subgroup in Subgroups)
             {
                 foreach (ParticipantWrapper participant in subgroup.Participants)
                 {
@@ -71,7 +71,7 @@ namespace TournamentSoftware
         {
             if (!IsSubgroupExists(subgroupName))
             {
-                subgroups.Add(new Subgroup() { Name = subgroupName });
+                subgroups.Add(new SubgroupWrapper() { Name = subgroupName });
             }
         }
 
@@ -80,7 +80,7 @@ namespace TournamentSoftware
             return subgroups.Exists(subgroup => subgroup.Name.Equals(subgroupName));
         }
 
-        public Subgroup GetSubgroupByName(string subgroupName)
+        public SubgroupWrapper GetSubgroupByName(string subgroupName)
         {
             return subgroups.Find(subgroup => subgroup.Name.Equals(subgroupName));
         }
