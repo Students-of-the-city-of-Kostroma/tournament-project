@@ -4,28 +4,29 @@ using System.Runtime.CompilerServices;
 
 namespace TournamentSoftware
 {
-    public class ParticipantFormModel : INotifyPropertyChanged
+    public class ParticipantWrapper : INotifyPropertyChanged
     {
-        private string _Club;
-        private string _City;
-        private string _Kategory;
+        private string club;
+        private string city;
+        private string category;
+        private Dictionary<string, bool> nominations = new Dictionary<string, bool>();
 
-        public string Kategory
+        public string Category
         {
-            get { return _Kategory; }
-            set { _Kategory = value; OnPropertyChanged("Kategory"); }
+            get { return category; }
+            set { category = value; OnPropertyChanged("Category"); }
 
         }
         public string Club
         {
-            get { return _Club; }
-            set { _Club = value; OnPropertyChanged("Club"); }
+            get { return club; }
+            set { club = value; OnPropertyChanged("Club"); }
 
         }
         public string City
         {
-            get { return _City; }
-            set { _City = value; OnPropertyChanged("City"); }
+            get { return city; }
+            set { city = value; OnPropertyChanged("City"); }
 
         }
 
@@ -48,11 +49,10 @@ namespace TournamentSoftware
             set { participant = value; OnPropertyChanged("Participant"); }
         }
 
-        private Dictionary<string, bool> _Nominations = new Dictionary<string, bool>();
         public Dictionary<string, bool> Nominations
         {
-            get { return _Nominations; }
-            set { _Nominations = value; OnPropertyChanged("Nominations"); }
+            get { return nominations; }
+            set { nominations = value; OnPropertyChanged("Nominations"); }
         }
 
         private string[] availableSex = new string[2] { "М", "Ж" };
@@ -75,6 +75,11 @@ namespace TournamentSoftware
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+
+        public bool RequestedToNomination(string nominationName)
+        {
+            return nominations.ContainsKey(nominationName) && nominations[nominationName];
         }
     }
 }

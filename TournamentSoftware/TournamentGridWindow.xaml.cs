@@ -1,41 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using static TournamentSoftware.TournamentData;
 
 namespace TournamentSoftware
 {
-    /// <summary>
-    /// Interaction logic for TournamentGridWindow.xaml
-    /// </summary>
     public partial class TournamentGridWindow : Window
     {
 
         private bool isPanelOpen = true;
         private string selectedNomination = "";
-        private string selectedKategory = "";
-        private Dictionary<string, Dictionary<string, List<ParticipantFormModel>>> nominationsDictionary;
         public TournamentGridWindow()
         {
             InitializeComponent();
+            WindowState = WindowState.Maximized;
         }
 
-        public void Show(Dictionary<string, Dictionary<string, List<ParticipantFormModel>>> nominationsDictionary)
+        public void Show()
         {
-            this.nominationsDictionary = nominationsDictionary;
-            this.Show();
+            Show();
         }
 
-        private void hideInstrumentsPanel(object sender, RoutedEventArgs e)
+        private void HideInstrumentsPanel(object sender, RoutedEventArgs e)
         {
             if (isPanelOpen)
             {
@@ -53,49 +39,50 @@ namespace TournamentSoftware
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            showNominationsList();
+            ShowNominationsList();
         }
 
-        private void showNominationsList()
+        private void ShowNominationsList()
         {
             ParticipantsReagistrator participantsReagistrator = MainWindow.GetReagistrator;
-            List<string> nominationsList = participantsReagistrator.nominationsNames;
-            nominationsList.ForEach(nomination => {
+            foreach (NominationWrapper nomination in nominations) 
+            {
+                string nominationName = nomination.Nomination.Name;
                 Button button = new Button();
-                button.Content = nomination;
+                button.Content = nominationName;
                 button.Margin = new Thickness(5);
-                button.Tag = nomination;
-                button.Click += selectNomination;
+                button.Tag = nominationName;
+                button.Click += SelectNomination;
                 nominationsStackPanel.Children.Add(button);
-            });
+            }
         }
 
-        private void selectNomination(object sender, RoutedEventArgs e)
+        private void SelectNomination(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             selectedNomination = button.Tag.ToString();
-            createKategoriesTabs();
+            CreateKategoriesTabs();
         }
 
-        private void judgesRegistrationButton_Click(object sender, RoutedEventArgs e)
+        private void JudgesRegistrationButton_Click(object sender, RoutedEventArgs e)
         {
             JudgesRegistrationWindow judgesRegistrationWindow = new JudgesRegistrationWindow();
             judgesRegistrationWindow.Show();
         }
 
-        private void createKategoriesTabs()
+        private void CreateKategoriesTabs()
         {
-            Dictionary<string, List<ParticipantFormModel>> kategories = nominationsDictionary[selectedNomination];
             tabsGridRow.Children.Clear();
             tabsGridRow.ColumnDefinitions.Clear();
-            foreach (KeyValuePair<string, List<ParticipantFormModel>> keyValuePair in kategories)
+            List<string> categoryNames = GetCategoryNames();
+            foreach (string category in categoryNames)
             {
                 Grid kategoryGrid = new Grid();
                 RowDefinition row1 = new RowDefinition();
                 Button button = new Button();
                 button.HorizontalAlignment = HorizontalAlignment.Stretch;
                 button.VerticalAlignment = VerticalAlignment.Stretch;
-                button.Content = keyValuePair.Key;
+                button.Content = category;
                 button.Click += Button_Click;
                 kategoryGrid.RowDefinitions.Add(row1);
                 kategoryGrid.Children.Add(button);
@@ -104,14 +91,13 @@ namespace TournamentSoftware
                 ColumnDefinition columnDefinition = new ColumnDefinition();
                 tabsGridRow.ColumnDefinitions.Add(columnDefinition);
                 tabsGridRow.Children.Add(kategoryGrid);
-                Grid.SetColumn(kategoryGrid, tabsGridRow.ColumnDefinitions.Count-1);
-
+                Grid.SetColumn(kategoryGrid, tabsGridRow.ColumnDefinitions.Count - 1);
             }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-           
+
         }
     }
 }

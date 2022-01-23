@@ -34,7 +34,7 @@
                     Margin="10,10,0,0" 
                     VerticalAlignment="Top" 
                     Width="35"
-                    Height="35" Click="hideInstrumentsPanel">
+                    Height="35" Click="HideInstrumentsPanel">
                     <Button.Background>
                         <ImageBrush ImageSource="/burger menu.png"/>
                     </Button.Background>
@@ -59,7 +59,7 @@
                             HorizontalAlignment="Stretch"
                             Margin="5"
                             VerticalAlignment="Center" 
-                            Content="Регистрация судей" Grid.Row="2" Click="judgesRegistrationButton_Click"/>
+                            Content="Регистрация судей" Grid.Row="2" Click="JudgesRegistrationButton_Click"/>
                 </Grid>
             </Grid>
         </Grid>
