@@ -30,7 +30,7 @@ namespace TournamentSoftware
         private List<Button> categoriesButtons = new List<Button>();
         private int lastClickedCategory = -1;
         private Button goNextButton = new Button();
-        private static SubgroupingErrorLogger errorsLogger = new SubgroupingErrorLogger();
+        //private static SubgroupingErrorLogger errorsLogger = new SubgroupingErrorLogger();
 
         private Label CreateLabel(string content, int fontSize = 24)
         {
@@ -242,24 +242,25 @@ namespace TournamentSoftware
         {
             Console.WriteLine("Проверка правила " + roolName + " для подгруппы " + subgroupName);
             List<ParticipantWrapper> participants = GetCategoryFromNomination(selectedNomination, selectedCategory).GetParticipantsBySubgroup(subgroupName);
+            Subgroup subgroup = GetGroupByNomination(selectedNomination).GetSubgroupByCategory(selectedCategory, subgroupName);
             switch (roolName)
             {
                 case "Правило города":
                     if (participants.Exists(participant => participant.City.Equals(controlPartisipant.City) && !participant.Equals(controlPartisipant)))
                     {
-                        errorsLogger.AddError(GetGroupByNomination(selectedNomination), subgroupName, "Нарушено правило города");
+                        subgroup.AddError("Нарушено правило города");
                     }
                     break;
                 case "Правило посевных бойцов":
                     if (participants.Exists(participant => (participant.Participant.Leader.Equals(true) && !participant.Equals(controlPartisipant))) && controlPartisipant.Participant.Leader)
                     {
-                        errorsLogger.AddError(GetGroupByNomination(selectedNomination), subgroupName, "Нарушено правило посевных бойцов");
+                        subgroup.AddError("Нарушено правило посевных бойцов");
                     }
                     break;
                 case "Правило одноклубников":
                     if (participants.Exists(participant => participant.Club.Equals(controlPartisipant.Club) && !participant.Equals(controlPartisipant)))
                     {
-                        errorsLogger.AddError(GetGroupByNomination(selectedNomination), subgroupName, "Нарушено правило одноклубников");
+                        subgroup.AddError("Нарушено правило одноклубников");
                     }
                     break;
                 default:
@@ -480,7 +481,7 @@ namespace TournamentSoftware
                 subgroupName.HorizontalAlignment = HorizontalAlignment.Left;
 
                 string errors = "";
-                List<string> errorsBySubgroup = errorsLogger.GetErrorsBySubgroup(GetGroupByNomination(selectedNomination), subgroups[i].Name);
+                List<string> errorsBySubgroup = subgroups[i].Errors;
                 foreach (string str in errorsBySubgroup)
                 {
                     errors += str + "\n";

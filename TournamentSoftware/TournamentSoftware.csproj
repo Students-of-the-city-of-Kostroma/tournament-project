@@ -110,7 +110,6 @@
       <DependentUpon>StartWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Subgroup.cs" />
-    <Compile Include="SubgroupingErrorLogger.cs" />
     <Compile Include="Subgrouping.cs" />
     <Compile Include="TournamentData.cs" />
     <Compile Include="TournamentGrid.cs" />

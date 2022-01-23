@@ -50,5 +50,10 @@ namespace TournamentSoftware
             }
             return categories;
         }
+
+        public Subgroup GetSubgroupByCategory(string categoryName, string subgroupName)
+        {
+            return GetCategory(categoryName).GetSubgroupByName(subgroupName);
+        }
     }
 }

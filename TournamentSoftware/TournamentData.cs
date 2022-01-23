@@ -68,9 +68,14 @@ namespace TournamentSoftware
                 partisipant.Nominations.Remove(nominationName);
             }
         }
+        private static void ClearGroups()
+        {
+            groups.Clear();
+        }
 
         public static void SetGroups()
         {
+            ClearGroups();
             foreach (NominationWrapper nomination in nominations)
             {
                 foreach (ParticipantWrapper participant in participants)
