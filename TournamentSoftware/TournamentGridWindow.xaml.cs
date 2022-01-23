@@ -16,11 +16,6 @@ namespace TournamentSoftware
             WindowState = WindowState.Maximized;
         }
 
-        public void Show()
-        {
-            Show();
-        }
-
         private void HideInstrumentsPanel(object sender, RoutedEventArgs e)
         {
             if (isPanelOpen)
