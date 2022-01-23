@@ -447,10 +447,18 @@ namespace TournamentSoftware
                 });
                 n.CellStyle = cellStyle;
 
+                var checkboxStyle = new Style(typeof(Border));
+                checkboxStyle.Setters.Add(new Setter()
+                {
+                    Property = Border.CornerRadiusProperty,
+                    Value = 3
+                });
+                CornerRadiusConverter a = new CornerRadiusConverter();
                 FrameworkElementFactory checkBox = new FrameworkElementFactory(typeof(CheckBox));
                 checkBox.SetBinding(CheckBox.IsCheckedProperty, bind);
                 checkBox.SetValue(CheckBox.HorizontalAlignmentProperty, HorizontalAlignment.Center);
                 checkBox.SetValue(CheckBox.VerticalAlignmentProperty, VerticalAlignment.Center);
+                checkBox.SetValue(Border.CornerRadiusProperty, a.ConvertFromString("3"));
                 DataTemplate checkBoxTemplate = new DataTemplate();
                 checkBoxTemplate.VisualTree = checkBox;
                 n.CellTemplate = checkBoxTemplate;
@@ -585,9 +593,8 @@ namespace TournamentSoftware
                 UIElement kategories = subgroupsFormation.CategoryList();
                 kategoriesStackPanel.Children.Add(kategories);
 
-                UIElement categorySettingsPanel = subgroupsFormation.CategorySettingsPanel();
-                SubgroupsFormationGrid.Children.Add(categorySettingsPanel);
-                Grid.SetColumn(categorySettingsPanel, 1);
+                UIElement categorySettingsPanel = subgroupsFormation.categorySettingsPanel();
+                categorySettingsGrid.Children.Add(categorySettingsPanel);
                 Grid.SetRow(categorySettingsPanel, 1);
 
                 UIElement subgroupSettingsPanel = subgroupsFormation.SubgroupSettings();

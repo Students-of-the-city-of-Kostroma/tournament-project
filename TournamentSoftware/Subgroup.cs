@@ -6,6 +6,7 @@ namespace TournamentSoftware
     {
         private string name = "";
         private List<ParticipantWrapper> participants = new List<ParticipantWrapper>();
+        private List<string> errors = new List<string>();
         public Subgroup() { }
         public Subgroup(ParticipantWrapper participant) {
             participants = new List<ParticipantWrapper>() { participant };
@@ -24,6 +25,11 @@ namespace TournamentSoftware
             set { participants = value; }
         }
 
+        public List<string> Errors
+        {
+            get { return errors; }
+        }
+
         public void AddParticipant(ParticipantWrapper participant) {
             participants.Add(participant);
         }
@@ -31,6 +37,27 @@ namespace TournamentSoftware
         public void RemoveParticipant(ParticipantWrapper participant)
         {
             participants.Remove(participant);
+        }
+
+        public void AddError(string errorMessage)
+        {
+            if (!errors.Contains(errorMessage))
+            {
+                errors.Add(errorMessage);
+            }
+        }
+
+        public void RemoveError(string errorMessage)
+        {
+            if (!errors.Contains(errorMessage))
+            {
+                errors.Remove(errorMessage);
+            }
+        }
+
+        public void ClearErrors()
+        {
+            errors.Clear();
         }
     }
 }
