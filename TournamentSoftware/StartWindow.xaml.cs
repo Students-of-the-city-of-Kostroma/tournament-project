@@ -15,7 +15,6 @@ using System.Windows.Shapes;
 
 namespace TournamentSoftware
 {
-
     /// <summary>
     /// Логика взаимодействия для StartWindow.xaml
     /// </summary>
@@ -50,7 +49,6 @@ namespace TournamentSoftware
                 HideInstrumentPanelButton.Visibility = Visibility.Hidden;
                 HideInstrumentPanelButton2.Visibility = Visibility.Visible;
             }
-
         }
     }
 }

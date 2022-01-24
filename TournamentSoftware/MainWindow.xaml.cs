@@ -9,10 +9,10 @@ using System.Windows.Input;
 using System.Windows.Data;
 using Newtonsoft.Json;
 using System.Windows.Media;
+using System.Linq;
 using static TournamentSoftware.ApplicationResourcesPaths;
 using static TournamentSoftware.ApplicationStringValues;
 using static TournamentSoftware.TournamentData;
-using System.Linq;
 
 namespace TournamentSoftware
 {
@@ -275,7 +275,6 @@ namespace TournamentSoftware
             // если остановились на турнирной сетке
             else if (!appState.IsTournamentComplited)
             {
-
             }
             r.Close();
         }
@@ -398,7 +397,6 @@ namespace TournamentSoftware
             return dataTable;
         }
 
-
         /// <summary>
         /// Открываем инструменты для редактирования лейаута модуля регистрации
         /// </summary>
@@ -514,7 +512,7 @@ namespace TournamentSoftware
                         errors.Add("Некорректно заполнен год рождения участника на строке " + count);
                     }
 
-                    if (participant.Participant.Sex == null || !participant.Participant.Sex.Equals("М") && !participant.Participant.Sex.Equals("Ж"))
+                    if (participant.Participant.Sex == null || (!participant.Participant.Sex.Equals("М") && !participant.Participant.Sex.Equals("Ж")))
                     {
                         errors.Add("Заполните пол участника на строке " + count + " " + participant.Participant.Sex);
                     }
@@ -720,7 +718,6 @@ namespace TournamentSoftware
                         dataBaseHandler.AddCategory(category);
                     }
                     category = dataBaseHandler.GetCategorysData("SELECT * FROM Category WHERE name=\"" + categoryWrapper.Name + "\";")[0];
-
 
                     // добавление групп 
                     TournamentGroup group = new TournamentGroup();

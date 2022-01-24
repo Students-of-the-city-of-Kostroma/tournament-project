@@ -7,7 +7,6 @@ namespace TournamentSoftware
 {
     public partial class TournamentGridWindow : Window
     {
-
         private bool isPanelOpen = true;
         private string selectedNomination = "";
         public TournamentGridWindow()
@@ -92,7 +91,6 @@ namespace TournamentSoftware
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-
         }
     }
 }
