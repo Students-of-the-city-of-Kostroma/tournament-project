@@ -15,19 +15,16 @@ namespace TournamentSoftware
         {
             get { return category; }
             set { category = value; OnPropertyChanged("Category"); }
-
         }
         public string Club
         {
             get { return club; }
             set { club = value; OnPropertyChanged("Club"); }
-
         }
         public string City
         {
             get { return city; }
             set { city = value; OnPropertyChanged("City"); }
-
         }
 
         private Participant participant = new Participant() 

@@ -520,7 +520,6 @@ namespace TournamentSoftware
                 subgroupsSettingsGrid.Children.Add(grid);
                 Grid.SetRow(grid, subgroupsSettingsGrid.RowDefinitions.Count - 1);
             }
-
         }
 
         private void Grid_DragOver(object sender, DragEventArgs e)
