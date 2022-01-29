@@ -46,6 +46,7 @@ namespace TournamentSoftware
 
         public MainWindow()
         {
+            PrepareFiles();
             InitializeComponent();
             Visibility = Visibility.Hidden;
             StartWindow startWindow = new StartWindow();
@@ -251,6 +252,18 @@ namespace TournamentSoftware
             }
         }
 
+        private void PrepareFiles()
+        {
+            allResourcesFilePaths.ForEach(path =>
+            {
+                if (!File.Exists(path))
+                {
+                    File.Create(path);
+                }
+            });
+        }
+
+
         private void mainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             participants = new ObservableCollection<ParticipantWrapper>();
@@ -262,6 +275,10 @@ namespace TournamentSoftware
             StreamReader r = new StreamReader(appStateJsonPath);
             string json = r.ReadToEnd();
             appState = JsonConvert.DeserializeObject<ApplicationState>(json);
+            if (appState == null)
+            {
+                appState = new ApplicationState();
+            }
             TournamentNameTextBox.Text = appState.TournamentName;
 
             setWindowSize();

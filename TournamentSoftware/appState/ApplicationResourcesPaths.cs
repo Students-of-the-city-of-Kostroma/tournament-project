@@ -8,6 +8,13 @@ namespace TournamentSoftware
         public const string dataBasePath = "db.db";
         public const string registrationBackupPath = "registrationBackup.json";
         public const string judgesBackupPath = "judgesBackup.json";
+
+        public static readonly List<string> allResourcesFilePaths = new List<string> {
+            appStateJsonPath,
+            dataBasePath,
+            registrationBackupPath,
+            judgesBackupPath
+        };
     }
 
     public class ApplicationStringValues
