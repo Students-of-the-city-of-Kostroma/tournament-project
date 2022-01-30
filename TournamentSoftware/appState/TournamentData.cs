@@ -14,8 +14,9 @@ namespace TournamentSoftware
         public static ObservableCollection<NominationWrapper> nominations = new ObservableCollection<NominationWrapper>();
         public static List<GroupWrapper> groups = new List<GroupWrapper>();
         public static string cellsColor = "#F5F1DA";
-        public static SolidColorBrush yellow = new SolidColorBrush(Color.FromRgb(255, 215, 0));
         public static SolidColorBrush white = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+        public static SolidColorBrush darkGreen = new SolidColorBrush(Color.FromRgb(128, 140, 108));
+        public static SolidColorBrush beige = new SolidColorBrush(Color.FromRgb(227, 223, 200));
 
         public static Style GetCellStyle()
         {
