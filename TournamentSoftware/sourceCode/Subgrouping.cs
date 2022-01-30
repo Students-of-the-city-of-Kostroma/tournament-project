@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 using static TournamentSoftware.TournamentData;
 
 namespace TournamentSoftware
@@ -359,6 +360,38 @@ namespace TournamentSoftware
             }
         }
 
+        private void RemoveShadowFromCategoryButtons()
+        {
+            categoriesButtons.ForEach(button => {
+                button.Effect = null;
+            });
+        }
+
+        private void AddShadowToCategoryButtonWithErrors(CategoryWrapper category)
+        {
+            string categoryName = category.Name;
+            if (category.Subgroups.Exists(subgroup => subgroup.Errors.Count > 0))
+            {
+                Button btn = categoriesButtons.Find(button => button.Tag.ToString().Equals(categoryName));
+
+                btn.Effect = new DropShadowEffect
+                {
+                    Color = orange.Color,
+                    Opacity = 0.5,
+                    BlurRadius = 10,
+                };
+            }
+        }
+
+        private void AddShadowToCategoryButtonsWithErrors()
+        {
+            List<CategoryWrapper> categories = GetCategoriesFromNomination(selectedNomination);
+            categories.ForEach(category => {
+                AddShadowToCategoryButtonWithErrors(category);
+            });
+        }
+
+
         private void PrepareCategoryForSubgrouping()
         {
             CategoryWrapper category = GetCategoryFromNomination(selectedNomination, selectedCategory);
@@ -406,6 +439,8 @@ namespace TournamentSoftware
                 }
 
                 ShowSubgroups();
+                RemoveShadowFromCategoryButtons();
+                AddShadowToCategoryButtonsWithErrors();
             }
             else
             {
