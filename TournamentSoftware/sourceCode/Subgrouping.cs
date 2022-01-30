@@ -391,7 +391,6 @@ namespace TournamentSoftware
             });
         }
 
-
         private void PrepareCategoryForSubgrouping()
         {
             CategoryWrapper category = GetCategoryFromNomination(selectedNomination, selectedCategory);
