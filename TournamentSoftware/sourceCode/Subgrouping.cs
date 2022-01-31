@@ -28,9 +28,7 @@ namespace TournamentSoftware
         private List<string> rools = new List<string> { "Правило посевных бойцов", "Правило одноклубников", "Правило города" };
         private static List<string> selectedRools = new List<string> { "Правило посевных бойцов", "Правило одноклубников", "Правило города" };
         private List<Button> categoriesButtons = new List<Button>();
-        private int lastClickedCategory = -1;
         private Button goNextButton = new Button();
-        //private static SubgroupingErrorLogger errorsLogger = new SubgroupingErrorLogger();
 
         private Label CreateLabel(string content, int fontSize = 24)
         {
@@ -65,7 +63,6 @@ namespace TournamentSoftware
                     Tag = nominationName
                 };
                 nominationButton.Click += SelectNomination;
-                categoriesButtons.Add(nominationButton);
                 grid.RowDefinitions.Add(row);
                 grid.Children.Add(nominationButton);
                 Grid.SetRow(nominationButton, rowsCount);
@@ -83,10 +80,17 @@ namespace TournamentSoftware
             ShowCategoriesForNomination(selectedNomination);
         }
 
-        private void ShowCategoriesForNomination(string nominationName)
+        private void PrepareCategoriesGrid() 
         {
             categoriesGrid.Children.Clear();
             categoriesGrid.RowDefinitions.Clear();
+            categoriesButtons.Clear();
+            selectedCategory = "";
+        }
+
+        private void ShowCategoriesForNomination(string nominationName)
+        {
+            PrepareCategoriesGrid();
 
             int rowsCount = 0;
 
@@ -102,21 +106,18 @@ namespace TournamentSoftware
                     Tag = category.Name
                 };
 
-                if (category.ParticipantsCount() == 1)
+                if (category.ParticipantsCount() < 3)
                 {
-                    categoryButton.ToolTip = "В этой категории всего 1 участник";
-                    categoryButton.Click += SelectCategory;
+                    categoryButton.ToolTip = "В этой категории слишком мало участников";
                 }
-                else
-                {
-                    categoryButton.Click += SelectCategory;
-                }
+                categoryButton.Click += SelectCategory;
                 categoriesButtons.Add(categoryButton);
                 categoriesGrid.RowDefinitions.Add(row);
                 categoriesGrid.Children.Add(categoryButton);
                 Grid.SetRow(categoryButton, rowsCount);
                 rowsCount++;
             }
+            ColorCategoryButtons();
         }
 
         public UIElement CategoryList()
@@ -146,20 +147,25 @@ namespace TournamentSoftware
             return categoriesGrid;
         }
 
+        private void ColorCategoryButtons()
+        {
+            categoriesButtons.ForEach(button =>
+            {
+                button.Background = !selectedCategory.Equals("") && button.Tag.ToString().Equals(selectedCategory) ? darkGreen :
+                GetCategoryFromNomination(selectedNomination, button.Tag.ToString()).ParticipantsCount() < 3 ? white :
+                beige;
+            });
+        }
+
         private void SelectCategory(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            button.Background = yellow;
             string kategory = button.Tag.ToString();
             selectedCategory = kategory;
             countInCategory.Content = GetCategoryFromNomination(selectedNomination, kategory).ParticipantsCount();
             ShowCategorySettings();
-            if (lastClickedCategory != -1)
-            {
-                categoriesButtons[lastClickedCategory].Background = white;
-            }
+            ColorCategoryButtons();
             countSubgroups.Text = "";
-            lastClickedCategory = categoriesButtons.IndexOf(button);
         }
 
         public void ShowCategorySettings()
