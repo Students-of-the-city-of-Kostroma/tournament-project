@@ -15,6 +15,7 @@ namespace TournamentSoftware
         public static List<GroupWrapper> groups = new List<GroupWrapper>();
         public static string cellsColor = "#F5F1DA";
         public static SolidColorBrush white = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+        public static SolidColorBrush orange = new SolidColorBrush(Color.FromRgb(253, 172, 97));
         public static SolidColorBrush darkGreen = new SolidColorBrush(Color.FromRgb(128, 140, 108));
         public static SolidColorBrush beige = new SolidColorBrush(Color.FromRgb(227, 223, 200));
 
