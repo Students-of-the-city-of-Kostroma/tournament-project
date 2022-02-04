@@ -1,0 +1,61 @@
+﻿<Window x:Class="TournamentSoftware.AddStageWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="AddStageWindow" Height="250" Width="680">
+    <Grid>
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition/>
+                <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+
+            <Label Content="Выберите систему боя для этапа" 
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Top" 
+                   FontSize="24"
+                   Grid.Row="0"/>
+
+            <Grid Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Button Content="Создать" 
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center" 
+                    Width="100"
+                    Height="40"
+                    Grid.Column="0" Margin="208,5,28.8,4.6" Click="Apply"
+                    />
+                <Button Content="Отмена" 
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center" 
+                    Width="100"
+                    Height="40"
+                    Grid.Column="1" Margin="28.2,5,208.6,4.6" Click="Cancel"
+                    />
+            </Grid>
+            <ComboBox Name="fightingSystemsCombobox" 
+                      HorizontalAlignment="Left" 
+                      Margin="208,35.6,0,0" 
+                      Grid.Row="1" 
+                      VerticalAlignment="Top" 
+                      Width="100" Height="38" 
+                      SelectedIndex="0" 
+                      FontSize="16"/>
+            <TextBox HorizontalAlignment="Left"
+                     FontSize="20"
+                      PreviewTextInput="NumericOnly"
+                     Height="38" 
+                     Margin="370,35.6,0,0" 
+                     Grid.Row="1" 
+                     TextWrapping="Wrap" 
+                     VerticalAlignment="Top" 
+                     Width="38" />
+        </Grid>
+    </Grid>
+</Window>

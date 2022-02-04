@@ -30,7 +30,15 @@ namespace TournamentSoftware
 
         private void AddStage(object sender, RoutedEventArgs e)
         {
-            
+            AddStageWindow addStageWindow = new AddStageWindow();
+            addStageWindow.Closed += AddStageWindow_Closed;
+            addStageWindow.Show();
+            addStageButton.IsEnabled = false;
+        }
+
+        private void AddStageWindow_Closed(object sender, System.EventArgs e)
+        {
+            addStageButton.IsEnabled = true;
         }
 
         private void HideInstrumentsPanel(object sender, RoutedEventArgs e)
@@ -154,7 +162,7 @@ namespace TournamentSoftware
             }
         }
 
-        private void HideSubgroups(Button categoryButton) 
+        private void HideSubgroups(Button categoryButton)
         {
             Grid categoryTab = (Grid)categoryButton.Tag;
             categoryTab.RowDefinitions[1].Height = new GridLength(0, GridUnitType.Star);

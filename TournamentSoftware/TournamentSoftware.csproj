@@ -89,6 +89,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AddStageWindow.xaml.cs">
+      <DependentUpon>AddStageWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="appState\ApplicationResourcesPaths.cs" />
     <Compile Include="appState\ApplicationState.cs" />
     <Compile Include="DB Classes\BattleProtocol.cs" />
@@ -131,6 +134,10 @@
     <Compile Include="ViewSettingsWindow.xaml.cs">
       <DependentUpon>ViewSettingsWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="AddStageWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ErrorListWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
