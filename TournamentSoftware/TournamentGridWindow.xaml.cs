@@ -57,6 +57,58 @@ namespace TournamentSoftware
             judgesRegistrationWindow.Show();
         }
 
+        private UIElement SubgroupTabs(CategoryWrapper category)
+        {
+            Grid subgroupsGrid = new Grid();
+            foreach (SubgroupWrapper subgroup in category.Subgroups)
+            {
+                ColumnDefinition column = new ColumnDefinition();
+                Button subgroupButton = new Button
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Stretch,
+                    Content = subgroup.Name,
+                };
+                subgroupsGrid.ColumnDefinitions.Add(column);
+                subgroupsGrid.Children.Add(subgroupButton);
+                Grid.SetColumn(subgroupButton, subgroupsGrid.ColumnDefinitions.Count - 1);
+            }
+            return subgroupsGrid;
+        }
+
+        private UIElement CategoryTab(CategoryWrapper category)
+        {
+            Grid categoryTab = new Grid();
+
+            RowDefinition categoryButtonRow = new RowDefinition
+            {
+                Height = new GridLength(2, GridUnitType.Star)
+            };
+            RowDefinition subgroupsRow = new RowDefinition
+            {
+                Height = new GridLength(1, GridUnitType.Star)
+            };
+
+            Button categoryButton = new Button
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                Content = category.Name
+            };
+            categoryButton.Click += SelectCategory;
+
+            Grid subgroupsGrid = (Grid)SubgroupTabs(category);
+
+            categoryTab.RowDefinitions.Add(categoryButtonRow);
+            categoryTab.RowDefinitions.Add(subgroupsRow);
+            categoryTab.Children.Add(categoryButton);
+            Grid.SetRow(categoryButton, 0);
+            categoryTab.Children.Add(subgroupsGrid);
+            Grid.SetRow(subgroupsGrid, 1);
+
+            return categoryTab;
+        }
+
         private void CreateCategoriesTabs()
         {
             categoryTabsGrid.Children.Clear();
@@ -64,18 +116,7 @@ namespace TournamentSoftware
             List<CategoryWrapper> categoryNames = GetCategoriesFromNomination(selectedNomination);
             foreach (CategoryWrapper category in categoryNames)
             {
-                Grid categoryGrid = new Grid();
-                RowDefinition row1 = new RowDefinition();
-                Button categoryButton = new Button
-                {
-                    HorizontalAlignment = HorizontalAlignment.Stretch,
-                    VerticalAlignment = VerticalAlignment.Stretch,
-                    Content = category.Name
-                };
-                categoryButton.Click += SelectCategory;
-                categoryGrid.RowDefinitions.Add(row1);
-                categoryGrid.Children.Add(categoryButton);
-                Grid.SetRow(categoryButton, 0);
+                Grid categoryGrid = (Grid)CategoryTab(category);
 
                 ColumnDefinition columnDefinition = new ColumnDefinition();
                 categoryTabsGrid.ColumnDefinitions.Add(columnDefinition);
