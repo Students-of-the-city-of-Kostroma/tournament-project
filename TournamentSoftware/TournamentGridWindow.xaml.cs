@@ -9,6 +9,8 @@ namespace TournamentSoftware
     {
         private bool isPanelOpen = true;
         private string selectedNomination = "";
+        private string selectedCategory = "";
+        private List<Button> categoryButtons = new List<Button>();
         public TournamentGridWindow()
         {
             InitializeComponent();
@@ -86,16 +88,18 @@ namespace TournamentSoftware
             };
             RowDefinition subgroupsRow = new RowDefinition
             {
-                Height = new GridLength(1, GridUnitType.Star)
+                Height = new GridLength(0, GridUnitType.Star)
             };
 
             Button categoryButton = new Button
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,
-                Content = category.Name
+                Content = category.Name,
+                Tag = categoryTab
             };
             categoryButton.Click += SelectCategory;
+            categoryButtons.Add(categoryButton);
 
             Grid subgroupsGrid = (Grid)SubgroupTabs(category);
 
@@ -111,6 +115,8 @@ namespace TournamentSoftware
 
         private void CreateCategoriesTabs()
         {
+            selectedCategory = "";
+            categoryButtons.Clear();
             categoryTabsGrid.Children.Clear();
             categoryTabsGrid.ColumnDefinitions.Clear();
             List<CategoryWrapper> categoryNames = GetCategoriesFromNomination(selectedNomination);
@@ -125,8 +131,26 @@ namespace TournamentSoftware
             }
         }
 
+        private void HideSubgroups(Button categoryButton) 
+        {
+            Grid categoryTab = (Grid)categoryButton.Tag;
+            categoryTab.RowDefinitions[1].Height = new GridLength(0, GridUnitType.Star);
+        }
+
         private void SelectCategory(object sender, RoutedEventArgs e)
         {
+            Button categoryButton = sender as Button;
+            Grid categoryTab = (Grid)categoryButton.Tag;
+            categoryTab.RowDefinitions[1].Height = new GridLength(1, GridUnitType.Star);
+            selectedCategory = categoryButton.Content.ToString();
+
+            foreach (Button button in categoryButtons)
+            {
+                if (!button.Equals(categoryButton))
+                {
+                    HideSubgroups(button);
+                }
+            }
         }
     }
 }
