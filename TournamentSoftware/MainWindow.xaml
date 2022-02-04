@@ -9,7 +9,7 @@
         Height="513" 
         Width="1209" 
         Loaded="mainWindow_Loaded" 
-        Closing="mainWindow_Closing">
+        Closing="MainWindow_Closing">
     <Grid>
         <Grid x:Name="appGrid"
               HorizontalAlignment="Stretch"
@@ -53,7 +53,7 @@
                     Padding="5"
                     Height="30"
                     Width="120"
-                    Click="addParticipant"/>
+                    Click="AddParticipant"/>
             <Button x:Name="deleteParticipantButton"
                     Content="Удалить участника"
                     Grid.Column="1"
@@ -63,7 +63,7 @@
                     Padding="5"
                     Height="30"
                     Width="120"
-                    Click="deleteParticipant"
+                    Click="DeleteParticipant"
                     IsEnabled="False"/>
             <DataGrid x:Name="registrationTable" 
                       x:FieldModifier="public" 
@@ -91,7 +91,7 @@
                                             Width="20">
                         <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>
-                                <CheckBox Checked="selectorAllForDelete_Checked" Unchecked="selectorAllForDelete_Unchecked">
+                                <CheckBox Checked="SelectorAllForDelete_Checked" Unchecked="SelectorAllForDelete_Unchecked">
                                     <CheckBox.Resources>
                                         <Style TargetType="Border">
                                             <Setter Property="CornerRadius" Value="3"/>
@@ -104,7 +104,7 @@
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding IsSelected, 
                                     UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
-                                          Checked="participantChecked" Unchecked="participantUnchecked"
+                                          Checked="ParticipantChecked" Unchecked="ParticipantUnchecked"
                                           VerticalAlignment="Center" HorizontalAlignment="Center">
                                     <CheckBox.Resources>
                                         <Style TargetType="Border">
@@ -412,7 +412,7 @@
                     Padding="5" 
                     Height="30"
                     Width="120" 
-                    Click="saveFile"
+                    Click="SaveFile"
                     IsEnabled="False"/>
             <Button x:Name="viewSettingsButton" 
                     Content="Настроить вид" 
@@ -423,7 +423,7 @@
                     Padding="5" 
                     Height="30"
                     Width="120" 
-                    Click="showRegistrationModuleSettings"/>
+                    Click="ShowRegistrationModuleSettings"/>
             <TextBox x:Name="TournamentNameTextBox" 
                      Grid.Column="1" 
                      HorizontalAlignment="Center"
