@@ -79,12 +79,7 @@ namespace TournamentSoftware
             }
         }
 
-        /// <summary>
-        /// алгоритм добавление участника
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void addParticipant(object sender, RoutedEventArgs e)
+        private void AddParticipant(object sender, RoutedEventArgs e)
         {
             Participant participant = new Participant()
             {
@@ -115,12 +110,7 @@ namespace TournamentSoftware
             exportButton.IsEnabled = true;
         }
 
-        /// <summary>
-        /// Удаление отмеченных участников
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void deleteParticipant(object sender, RoutedEventArgs e)
+        private void DeleteParticipant(object sender, RoutedEventArgs e)
         {
             for (int i = 0; i < participants.Count;)
             {
@@ -140,7 +130,7 @@ namespace TournamentSoftware
             }
 
             deleteParticipantButton.IsEnabled = false;
-            selectorAllForDelete_Unchecked(sender, e);
+            SelectorAllForDelete_Unchecked(sender, e);
         }
 
         /// <summary>
@@ -148,7 +138,7 @@ namespace TournamentSoftware
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void selectorAllForDelete_Unchecked(object sender, RoutedEventArgs e)
+        private void SelectorAllForDelete_Unchecked(object sender, RoutedEventArgs e)
         {
             for (int i = 0; i < participants.Count; i++)
             {
@@ -165,7 +155,7 @@ namespace TournamentSoftware
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void selectorAllForDelete_Checked(object sender, RoutedEventArgs e)
+        private void SelectorAllForDelete_Checked(object sender, RoutedEventArgs e)
         {
             for (int i = 0; i < participants.Count; i++)
             {
@@ -179,7 +169,7 @@ namespace TournamentSoftware
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void mainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             // если были участники и не перешли к турниру
             if (participants.Count > 0 && !appState.IsTournamentComplited)
@@ -285,7 +275,7 @@ namespace TournamentSoftware
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void participantChecked(object sender, RoutedEventArgs e)
+        private void ParticipantChecked(object sender, RoutedEventArgs e)
         {
             deleteParticipantButton.IsEnabled = true;
         }
@@ -296,7 +286,7 @@ namespace TournamentSoftware
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void participantUnchecked(object sender, RoutedEventArgs e)
+        private void ParticipantUnchecked(object sender, RoutedEventArgs e)
         {
             int selectedCount = 0;
             for (int i = 0; i < participants.Count; i++)
@@ -318,12 +308,12 @@ namespace TournamentSoftware
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void saveFile(object sender, RoutedEventArgs e)
+        private void SaveFile(object sender, RoutedEventArgs e)
         {
-            registrator.SaveFile(toDataTable(participants));
+            registrator.SaveFile(ToDataTable(participants));
         }
 
-        private DataTable toDataTable(ObservableCollection<ParticipantWrapper> participants)
+        private DataTable ToDataTable(ObservableCollection<ParticipantWrapper> participants)
         {
             DataTable dataTable = new DataTable();
 
@@ -397,12 +387,7 @@ namespace TournamentSoftware
             return dataTable;
         }
 
-        /// <summary>
-        /// Открываем инструменты для редактирования лейаута модуля регистрации
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void showRegistrationModuleSettings(object sender, RoutedEventArgs e)
+        private void ShowRegistrationModuleSettings(object sender, RoutedEventArgs e)
         {
             ViewSettingsWindow settings = new ViewSettingsWindow();
             settings.Show();
@@ -423,10 +408,6 @@ namespace TournamentSoftware
             }
         }
 
-        /// <summary>
-        /// Добавление колонки номинации
-        /// </summary>
-        /// <param name="nominationName"></param>
         private void AddNominationColumn(string nominationName)
         {
             if (!IsNominationExists(nominationName))
@@ -475,10 +456,6 @@ namespace TournamentSoftware
             }
         }
 
-        /// <summary>
-        /// Проверка заполнения всех обязательных полей у участников
-        /// </summary>
-        /// <returns></returns>
         private bool IsRegistrationTableValid()
         {
             List<string> errors = new List<string>();
