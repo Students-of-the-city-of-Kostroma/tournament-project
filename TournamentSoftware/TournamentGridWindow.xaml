@@ -19,8 +19,8 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <Grid x:Name="categoryTabsGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0"></Grid>
-                <TabControl x:Name="categoriesTabs" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Stretch">
-                </TabControl>
+                <Grid x:Name="tournamentGrid" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Stretch">
+                </Grid>
             </Grid>
             
             <Grid x:Name="instrumentsPanelGrid" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

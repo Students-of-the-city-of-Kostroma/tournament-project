@@ -11,10 +11,26 @@ namespace TournamentSoftware
         private string selectedNomination = "";
         private string selectedCategory = "";
         private List<Button> categoryButtons = new List<Button>();
+        private Button addStageButton = new Button
+        {
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+            Padding = new Thickness(10),
+            BorderThickness = new Thickness(0),
+            Background = white,
+            FontSize = 24,
+            Content = "+ Добавить этап",
+        };
         public TournamentGridWindow()
         {
             InitializeComponent();
             WindowState = WindowState.Maximized;
+            addStageButton.Click += AddStage;
+        }
+
+        private void AddStage(object sender, RoutedEventArgs e)
+        {
+            
         }
 
         private void HideInstrumentsPanel(object sender, RoutedEventArgs e)
@@ -70,12 +86,20 @@ namespace TournamentSoftware
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                     VerticalAlignment = VerticalAlignment.Stretch,
                     Content = subgroup.Name,
+                    Tag = subgroup,
                 };
+                subgroupButton.Click += SelectSubgroup;
                 subgroupsGrid.ColumnDefinitions.Add(column);
                 subgroupsGrid.Children.Add(subgroupButton);
                 Grid.SetColumn(subgroupButton, subgroupsGrid.ColumnDefinitions.Count - 1);
             }
             return subgroupsGrid;
+        }
+
+        private void SelectSubgroup(object sender, RoutedEventArgs e)
+        {
+            var subgroupButton = sender as Button;
+            ShowTournamentGrid((SubgroupWrapper)subgroupButton.Tag);
         }
 
         private UIElement CategoryTab(CategoryWrapper category)
@@ -123,7 +147,6 @@ namespace TournamentSoftware
             foreach (CategoryWrapper category in categoryNames)
             {
                 Grid categoryGrid = (Grid)CategoryTab(category);
-
                 ColumnDefinition columnDefinition = new ColumnDefinition();
                 categoryTabsGrid.ColumnDefinitions.Add(columnDefinition);
                 categoryTabsGrid.Children.Add(categoryGrid);
@@ -135,6 +158,12 @@ namespace TournamentSoftware
         {
             Grid categoryTab = (Grid)categoryButton.Tag;
             categoryTab.RowDefinitions[1].Height = new GridLength(0, GridUnitType.Star);
+        }
+
+        private void ShowTournamentGrid(SubgroupWrapper subgroup)
+        {
+            tournamentGrid.Children.Clear();
+            tournamentGrid.Children.Add(addStageButton);
         }
 
         private void SelectCategory(object sender, RoutedEventArgs e)
