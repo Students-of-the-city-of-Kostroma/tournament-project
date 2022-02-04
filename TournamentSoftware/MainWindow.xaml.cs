@@ -593,34 +593,26 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void HideInstrumentsPanel(object sender, RoutedEventArgs e)
         {
+            var VisibilityOnSite = Visibility.Hidden;
             if (isPanelOpen)
-            {
                 appGrid.ColumnDefinitions[1].Width = new GridLength(40);
-                exportButton.Visibility = Visibility.Hidden;
-                TournamentNameLabel.Visibility = Visibility.Hidden;
-                TournamentNameTextBox.Visibility = Visibility.Hidden;
-                addParticipantButton.Visibility = Visibility.Hidden;
-                loadFromFile.Visibility = Visibility.Hidden;
-                deleteParticipantButton.Visibility = Visibility.Hidden;
-                viewSettingsButton.Visibility = Visibility.Hidden;
-                goHomeButton.Visibility = Visibility.Hidden;
-                goTournament.Visibility = Visibility.Hidden;
-                isPanelOpen = false;
-            }
             else
             {
+                VisibilityOnSite = Visibility.Visible;
                 appGrid.ColumnDefinitions[1].Width = new GridLength(160);
-                exportButton.Visibility = Visibility.Visible;
-                TournamentNameLabel.Visibility = Visibility.Visible;
-                TournamentNameTextBox.Visibility = Visibility.Visible;
-                addParticipantButton.Visibility = Visibility.Visible;
-                loadFromFile.Visibility = Visibility.Visible;
-                deleteParticipantButton.Visibility = Visibility.Visible;
-                viewSettingsButton.Visibility = Visibility.Visible;
-                goHomeButton.Visibility = Visibility.Visible;
-                goTournament.Visibility = Visibility.Visible;
-                isPanelOpen = true;
             }
+
+            isPanelOpen = !isPanelOpen;
+
+            exportButton.Visibility = VisibilityOnSite;
+            TournamentNameLabel.Visibility = VisibilityOnSite;
+            TournamentNameTextBox.Visibility = VisibilityOnSite;
+            addParticipantButton.Visibility = VisibilityOnSite;
+            loadFromFile.Visibility = VisibilityOnSite;
+            deleteParticipantButton.Visibility = VisibilityOnSite;
+            viewSettingsButton.Visibility = VisibilityOnSite;
+            goHomeButton.Visibility = VisibilityOnSite;
+            goTournament.Visibility = VisibilityOnSite;
         }
 
         private void BackToRegistratioinTable(object sender, RoutedEventArgs e)
