@@ -18,8 +18,8 @@
                     <RowDefinition Height="50"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <Grid x:Name="tabsGridRow" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0"></Grid>
-                <TabControl x:Name="kategoriesTabs" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Stretch">
+                <Grid x:Name="categoryTabsGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0"></Grid>
+                <TabControl x:Name="categoriesTabs" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Stretch">
                 </TabControl>
             </Grid>
             

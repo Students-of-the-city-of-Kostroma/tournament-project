@@ -17,18 +17,9 @@ namespace TournamentSoftware
 
         private void HideInstrumentsPanel(object sender, RoutedEventArgs e)
         {
-            if (isPanelOpen)
-            {
-                mainGrid.ColumnDefinitions[1].Width = new GridLength(60);
-                controlsGrid.Visibility = Visibility.Hidden;
-                isPanelOpen = false;
-            }
-            else
-            {
-                mainGrid.ColumnDefinitions[1].Width = new GridLength(160);
-                controlsGrid.Visibility = Visibility.Visible;
-                isPanelOpen = true;
-            }
+            mainGrid.ColumnDefinitions[1].Width = isPanelOpen ? new GridLength(60) : new GridLength(160);
+            controlsGrid.Visibility = isPanelOpen ? Visibility.Hidden : Visibility.Visible;
+            isPanelOpen = !isPanelOpen;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -39,15 +30,17 @@ namespace TournamentSoftware
         private void ShowNominationsList()
         {
             ParticipantsReagistrator participantsReagistrator = MainWindow.GetReagistrator;
-            foreach (NominationWrapper nomination in nominations) 
+            foreach (NominationWrapper nomination in nominations)
             {
                 string nominationName = nomination.Nomination.Name;
-                Button button = new Button();
-                button.Content = nominationName;
-                button.Margin = new Thickness(5);
-                button.Tag = nominationName;
-                button.Click += SelectNomination;
-                nominationsStackPanel.Children.Add(button);
+                Button niminationButton = new Button
+                {
+                    Content = nominationName,
+                    Margin = new Thickness(5),
+                    Tag = nominationName
+                };
+                niminationButton.Click += SelectNomination;
+                nominationsStackPanel.Children.Add(niminationButton);
             }
         }
 
@@ -55,7 +48,7 @@ namespace TournamentSoftware
         {
             var button = sender as Button;
             selectedNomination = button.Tag.ToString();
-            CreateKategoriesTabs();
+            CreateCategoriesTabs();
         }
 
         private void JudgesRegistrationButton_Click(object sender, RoutedEventArgs e)
@@ -64,32 +57,34 @@ namespace TournamentSoftware
             judgesRegistrationWindow.Show();
         }
 
-        private void CreateKategoriesTabs()
+        private void CreateCategoriesTabs()
         {
-            tabsGridRow.Children.Clear();
-            tabsGridRow.ColumnDefinitions.Clear();
+            categoryTabsGrid.Children.Clear();
+            categoryTabsGrid.ColumnDefinitions.Clear();
             List<string> categoryNames = GetCategoryNames();
             foreach (string category in categoryNames)
             {
-                Grid kategoryGrid = new Grid();
+                Grid categoryGrid = new Grid();
                 RowDefinition row1 = new RowDefinition();
-                Button button = new Button();
-                button.HorizontalAlignment = HorizontalAlignment.Stretch;
-                button.VerticalAlignment = VerticalAlignment.Stretch;
-                button.Content = category;
-                button.Click += Button_Click;
-                kategoryGrid.RowDefinitions.Add(row1);
-                kategoryGrid.Children.Add(button);
-                Grid.SetRow(button, 0);
+                Button categoryButton = new Button
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Stretch,
+                    Content = category
+                };
+                categoryButton.Click += SelectCategory;
+                categoryGrid.RowDefinitions.Add(row1);
+                categoryGrid.Children.Add(categoryButton);
+                Grid.SetRow(categoryButton, 0);
 
                 ColumnDefinition columnDefinition = new ColumnDefinition();
-                tabsGridRow.ColumnDefinitions.Add(columnDefinition);
-                tabsGridRow.Children.Add(kategoryGrid);
-                Grid.SetColumn(kategoryGrid, tabsGridRow.ColumnDefinitions.Count - 1);
+                categoryTabsGrid.ColumnDefinitions.Add(columnDefinition);
+                categoryTabsGrid.Children.Add(categoryGrid);
+                Grid.SetColumn(categoryGrid, categoryTabsGrid.ColumnDefinitions.Count - 1);
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void SelectCategory(object sender, RoutedEventArgs e)
         {
         }
     }
