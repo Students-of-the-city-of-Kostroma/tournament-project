@@ -61,8 +61,8 @@ namespace TournamentSoftware
         {
             categoryTabsGrid.Children.Clear();
             categoryTabsGrid.ColumnDefinitions.Clear();
-            List<string> categoryNames = GetCategoryNames();
-            foreach (string category in categoryNames)
+            List<CategoryWrapper> categoryNames = GetCategoriesFromNomination(selectedNomination);
+            foreach (CategoryWrapper category in categoryNames)
             {
                 Grid categoryGrid = new Grid();
                 RowDefinition row1 = new RowDefinition();
@@ -70,7 +70,7 @@ namespace TournamentSoftware
                 {
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                     VerticalAlignment = VerticalAlignment.Stretch,
-                    Content = category
+                    Content = category.Name
                 };
                 categoryButton.Click += SelectCategory;
                 categoryGrid.RowDefinitions.Add(row1);
