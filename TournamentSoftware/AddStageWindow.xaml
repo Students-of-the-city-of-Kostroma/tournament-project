@@ -57,7 +57,7 @@
                      TextWrapping="Wrap" 
                      VerticalAlignment="Top" 
                      Width="38" />
-            <Label Content="круга/кругов" HorizontalAlignment="Left" Margin="423,43.6,0,0" Grid.Row="1" VerticalAlignment="Top" Width="67"/>
+            <Label Content="круга/кругов" HorizontalAlignment="Left" Margin="423,43.6,0,0" Grid.Row="1" VerticalAlignment="Top" Width="96"/>
         </Grid>
     </Grid>
 </Window>

@@ -19,6 +19,8 @@ namespace TournamentSoftware
         public static SolidColorBrush orange = new SolidColorBrush(Color.FromRgb(253, 172, 97));
         public static SolidColorBrush darkGreen = new SolidColorBrush(Color.FromRgb(128, 140, 108));
         public static SolidColorBrush beige = new SolidColorBrush(Color.FromRgb(227, 223, 200));
+        public static SolidColorBrush red = new SolidColorBrush(Color.FromRgb(255, 105, 97));
+        public static SolidColorBrush blue = new SolidColorBrush(Color.FromRgb(174, 198, 207));
 
         public static Style GetCellStyle()
         {

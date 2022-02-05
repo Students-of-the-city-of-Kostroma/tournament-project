@@ -117,6 +117,7 @@
     <Compile Include="wrapperClasses\JudgeWrapper.cs" />
     <Compile Include="wrapperClasses\NominationWrapper.cs" />
     <Compile Include="wrapperClasses\ParticipantWrapper.cs" />
+    <Compile Include="wrapperClasses\BattleWrapper.cs" />
     <Compile Include="wrapperClasses\SubgroupWrapper.cs" />
     <Compile Include="ErrorListWindow.xaml.cs">
       <DependentUpon>ErrorListWindow.xaml</DependentUpon>
