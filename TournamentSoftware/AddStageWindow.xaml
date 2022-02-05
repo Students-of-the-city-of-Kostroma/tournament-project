@@ -47,15 +47,17 @@
                       Width="100" Height="38" 
                       SelectedIndex="0" 
                       FontSize="16"/>
-            <TextBox HorizontalAlignment="Left"
+            <TextBox Name="rounds"
+                     HorizontalAlignment="Left"
                      FontSize="20"
-                      PreviewTextInput="NumericOnly"
+                     PreviewTextInput="NumericOnly"
                      Height="38" 
                      Margin="370,35.6,0,0" 
                      Grid.Row="1" 
                      TextWrapping="Wrap" 
                      VerticalAlignment="Top" 
                      Width="38" />
+            <Label Content="круга/кругов" HorizontalAlignment="Left" Margin="423,43.6,0,0" Grid.Row="1" VerticalAlignment="Top" Width="67"/>
         </Grid>
     </Grid>
 </Window>

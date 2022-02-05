@@ -41,6 +41,8 @@ namespace TournamentSoftware
 
         private void Apply(object sender, RoutedEventArgs e)
         {
+            TournamentGridWindow.roundsCount = int.Parse(rounds.Text);
+            TournamentGridWindow.fightingSystem = fightingSystemsCombobox.Text;
             Close();
         }
     }

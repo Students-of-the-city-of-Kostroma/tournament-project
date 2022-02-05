@@ -10,6 +10,8 @@ namespace TournamentSoftware
         private bool isPanelOpen = true;
         private string selectedNomination = "";
         private string selectedCategory = "";
+        public static int roundsCount = 0;
+        public static string fightingSystem = "";
         private List<Button> categoryButtons = new List<Button>();
         private Button addStageButton = new Button
         {
@@ -39,6 +41,89 @@ namespace TournamentSoftware
         private void AddStageWindow_Closed(object sender, System.EventArgs e)
         {
             addStageButton.IsEnabled = true;
+            if (roundsCount > 0)
+            {
+                StagesFormation();
+            }
+        }
+
+        private Grid RoundHeader(int roundNumber)
+        {
+            Grid roundHeader = new Grid();
+            RowDefinition roundNumberRow = new RowDefinition
+            {
+                Height = new GridLength(1, GridUnitType.Star),
+            };
+            RowDefinition fightingSystemRow = new RowDefinition
+            {
+                Height = new GridLength(1, GridUnitType.Star)
+            };
+            Label roundNumberLabel = new Label
+            {
+                Content = "Круг " + roundNumber,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                FontSize = 18,
+            };
+            Label fightingSystemLabel = new Label
+            {
+                Content = "Система: " + fightingSystem,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                FontSize = 14,
+            };
+            roundHeader.RowDefinitions.Add(roundNumberRow);
+            roundHeader.RowDefinitions.Add(fightingSystemRow);
+            roundHeader.Children.Add(roundNumberLabel);
+            Grid.SetRow(roundNumberLabel, 0);
+            roundHeader.Children.Add(fightingSystemLabel);
+            Grid.SetRow(fightingSystemLabel, 1);
+            return roundHeader;
+        }
+
+        private Grid RoundGrid(int roundNumber)
+        {
+            Grid roundGrid = new Grid();
+            RowDefinition headerRow = new RowDefinition
+            {
+                Height = new GridLength(70, GridUnitType.Pixel)
+            };
+            Grid header = RoundHeader(roundNumber);
+            roundGrid.RowDefinitions.Add(headerRow);
+            roundGrid.Children.Add(header);
+            Grid.SetRow(header, 0);
+            return roundGrid;
+        }
+
+        private void StagesFormation()
+        {
+            tournamentGrid.Children.Remove(addStageButton);
+            tournamentGrid.ColumnDefinitions.RemoveAt(tournamentGrid.ColumnDefinitions.Count - 1);
+            for (int i = 1; i <= roundsCount; i++)
+            {
+                ColumnDefinition column = new ColumnDefinition
+                {
+                    Width = new GridLength(200, GridUnitType.Pixel)
+                };
+                Grid stage = RoundGrid(i);
+                tournamentGrid.ColumnDefinitions.Add(column);
+                tournamentGrid.Children.Add(stage);
+                Grid.SetColumn(stage, tournamentGrid.ColumnDefinitions.Count - 1);
+            }
+            SetAddButtonToLastColumn();
+        }
+
+
+        private void SetAddButtonToLastColumn()
+        {
+            ColumnDefinition columnWithAddButton = new ColumnDefinition
+            {
+                Width = tournamentGrid.ColumnDefinitions.Count > 0 ?
+                new GridLength(200, GridUnitType.Pixel) : new GridLength(1, GridUnitType.Star)
+            };
+            tournamentGrid.ColumnDefinitions.Add(columnWithAddButton);
+            tournamentGrid.Children.Add(addStageButton);
+            Grid.SetColumn(addStageButton, tournamentGrid.ColumnDefinitions.Count - 1);
         }
 
         private void HideInstrumentsPanel(object sender, RoutedEventArgs e)
@@ -181,7 +266,7 @@ namespace TournamentSoftware
         private void ShowTournamentGrid(SubgroupWrapper subgroup)
         {
             tournamentGrid.Children.Clear();
-            tournamentGrid.Children.Add(addStageButton);
+            SetAddButtonToLastColumn();
         }
 
         private void SelectCategory(object sender, RoutedEventArgs e)
