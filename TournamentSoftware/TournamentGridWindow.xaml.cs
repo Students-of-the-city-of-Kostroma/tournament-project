@@ -50,6 +50,60 @@ namespace TournamentSoftware
             }
         }
 
+        private Grid ParticipantsInSubgroup()
+        {
+            Grid participantsGrid = new Grid();
+            List<ParticipantWrapper> participants = GetCategoryFromNomination(selectedNomination, selectedCategory)
+                .GetParticipantsBySubgroup(selectedSubgroup);
+            RowDefinition headerRow = new RowDefinition
+            {
+                Height = new GridLength(70, GridUnitType.Pixel)
+            };
+            Label header = new Label
+            {
+                Content = "Список участников",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                VerticalContentAlignment = VerticalAlignment.Center,
+                FontSize = 20
+            };
+            participantsGrid.RowDefinitions.Add(headerRow);
+            participantsGrid.Children.Add(header);
+            Grid.SetRow(header, 0);
+            foreach (ParticipantWrapper participant in participants)
+            {
+                RowDefinition participantRow = new RowDefinition
+                {
+                    Height = new GridLength(35, GridUnitType.Pixel)
+                };
+                Label participantLabel = new Label
+                {
+                    Content = participant.Participant.Name + " " + participant.Participant.Surname,
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Stretch,
+                    HorizontalContentAlignment = HorizontalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(5),
+                    Background = beige
+                };
+                participantsGrid.RowDefinitions.Add(participantRow);
+                participantsGrid.Children.Add(participantLabel);
+                Grid.SetRow(participantLabel, participantsGrid.RowDefinitions.Count - 1);
+            }
+            return participantsGrid;
+        }
+
+        private void SetParticipantsList()
+        {
+            ColumnDefinition participantsListColumn = new ColumnDefinition();
+            participantsListColumn.Width = new GridLength(350, GridUnitType.Pixel);
+            Grid participantsList = ParticipantsInSubgroup();
+            tournamentGrid.ColumnDefinitions.Add(participantsListColumn);
+            tournamentGrid.Children.Add(participantsList);
+            Grid.SetColumn(participantsList, 0);
+        }
+
         private Grid RoundHeader(int roundNumber)
         {
             Grid roundHeader = new Grid();
@@ -170,13 +224,14 @@ namespace TournamentSoftware
         {
             tournamentGrid.Children.Remove(addStageButton);
             tournamentGrid.ColumnDefinitions.RemoveAt(tournamentGrid.ColumnDefinitions.Count - 1);
+            int lastRoundNumber = battles.Count;
             for (int i = 1; i <= roundsCount; i++)
             {
                 ColumnDefinition column = new ColumnDefinition
                 {
                     Width = new GridLength(200, GridUnitType.Pixel)
                 };
-                Grid stage = RoundGrid(i);
+                Grid stage = RoundGrid(i + lastRoundNumber);
                 tournamentGrid.ColumnDefinitions.Add(column);
                 tournamentGrid.Children.Add(stage);
                 Grid.SetColumn(stage, tournamentGrid.ColumnDefinitions.Count - 1);
@@ -244,10 +299,20 @@ namespace TournamentSoftware
             }
         }
 
+        private void CleanTournamentGrid()
+        {
+            tournamentGrid.ColumnDefinitions.Clear();
+            tournamentGrid.Children.Clear();
+            battles.Clear();
+        }
+
         private void SelectNomination(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             selectedNomination = button.Tag.ToString();
+            selectedCategory = "";
+            selectedSubgroup = "";
+            CleanTournamentGrid();
             CreateCategoriesTabs();
         }
 
@@ -292,7 +357,7 @@ namespace TournamentSoftware
             Button subgroupButton = sender as Button;
             selectedSubgroup = subgroupButton.Content.ToString();
             ColorSubgroupButtons(subgroupButton);
-            ShowTournamentGrid((SubgroupWrapper)subgroupButton.Tag);
+            ShowTournamentGrid();
         }
 
         private UIElement CategoryTab(CategoryWrapper category)
@@ -353,14 +418,17 @@ namespace TournamentSoftware
             categoryTab.RowDefinitions[1].Height = new GridLength(0, GridUnitType.Star);
         }
 
-        private void ShowTournamentGrid(SubgroupWrapper subgroup)
+        private void ShowTournamentGrid()
         {
-            tournamentGrid.Children.Clear();
+            CleanTournamentGrid();
+            SetParticipantsList();
             SetAddButtonToLastColumn();
         }
 
         private void SelectCategory(object sender, RoutedEventArgs e)
         {
+            CleanTournamentGrid();
+            selectedSubgroup = "";
             Button categoryButton = sender as Button;
             Grid categoryTab = (Grid)categoryButton.Tag;
             categoryTab.RowDefinitions[1].Height = new GridLength(1, GridUnitType.Star);
