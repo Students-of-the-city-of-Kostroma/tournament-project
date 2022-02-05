@@ -456,77 +456,70 @@ namespace TournamentSoftware
             }
         }
 
+        #region Проверка на валидность строки
+        private string CheckingForAnEmptyString(string checking, string errortext, int count)
+        {
+            if (checking == null || checking.Equals(""))
+                return $"{errortext} {count}";
+            return null;
+        }
+        private string CheckingDateOfBirth(int checking, int count)
+        {
+            if (checking < 1900 || checking > DateTime.Now.Year - 13)
+                return $"Некорректно заполнен год рождения участника на строке {count}";
+            return null;
+        }
+        private string ChekingSex(string checking, int count)
+        {
+            if (checking == null || (!checking.Equals("М") && !checking.Equals("Ж")))
+                return $"Заполните пол участника на строке {count}";
+            return null;
+        }
+
+        private string ChekingNomination(ParticipantWrapper checking, int count)
+        {
+            if (checking.Nominations == null)
+                return $"Выберите номинацию участника на строке {count}";
+            else
+            {
+                int countTrue = 0;
+                foreach (KeyValuePair<string, bool> keyValuePair in checking.Nominations)
+                    if (keyValuePair.Value)
+                        countTrue++;
+                if (countTrue == 0)
+                    return $"Выберите номинацию участника на строке {count}";
+            }
+            return null;
+        }
+
+        private List<string> CheckcheckingMethod(ParticipantWrapper participant, int count)
+        {
+            List<string> result = new List<string>();
+
+            result.Add(CheckingForAnEmptyString(participant.Participant.Name, "Заполните имя участника на строке", count));
+            result.Add(CheckingForAnEmptyString(participant.Participant.Surname, "Заполните фамилию участника на строке", count));
+            result.Add(CheckingForAnEmptyString(participant.Club, "Заполните клуб участника на строке", count));
+            result.Add(CheckingForAnEmptyString(participant.City, "Заполните город участника на строке", count));
+            result.Add(CheckingDateOfBirth(participant.Participant.DateOfBirth, count));
+            result.Add(ChekingSex(participant.Participant.Sex, count));
+            result.Add(CheckingForAnEmptyString(participant.Category, "Заполните категорию участника на строке", count));
+            result.Add(ChekingNomination(participant, count));
+
+            return result.Where(x => x != null).ToList();
+        }
+        #endregion
         private bool IsRegistrationTableValid()
         {
             List<string> errors = new List<string>();
             int count = 1;
-            if (nominations.Count != 0)
-            {
+            if (nominations.Count == 0)
+                errors.Add("Добавьте хотябы 1 номинацию");
+            else
                 foreach (ParticipantWrapper participant in participants)
                 {
-                    if (participant.Participant.Name.Equals(""))
-                    {
-                        errors.Add("Заполните имя участника на строке " + count);
-                    }
-
-                    if (participant.Participant.Surname.Equals(""))
-                    {
-                        errors.Add("Заполните фамилию участника на строке " + count);
-                    }
-
-                    if (participant.Club.Equals(""))
-                    {
-                        errors.Add("Заполните клуб участника на строке " + count);
-                    }
-
-                    if (participant.City.Equals(""))
-                    {
-                        errors.Add("Заполните город участника на строке " + count);
-                    }
-
-                    if (participant.Participant.DateOfBirth < 1900 || participant.Participant.DateOfBirth > DateTime.Now.Year - 13)
-                    {
-                        errors.Add("Некорректно заполнен год рождения участника на строке " + count);
-                    }
-
-                    if (participant.Participant.Sex == null || (!participant.Participant.Sex.Equals("М") && !participant.Participant.Sex.Equals("Ж")))
-                    {
-                        errors.Add("Заполните пол участника на строке " + count + " " + participant.Participant.Sex);
-                    }
-
-                    if (participant.Category == null || participant.Category.Equals(""))
-                    {
-                        errors.Add("Заполните категорию участника на строке " + count);
-                    }
-
-                    if (participant.Nominations == null)
-                    {
-                        errors.Add("Выберите номинацию участника на строке " + count);
-                    }
-                    else
-                    {
-                        int countTrue = 0;
-                        foreach (KeyValuePair<string, bool> keyValuePair in participant.Nominations)
-                        {
-                            if (keyValuePair.Value)
-                            {
-                                countTrue++;
-                            }
-                        }
-
-                        if (countTrue == 0)
-                        {
-                            errors.Add("Выберите номинацию участника на строке " + count);
-                        }
-                    }
-
+                    errors.AddRange(CheckcheckingMethod(participant, count));
                     count++;
                 }
-            }
-            else
-            {
-                errors.Add("Добавьте хотябы 1 номинацию");
-            }
             if (TournamentNameTextBox.Text.Equals(""))
             {
                 errors.Add("Введите название турнира");
