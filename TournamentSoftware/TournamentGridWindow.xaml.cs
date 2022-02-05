@@ -239,7 +239,6 @@ namespace TournamentSoftware
             SetAddButtonToLastColumn();
         }
 
-
         private void SetAddButtonToLastColumn()
         {
             ColumnDefinition columnWithAddButton = new ColumnDefinition
