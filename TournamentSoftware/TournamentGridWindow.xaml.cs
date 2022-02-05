@@ -104,9 +104,19 @@ namespace TournamentSoftware
             return subgroupsGrid;
         }
 
+        private void ColorSubgroupButtons(Button selectedSubgroup)
+        {
+            Grid subgroupTabs = (Grid)selectedSubgroup.Parent;
+            foreach (UIElement subgroupButton in subgroupTabs.Children)
+            {
+                (subgroupButton as Button).Background = subgroupButton.Equals(selectedSubgroup) ? darkGreen : white;
+            }
+        }
+
         private void SelectSubgroup(object sender, RoutedEventArgs e)
         {
-            var subgroupButton = sender as Button;
+            Button subgroupButton = sender as Button;
+            ColorSubgroupButtons(subgroupButton);
             ShowTournamentGrid((SubgroupWrapper)subgroupButton.Tag);
         }
 
