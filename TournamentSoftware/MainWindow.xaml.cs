@@ -469,14 +469,14 @@ namespace TournamentSoftware
                 return $"Некорректно заполнен год рождения участника на строке {count}";
             return null;
         }
-        private string ChekingSex(string checking, int count)
+        private string CheckingSex(string checking, int count)
         {
             if (checking == null || (!checking.Equals("М") && !checking.Equals("Ж")))
                 return $"Заполните пол участника на строке {count}";
             return null;
         }
 
-        private string ChekingNomination(ParticipantWrapper checking, int count)
+        private string CheckingNomination(ParticipantWrapper checking, int count)
         {
             if (checking.Nominations == null)
                 return $"Выберите номинацию участника на строке {count}";
@@ -492,7 +492,7 @@ namespace TournamentSoftware
             return null;
         }
 
-        private List<string> CheckcheckingMethod(ParticipantWrapper participant, int count)
+        private List<string> CheckingForErrorsInRow(ParticipantWrapper participant, int count)
         {
             List<string> result = new List<string>();
 
@@ -501,9 +501,9 @@ namespace TournamentSoftware
             result.Add(CheckingForAnEmptyString(participant.Club, "Заполните клуб участника на строке", count));
             result.Add(CheckingForAnEmptyString(participant.City, "Заполните город участника на строке", count));
             result.Add(CheckingDateOfBirth(participant.Participant.DateOfBirth, count));
-            result.Add(ChekingSex(participant.Participant.Sex, count));
+            result.Add(CheckingSex(participant.Participant.Sex, count));
             result.Add(CheckingForAnEmptyString(participant.Category, "Заполните категорию участника на строке", count));
-            result.Add(ChekingNomination(participant, count));
+            result.Add(CheckingNomination(participant, count));
 
             return result.Where(x => x != null).ToList();
         }
@@ -517,7 +517,7 @@ namespace TournamentSoftware
             else
                 foreach (ParticipantWrapper participant in participants)
                 {
-                    errors.AddRange(CheckcheckingMethod(participant, count));
+                    errors.AddRange(CheckingForErrorsInRow(participant, count));
                     count++;
                 }
             if (TournamentNameTextBox.Text.Equals(""))
