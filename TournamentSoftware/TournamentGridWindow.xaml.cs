@@ -92,5 +92,11 @@ namespace TournamentSoftware
         private void Button_Click(object sender, RoutedEventArgs e)
         {
         }
+
+        private void openFightProtocolButton_Click(object sender, RoutedEventArgs e)
+        {
+            BattleProtocolWindow battleProtocolWindow = new BattleProtocolWindow();
+            battleProtocolWindow.Show();
+        }
     }
 }

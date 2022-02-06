@@ -1,0 +1,231 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TournamentSoftware"
+        xmlns:Collections="clr-namespace:System.Collections;assembly=mscorlib" x:Class="TournamentSoftware.BattleProtocolWindow"
+        mc:Ignorable="d"
+        Title="Протокол боя" DataContext="{Binding RelativeSource={RelativeSource Self}}" MinWidth="350" MaxWidth="350" MaxHeight="410" MinHeight="410" Height="410" >
+
+    <Grid x:Name="mainGrid" Margin="10,10,10,10">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="266"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="241*" />
+                <ColumnDefinition Width="89*" />
+            </Grid.ColumnDefinitions>
+
+            <Label x:Name="fightersNamesLabel"
+               Content="Протокол Боя " 
+               HorizontalContentAlignment="Right"  
+               FontSize="15" VerticalContentAlignment="Center" 
+               Grid.Column="0"/>
+
+            <Button Content="..." Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" >
+                <Button.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Добавить судью" Click="AddJudgeMenuItem_Click" />
+                        <MenuItem Header="Удалить судью" Click="DeleteJudgeMenuItem_Click" />
+                    </ContextMenu>
+                </Button.ContextMenu>
+            </Button>
+        </Grid>
+
+        <DataGrid x:Name="FightProtocolTable" 
+                GridLinesVisibility="All" 
+                HeadersVisibility="All"  
+                HorizontalScrollBarVisibility="Auto" 
+                SelectionMode="Extended" 
+                IsReadOnly="False" 
+                AutoGenerateColumns="False" 
+                HorizontalGridLinesBrush="White"
+                VerticalGridLinesBrush="White"
+                BorderBrush="#FF808C6C"
+                Grid.Row="1" Background="White"
+                ItemsSource="{Binding FighterBattleResult}" CanUserDeleteRows="False" CanUserAddRows="False" BorderThickness="0,0,0,0" CanUserResizeRows="False" MaxColumnWidth="30" MinColumnWidth="30" CanUserSortColumns="False" CanUserResizeColumns="False" CanUserReorderColumns="False" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" RowHeight="40">
+
+            <DataGrid.Columns>
+
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding Path=DataContext.AvailableJudges,
+                                        RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window},
+                                        UpdateSourceTrigger=PropertyChanged}"
+                                         
+                                         BorderThickness="0"
+                                         IsTextSearchEnabled="False" Width="180" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox BorderThickness="0" Text="{Binding FirstJudge, 
+                                                UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding Path=DataContext.AvailableJudges,
+                                        RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window},
+                                        UpdateSourceTrigger=PropertyChanged}"
+                                         
+                                         BorderThickness="0"
+                                         IsTextSearchEnabled="False" Width="180" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox BorderThickness="0" Text="{Binding SecondJudge, 
+                                                UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding Path=DataContext.AvailableJudges,
+                                        RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window},
+                                        UpdateSourceTrigger=PropertyChanged}"
+                                         
+                                         BorderThickness="0"
+                                         IsTextSearchEnabled="False" Width="180" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox BorderThickness="0" Text="{Binding ThirdJudge, 
+                                                UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Предупреждение">
+
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox BorderThickness="0" Text="{Binding Warnings, 
+                                                UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Доп. баллы">
+
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox BorderThickness="0" Text="{Binding ExtraPoints, 
+                                                UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Выбывшие бойцы">
+
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox BorderThickness="0" Text="{Binding RetiredFighters, 
+                                                UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Отметка о доср. окончании боя">
+
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox BorderThickness="0" Text="{Binding EarlyEndOfTheFight, 
+                                                UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Результат">
+
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox BorderThickness="0" Text="{Binding Result, 
+                                                UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+            </DataGrid.Columns>
+
+            <DataGrid.LayoutTransform>
+                <TransformGroup>
+                    <RotateTransform Angle="90"/>
+                    <MatrixTransform Matrix="-1,0,0,1,0,0"/>
+                </TransformGroup>
+            </DataGrid.LayoutTransform>
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="{x:Type DataGridColumnHeader}"
+                BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                    <Setter Property="LayoutTransform">
+                        <Setter.Value>
+                            <TransformGroup>
+                                <RotateTransform Angle="-90"/>
+                                <ScaleTransform ScaleX="1" ScaleY="-1" />
+                            </TransformGroup>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+            <DataGrid.CellStyle>
+                <Style  TargetType="DataGridCell">
+                    <Setter Property="LayoutTransform">
+                        <Setter.Value>
+                            <TransformGroup>
+                                <RotateTransform Angle="-90"/>
+                                <ScaleTransform ScaleX="1" ScaleY="-1" />
+                            </TransformGroup>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </DataGrid.CellStyle>
+
+            <DataGrid.Resources>
+                <Style TargetType="{x:Type DataGridCell}">
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="BorderBrush" Value="Black" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.Resources>
+
+        </DataGrid>
+
+        <Grid Grid.Row="2">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="editButton" 
+                    Content="Внести изменения" 
+                    Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="110" Height="25" />
+
+            <Button x:Name="printButton" 
+                    Content="Печать" 
+                    Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="110" Height="25" />
+        </Grid>
+
+    </Grid>
+
+</Window>
