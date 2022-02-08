@@ -48,6 +48,7 @@ namespace TournamentSoftware
             {
                 StagesFormation();
             }
+            roundsCount = 0;
         }
 
         private Grid ParticipantsInSubgroup()
