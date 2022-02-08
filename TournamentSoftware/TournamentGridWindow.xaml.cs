@@ -44,11 +44,14 @@ namespace TournamentSoftware
         private void AddStageWindow_Closed(object sender, System.EventArgs e)
         {
             addStageButton.IsEnabled = true;
-            if (roundsCount > 0)
+            if (fightingSystem.Equals("Круговая"))
             {
-                StagesFormation();
+                if (roundsCount > 0)
+                {
+                    StagesFormation();
+                }
+                roundsCount = 0;
             }
-            roundsCount = 0;
         }
 
         private Grid ParticipantsInSubgroup()
