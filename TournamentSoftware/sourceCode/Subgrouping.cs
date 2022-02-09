@@ -77,8 +77,13 @@ namespace TournamentSoftware
             Button button = sender as Button;
             string nomination = button.Tag.ToString();
             selectedNomination = nomination;
-            ((MainWindow)Application.Current.MainWindow).SubgroupFormationLabel.Content = "Формирование групп. Номинация " + nomination;
-            ShowCategoriesForNomination(selectedNomination);
+            if (GetGroupByNomination(selectedNomination) == null)
+                MessageBox.Show("В номинации отсутствуют участники", "Ошибка", MessageBoxButton.OK);
+            else
+            {               
+                ((MainWindow)Application.Current.MainWindow).SubgroupFormationLabel.Content = "Формирование групп. Номинация " + nomination;
+                ShowCategoriesForNomination(selectedNomination);
+            }
         }
 
         private void PrepareCategoriesGrid() 
