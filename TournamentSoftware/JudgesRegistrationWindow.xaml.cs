@@ -13,6 +13,7 @@ namespace TournamentSoftware
         public static ObservableCollection<JudgeWrapper> judgesList = new ObservableCollection<JudgeWrapper>();
         private ParticipantsReagistrator reagistrator = new ParticipantsReagistrator();
         private bool isJudgesSaved = false;
+        private int idAddedjudge = 0; //id судьи с которого началось добавление
 
         public bool JudesSaved
         {
@@ -31,7 +32,7 @@ namespace TournamentSoftware
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void addJude (object sender, RoutedEventArgs e)
+        private void addJude(object sender, RoutedEventArgs e)
         {
             JudgeWrapper jude = new JudgeWrapper
             {
@@ -43,6 +44,8 @@ namespace TournamentSoftware
             };
 
             judgesList.Add(jude);
+            if (idAddedjudge == 0)
+                idAddedjudge = judgesList.Count - 1;
         }
 
         /// <summary>
@@ -72,7 +75,19 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            reagistrator.BackupRegistrationTable(judgesList, judgesBackupPath);
+            if (idAddedjudge == 0)
+            {
+                reagistrator.BackupRegistrationTable(judgesList, judgesBackupPath);
+                return;
+            }
+            var result = MessageBox.Show("Вы хотите сохранить изменения?", "Винимание!", MessageBoxButton.YesNoCancel);
+            if (result == MessageBoxResult.Yes)
+                reagistrator.BackupRegistrationTable(judgesList, judgesBackupPath);
+            else if (result == MessageBoxResult.No)
+                while (judgesList.Count != idAddedjudge)
+                    judgesList.RemoveAt(idAddedjudge);
+            else
+                e.Cancel = true;
         }
 
         /// <summary>
@@ -82,6 +97,7 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void saveJudgesList(object sender, RoutedEventArgs e)
         {
+            idAddedjudge = 0;
             isJudgesSaved = true;
         }
 
