@@ -13,6 +13,10 @@ namespace TournamentSoftware
         public static ObservableCollection<JudgeWrapper> judgesList = new ObservableCollection<JudgeWrapper>();
         private ParticipantsReagistrator reagistrator = new ParticipantsReagistrator();
         private bool isJudgesSaved = false;
+        /// <summary>
+        /// Id судьи с которого началось добавление
+        /// </summary>
+        private int idAddedjudge = 0;
 
         public bool JudesSaved
         {
@@ -31,7 +35,7 @@ namespace TournamentSoftware
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void addJude (object sender, RoutedEventArgs e)
+        private void addJude(object sender, RoutedEventArgs e)
         {
             JudgeWrapper jude = new JudgeWrapper
             {
@@ -43,6 +47,8 @@ namespace TournamentSoftware
             };
 
             judgesList.Add(jude);
+            if (idAddedjudge == 0)
+                idAddedjudge = judgesList.Count;
         }
 
         /// <summary>
@@ -58,7 +64,8 @@ namespace TournamentSoftware
                 addJudgeButton.Visibility = Visibility.Hidden;
                 isPanelOpen = false;
             }
-            else {
+            else
+            {
                 mainGrid.ColumnDefinitions[1].Width = new GridLength(100, GridUnitType.Pixel);
                 addJudgeButton.Visibility = Visibility.Visible;
                 isPanelOpen = true;
@@ -72,6 +79,20 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if (idAddedjudge == 0)
+            {
+                reagistrator.BackupRegistrationTable(judgesList, judgesBackupPath);
+                return;
+            }
+            var result = MessageBox.Show("Вы хотите сохранить изменения?", "Винимание!", MessageBoxButton.YesNoCancel);
+            if (result == MessageBoxResult.No)
+                while (judgesList.Count > idAddedjudge - 1)
+                    judgesList.RemoveAt(idAddedjudge - 1);
+            else
+            {
+                e.Cancel = true;
+                return;
+            }
             reagistrator.BackupRegistrationTable(judgesList, judgesBackupPath);
         }
 
@@ -82,6 +103,7 @@ namespace TournamentSoftware
         /// <param name="e"></param>
         private void saveJudgesList(object sender, RoutedEventArgs e)
         {
+            idAddedjudge = 0;
             isJudgesSaved = true;
         }
 
