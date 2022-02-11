@@ -88,7 +88,7 @@ namespace TournamentSoftware
             if (result == MessageBoxResult.No)
                 while (judgesList.Count > idAddedjudge - 1)
                     judgesList.RemoveAt(idAddedjudge - 1);
-            else
+            else if(result == MessageBoxResult.Cancel)
             {
                 e.Cancel = true;
                 return;
