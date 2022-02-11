@@ -516,7 +516,7 @@
                     
                 </Grid>
 
-                <Grid x:Name="categorySettingsGrid"  Grid.Column="1" Background="#808C6C" Margin="15,0,15,0" >
+                <Grid Grid.Column="1" Background="#808C6C" Margin="15,0,15,0" >
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="40px"/>
@@ -529,6 +529,8 @@
                        FontSize="20" 
                        Grid.Row="0" 
                        Foreground="White" />
+
+                    <Grid x:Name="categorySettingsGrid" Grid.Row="1"></Grid>
 
                 </Grid>
 
