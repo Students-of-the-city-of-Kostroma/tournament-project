@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using static TournamentSoftware.ApplicationResourcesPaths;
+using static TournamentSoftware.TournamentData;
 
 namespace TournamentSoftware
 {
@@ -83,22 +84,61 @@ namespace TournamentSoftware
         private void saveJudgesList(object sender, RoutedEventArgs e)
         {
             isJudgesSaved = true;
+            
+            for (int i = 0; i < judgesList.Count; i++)
+            {
+                if (judgesList[i].Surname != "" && judgesList[i].Name != "")
+                {
+                    Club club = new Club();
+                    if (judgesList[i].Club != "" && judgesList[i].City != "")
+                    {
+                        if (dataBaseHandler.GetClubsData("SELECT * FROM Club WHERE name=\"" + judgesList[i].Club + "\" AND city=\"" + judgesList[i].City + "\";").Count == 0)
+                        {
+                            club.Name = judgesList[i].Club;
+                            club.City = judgesList[i].City;
+                            dataBaseHandler.AddClub(club);
+                        }
+                        club = dataBaseHandler.GetClubsData("SELECT * FROM Club WHERE name=\"" + judgesList[i].Club + "\" AND city=\"" + judgesList[i].City + "\";")[0];
+                    }
+
+
+                    if (dataBaseHandler.GetJudgesData("SELECT * FROM Judge WHERE surname=\"" + judgesList[i].Surname + "\" AND name=\"" + judgesList[i].Name + "\";").Count == 0)
+                    {
+                        Judge judge = new Judge();
+                        judge.Surname = judgesList[i].Surname;
+                        judge.Name = judgesList[i].Name;
+                        judge.Patronymic = judgesList[i].Patronymic;
+                        if (club.Id != 0)
+                        {
+                            judge.ClubId = club.Id;
+                        }
+                        dataBaseHandler.AddJudge(judge);
+                    }
+                }
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (!isJudgesSaved)
-            {
-                judgesList.Clear();
-                List<JudgeWrapper> judges = reagistrator.GetJudgesFromBackup(judgesBackupPath);
-                if (judges != null)
+            judgesList.Clear();
+
+            List<Judge> judges = dataBaseHandler.GetJudgesData("SELECT * FROM Judge");
+            judges.ForEach(judge => {
+                JudgeWrapper judgeWrapper = new JudgeWrapper { Name = judge.Name, Surname = judge.Surname, Patronymic = judge.Patronymic };
+                List<Club> club = dataBaseHandler.GetClubsData("SELECT * FROM Club WHERE id=" + judge.ClubId + ";");
+                if (club.Count != 0)
                 {
-                    foreach (JudgeWrapper j in judges)
-                    {
-                        judgesList.Add(j);
-                    }
+                    judgeWrapper.Club = club[0].Name;
+                    judgeWrapper.City = club[0].City;
                 }
-            }
+                else 
+                {
+                    judgeWrapper.Club = "";
+                    judgeWrapper.City = "";
+                }
+                judgesList.Add(judgeWrapper);
+            });
+
             JudesTable.Items.Clear();
             JudesTable.ItemsSource = judgesList;
         }

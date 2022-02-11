@@ -22,7 +22,6 @@ namespace TournamentSoftware
         private static ParticipantsReagistrator registrator = new ParticipantsReagistrator();
         public ApplicationState appState = new ApplicationState();
         private bool isPanelOpen = true;
-        private DataBaseHandler dataBaseHandler;
 
         public static ParticipantsReagistrator GetReagistrator { get { return registrator; } }
         public static ObservableCollection<ParticipantWrapper> GetPartisipants { get { return participants; } }
@@ -51,7 +50,6 @@ namespace TournamentSoftware
             StartWindow startWindow = new StartWindow();
             startWindow.Show();
             startWindow.Closed += StartWindow_Closed;
-            dataBaseHandler = new DataBaseHandler(dataBasePath);
         }
 
         private void StartWindow_Closed(object sender, EventArgs e)
