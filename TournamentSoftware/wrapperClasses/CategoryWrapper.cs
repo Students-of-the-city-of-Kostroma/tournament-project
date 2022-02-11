@@ -5,10 +5,19 @@ namespace TournamentSoftware
 {
     public class CategoryWrapper
     {
+        private List<string> rools = new List<string>();
         private List<ParticipantWrapper> participantsBuffer = new List<ParticipantWrapper>();
         private List<SubgroupWrapper> subgroups = new List<SubgroupWrapper>();
         public bool ContainsSubgroups { get { return subgroups.Count > 0; } }
         public string Name { get; set; }
+        public List<string> Rools { get { return rools; } set { rools = value; } }
+        public void AddRool(string rool)
+        {
+            if (!rools.Contains(rool))
+            {
+                rools.Add(rool);
+            }
+        }
         public List<SubgroupWrapper> Subgroups { get { return subgroups; } set { subgroups = value; } }
         public CategoryWrapper() { Subgroups = new List<SubgroupWrapper>(); }
         public CategoryWrapper(ParticipantWrapper participant)

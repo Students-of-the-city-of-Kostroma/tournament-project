@@ -15,6 +15,7 @@ namespace TournamentSoftware
         public static int roundsCount = 0;
         public static string fightingSystem = "";
         private List<Button> categoryButtons = new List<Button>();
+        private List<string> rools = new List<string>();
         private Button addStageButton = new Button
         {
             HorizontalAlignment = HorizontalAlignment.Center,
@@ -51,6 +52,10 @@ namespace TournamentSoftware
                     StagesFormation();
                 }
                 roundsCount = 0;
+            } else if (fightingSystem.Equals("На вылет")) 
+            {
+                // получаем правила примененные к этой категории
+                rools = GetCategoryFromNomination(selectedNomination, selectedCategory).Rools;
             }
         }
 

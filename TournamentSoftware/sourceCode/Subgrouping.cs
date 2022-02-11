@@ -451,6 +451,7 @@ namespace TournamentSoftware
                 ShowSubgroups();
                 RemoveShadowFromCategoryButtons();
                 AddShadowToCategoryButtonsWithErrors();
+                GetCategoryFromNomination(selectedNomination, selectedCategory).Rools = selectedRools;
             }
             else
             {
