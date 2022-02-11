@@ -25,7 +25,6 @@ namespace TournamentSoftware
 
         public static DataBaseHandler dataBaseHandler = new DataBaseHandler(dataBasePath);
 
-
         public static Style GetCellStyle()
         {
             Style cellStyle = new Style(typeof(DataGridCell));

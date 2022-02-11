@@ -101,7 +101,6 @@ namespace TournamentSoftware
                         club = dataBaseHandler.GetClubsData("SELECT * FROM Club WHERE name=\"" + judgesList[i].Club + "\" AND city=\"" + judgesList[i].City + "\";")[0];
                     }
 
-
                     if (dataBaseHandler.GetJudgesData("SELECT * FROM Judge WHERE surname=\"" + judgesList[i].Surname + "\" AND name=\"" + judgesList[i].Name + "\";").Count == 0)
                     {
                         Judge judge = new Judge();
