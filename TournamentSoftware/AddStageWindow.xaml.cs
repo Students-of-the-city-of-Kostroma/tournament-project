@@ -41,9 +41,22 @@ namespace TournamentSoftware
 
         private void Apply(object sender, RoutedEventArgs e)
         {
-            TournamentGridWindow.roundsCount = int.Parse(rounds.Text);
-            TournamentGridWindow.fightingSystem = fightingSystemsCombobox.Text;
-            Close();
+            if (fightingSystemsCombobox.SelectedValue.ToString() == "Круговая")
+            {
+                if (!int.TryParse(rounds.Text, out int roundsCount))
+                    MessageBox.Show("Введите количество кругов", "Ошибка");
+                else
+                {
+                    TournamentGridWindow.roundsCount = roundsCount;
+                    TournamentGridWindow.fightingSystem = fightingSystemsCombobox.Text;
+                    Close();
+                }
+            }
+            else
+            {
+                TournamentGridWindow.fightingSystem = fightingSystemsCombobox.Text;
+                Close();
+            }
         }
     }
 }
