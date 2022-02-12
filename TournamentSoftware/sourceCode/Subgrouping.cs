@@ -13,7 +13,7 @@ namespace TournamentSoftware
         private Grid categoriesGrid = new Grid();
         private Grid categorySettingsGrid = new Grid();
         private Grid subgroupsSettingsGrid = new Grid { AllowDrop = true };
-        private Label countInCategory = new Label { FontSize = 30, VerticalAlignment = VerticalAlignment.Center };
+        private Label countInCategory = new Label { FontSize = 30, VerticalAlignment = VerticalAlignment.Center, Foreground = new SolidColorBrush(Colors.White), BorderBrush = new SolidColorBrush(Colors.White), BorderThickness = new Thickness(0, 0, 2, 0)};
         private TextBox countSubgroups = new TextBox
         {
             Width = 50,
@@ -178,7 +178,6 @@ namespace TournamentSoftware
         {
             subgroupsSettingsGrid.Children.Clear();
             categorySettingsGrid.Children.Clear();
-            categorySettingsGrid.ShowGridLines = true;
             var parent = VisualTreeHelper.GetParent(countInCategory);
             var parentGrid = parent as Grid;
             if (parentGrid != null)
@@ -201,6 +200,7 @@ namespace TournamentSoftware
             countInLategoryGrid.Children.Add(countInCategory);
             countInCategory.HorizontalAlignment = HorizontalAlignment.Right;
             Label label1 = CreateLabel("Количество\nбойцов в\nгруппе", 15);
+            label1.Foreground = new SolidColorBrush(Colors.White);
             label1.HorizontalContentAlignment = HorizontalAlignment.Left;
             label1.HorizontalAlignment = HorizontalAlignment.Left;
             label1.VerticalAlignment = VerticalAlignment.Center;
@@ -217,6 +217,7 @@ namespace TournamentSoftware
             goNextButton.Content = "Продолжить";
             goNextButton.HorizontalAlignment = HorizontalAlignment.Center;
             goNextButton.VerticalAlignment = VerticalAlignment.Top;
+            goNextButton.Background= new SolidColorBrush(Colors.White);
             goNextButton.Height = 40;
             goNextButton.Click += SubgroupsFormation;
 
@@ -591,7 +592,7 @@ namespace TournamentSoftware
 
             Label label = CreateLabel("Выбор правил", 15);
             label.HorizontalAlignment = HorizontalAlignment.Center;
-
+            label.Foreground = new SolidColorBrush(Colors.White);
             grid.Children.Add(label);
             Grid.SetRow(label, 0);
 
@@ -603,6 +604,7 @@ namespace TournamentSoftware
                 checkBox.IsChecked = true;
                 checkBox.Checked += CheckBox_Checked;
                 checkBox.Unchecked += CheckBox_Unchecked;
+                checkBox.Foreground = new SolidColorBrush(Colors.White);
 
                 grid.RowDefinitions.Add(row);
                 grid.Children.Add(checkBox);
@@ -645,10 +647,15 @@ namespace TournamentSoftware
 
             countSubgroups.TextChanged += CountSubgroups_TextChanged;
             countSubgroups.PreviewTextInput += CountSubgroups_PreviewTextInput;
+            countSubgroups.Background = (Brush)new BrushConverter().ConvertFrom("#808C6C");
+            countSubgroups.BorderThickness = new Thickness(2);
+            countSubgroups.BorderBrush = new SolidColorBrush(Colors.White);
+            countSubgroups.Foreground = new SolidColorBrush(Colors.White);
 
             Label label = CreateLabel("Количество подгрупп", 15);
             label.HorizontalAlignment = HorizontalAlignment.Left;
             label.VerticalAlignment = VerticalAlignment.Center;
+            label.Foreground = new SolidColorBrush(Colors.White);
 
             countOfSubgroupsGrid.Children.Add(countSubgroups);
             countOfSubgroupsGrid.Children.Add(label);

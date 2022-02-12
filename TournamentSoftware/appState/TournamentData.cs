@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using static TournamentSoftware.ApplicationResourcesPaths;
 
 namespace TournamentSoftware
 {
@@ -16,6 +17,9 @@ namespace TournamentSoftware
         public static List<string> fightingSystems = new List<string>() { "Круговая", "На вылет", "Смешанная" };
         public static string cellsColor = "#F5F1DA";
         public static SolidColorBrush white = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+        
+        public static DataBaseHandler dataBaseHandler = new DataBaseHandler(dataBasePath);
+        
         public static SolidColorBrush orange = new SolidColorBrush(Color.FromRgb(253, 172, 97));
         public static SolidColorBrush darkGreen = new SolidColorBrush(Color.FromRgb(128, 140, 108));
         public static SolidColorBrush beige = new SolidColorBrush(Color.FromRgb(227, 223, 200));
