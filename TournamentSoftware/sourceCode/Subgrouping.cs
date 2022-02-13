@@ -459,7 +459,7 @@ namespace TournamentSoftware
             }
         }
 
-        private static Dictionary<string, List<ParticipantWrapper>> FilterParticipantsForCities(List<ParticipantWrapper> participants)
+        public static Dictionary<string, List<ParticipantWrapper>> FilterParticipantsForCities(List<ParticipantWrapper> participants)
         {
             Dictionary<string, List<ParticipantWrapper>> participantsForCities = new Dictionary<string, List<ParticipantWrapper>>();
             participants.ForEach(participant =>
@@ -479,7 +479,7 @@ namespace TournamentSoftware
             return participantsForCities;
         }
 
-        private static Dictionary<string, List<ParticipantWrapper>> FilterParticipantsForClubs(List<ParticipantWrapper> participants)
+        public static Dictionary<string, List<ParticipantWrapper>> FilterParticipantsForClubs(List<ParticipantWrapper> participants)
         {
             Dictionary<string, List<ParticipantWrapper>> participantsForClubs = new Dictionary<string, List<ParticipantWrapper>>();
             participants.ForEach(participant =>
