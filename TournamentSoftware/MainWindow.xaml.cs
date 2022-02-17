@@ -22,6 +22,8 @@ namespace TournamentSoftware
         private static ParticipantsReagistrator registrator = new ParticipantsReagistrator();
         public ApplicationState appState = new ApplicationState();
         private bool isPanelOpen = true;
+        public bool stateExportButton;
+        public bool stateDeleteParticipantButton;
 
         public static ParticipantsReagistrator GetReagistrator { get { return registrator; } }
         public static ObservableCollection<ParticipantWrapper> GetPartisipants { get { return participants; } }
@@ -388,7 +390,19 @@ namespace TournamentSoftware
         private void ShowRegistrationModuleSettings(object sender, RoutedEventArgs e)
         {
             ViewSettingsWindow settings = new ViewSettingsWindow();
+            settings.Owner = this;
             settings.Show();
+
+            stateDeleteParticipantButton = deleteParticipantButton.IsEnabled;
+            stateExportButton = exportButton.IsEnabled;
+
+            addParticipantButton.IsEnabled = false;
+            loadFromFile.IsEnabled = false;
+            deleteParticipantButton.IsEnabled = false;
+            exportButton.IsEnabled = false;
+            viewSettingsButton.IsEnabled = false;
+            goHomeButton.IsEnabled = false;
+            goTournament.IsEnabled = false;
         }
 
         /// <summary>
