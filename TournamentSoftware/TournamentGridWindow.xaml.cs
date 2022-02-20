@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using TournamentSoftware.wrapperClasses;
@@ -14,7 +15,7 @@ namespace TournamentSoftware
         private string selectedSubgroup = "";
         public static int roundsCount = 0;
         public static string fightingSystem = "";
-        private int lastAddedPair = 0;
+        private int numberOfNextAddedPair = 0;
         private List<Button> categoryButtons = new List<Button>();
         private List<string> rools = new List<string>();
         private Button addStageButton = new Button
@@ -57,6 +58,8 @@ namespace TournamentSoftware
             else if (fightingSystem.Equals("На вылет"))
             {
                 roundsCount = 1;
+                numberOfNextAddedPair = 0;
+                battles.Clear();
                 rools = GetCategoryFromNomination(selectedNomination, selectedCategory).Rools;
                 StagesFormation();
             }
@@ -83,61 +86,59 @@ namespace TournamentSoftware
             return pairs;
         }
 
+        private void AddRedParticipantToPair(ref List<BattleWrapper> pairs, ref List<ParticipantWrapper> participants, int nextPairNumber, int pairsCount)
+        {
+            ParticipantWrapper participant = participants[participants.Count - 1];
+            participants.RemoveAt(participants.Count - 1);
+            BattleWrapper pair = new BattleWrapper(participant, null);
+            pairs.Add(pair);
+            Console.WriteLine("add red " + pairs.Count);
+            numberOfNextAddedPair = nextPairNumber + 1;
+            if (numberOfNextAddedPair >= pairsCount)
+            {
+                numberOfNextAddedPair = 0;
+            }
+        }
+        private void AddBlueParticipantToPair(ref List<BattleWrapper> pairs, ref List<ParticipantWrapper> participants, int nextPairNumber, int pairsCount)
+        {
+            ParticipantWrapper participant = participants[participants.Count - 1];
+            participants.RemoveAt(participants.Count - 1);
+            Console.WriteLine(nextPairNumber + " " + pairs.Count);
+            pairs[nextPairNumber].BlueParticipant = participant;
+            numberOfNextAddedPair = nextPairNumber + 1;
+            if (numberOfNextAddedPair >= pairsCount)
+            {
+                numberOfNextAddedPair = 0;
+            }
+        }
+
         private List<BattleWrapper> SortToPairs(List<BattleWrapper> pairs, List<ParticipantWrapper> participants, int pairsCount)
         {
             if (participants.Count > pairsCount)
             {
-                int index = lastAddedPair;
-                // первый заход - расставляем красных
-                for (int i = lastAddedPair; i < pairsCount; i++)
+                Console.WriteLine(numberOfNextAddedPair + " " + pairsCount);
+                for (int i = numberOfNextAddedPair; i < pairsCount && participants.Count > 0; i++)
                 {
-                    BattleWrapper pair = new BattleWrapper(participants[index], null);
-                    pairs.Add(pair);
-                    index += 2;
-                    lastAddedPair = i;
+
+                    AddRedParticipantToPair(ref pairs, ref participants, i, pairsCount);
                 }
-                index = 1;
-                // второй заход - расставляем синих
-                for (int i = 0; i < pairsCount; i++)
+                for (int i = 0; i < pairsCount && participants.Count > 0; i++)
                 {
-                    pairs[i].BlueParticipant = participants[index];
-                    index += 2;
-                    lastAddedPair = i;
-                }
-                if (lastAddedPair >= pairsCount)
-                {
-                    lastAddedPair = 0;
+                    AddBlueParticipantToPair(ref pairs, ref participants, i, pairsCount);
                 }
             }
             else
             {
-                int lastAddedParticipant = 0;
-                for (int i = lastAddedPair; i < pairsCount; i++)
+                for (int i = numberOfNextAddedPair; i < pairsCount && participants.Count > 0; i++)
                 {
-                    // закончились участники
-                    if (lastAddedParticipant >= participants.Count) { break; }
-
                     if (pairs.Count == pairsCount)
                     {
-                        pairs[i].BlueParticipant = participants[lastAddedParticipant];
-                        lastAddedParticipant++;
-                        lastAddedPair = i+1;
+                        AddBlueParticipantToPair(ref pairs, ref participants, i, pairsCount);
                     }
                     else
                     {
-                        BattleWrapper pair = new BattleWrapper(participants[lastAddedParticipant], null);
-                        lastAddedParticipant++;
-                        pairs.Add(pair);
-                        lastAddedPair = i+1;
+                        AddRedParticipantToPair(ref pairs, ref participants, i, pairsCount);
                     }
-                    if (lastAddedPair >= pairsCount)
-                    {
-                        lastAddedPair = 0;
-                    }
-                }
-                if (lastAddedPair >= pairsCount)
-                {
-                    lastAddedPair = 0;
                 }
             }
             return pairs;
@@ -171,6 +172,7 @@ namespace TournamentSoftware
                 .GetParticipantsBySubgroup(selectedSubgroup);
             int pairsCount = CountPairs(participants);
             List<BattleWrapper> pairs = new List<BattleWrapper>();
+
             if (rools.Contains("Правило посевных бойцов"))
             {
                 List<ParticipantWrapper> posevParticipants = participants.FindAll(participant => participant.Participant.Leader == true);
@@ -178,29 +180,17 @@ namespace TournamentSoftware
 
                 if (rools.Contains("Правило города"))
                 {
-                    if (rools.Contains("Правило одноклубников"))
-                    {
-                        pairs = SortByCityAndClub(pairs, posevParticipants, pairsCount);
-                        pairs = SortByCityAndClub(pairs, notPosevParticipants, pairsCount);
-                    }
-                    else
-                    {
-                        pairs = SortByCity(pairs, posevParticipants, pairsCount);
-                        pairs = SortByCity(pairs, notPosevParticipants, pairsCount);
-                    }
+                    pairs = rools.Contains("Правило одноклубников") ?
+                        SortByCityAndClub(pairs, posevParticipants, pairsCount) : SortByCity(pairs, posevParticipants, pairsCount);
+                    pairs = rools.Contains("Правило одноклубников") ?
+                        SortByCityAndClub(pairs, notPosevParticipants, pairsCount) : SortByCity(pairs, notPosevParticipants, pairsCount);
                 }
                 else
                 {
-                    if (rools.Contains("Правило одноклубников"))
-                    {
-                        pairs = SortByClub(pairs, posevParticipants, pairsCount);
-                        pairs = SortByClub(pairs, notPosevParticipants, pairsCount);
-                    }
-                    else
-                    {
-                        pairs = SortToPairs(pairs, posevParticipants, pairsCount);
-                        pairs = SortToPairs(pairs, notPosevParticipants, pairsCount);
-                    }
+                    pairs = rools.Contains("Правило одноклубников") ?
+                        SortByClub(pairs, posevParticipants, pairsCount) : SortToPairs(pairs, posevParticipants, pairsCount);
+                    pairs = rools.Contains("Правило одноклубников") ?
+                        SortByClub(pairs, notPosevParticipants, pairsCount) : SortToPairs(pairs, notPosevParticipants, pairsCount);
                 }
             }
             else if (rools.Contains("Правило города"))
@@ -397,12 +387,14 @@ namespace TournamentSoftware
             roundGrid.Children.Add(header);
             Grid.SetRow(header, 0);
 
-            BattlesFormation(roundNumber);
+            BattlesFormation(roundNumber); // распределение участников по парам
             List<BattleWrapper> battleWrappers = battles[roundNumber];
             foreach (BattleWrapper battle in battleWrappers)
             {
-                RowDefinition ballteRow = new RowDefinition();
-                ballteRow.Height = new GridLength(80, GridUnitType.Pixel);
+                RowDefinition ballteRow = new RowDefinition
+                {
+                    Height = new GridLength(80, GridUnitType.Pixel)
+                };
                 Grid battleGrid = BattleGrid(battle);
                 roundGrid.RowDefinitions.Add(ballteRow);
                 roundGrid.Children.Add(battleGrid);
