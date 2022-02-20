@@ -281,7 +281,7 @@ namespace TournamentSoftware
                                 int height = int.Parse(row.ItemArray[j].ToString());
                                 if (height > 100)
                                 {
-                                    newParticipant.Participant.Height = height;
+                                    newParticipant.Participant.Height = (uint)height;
                                 }
                             }
                         }
@@ -293,7 +293,7 @@ namespace TournamentSoftware
                                 int weight = int.Parse(row.ItemArray[j].ToString());
                                 if (weight > 10)
                                 {
-                                    newParticipant.Participant.Weight = weight;
+                                    newParticipant.Participant.Weight = (uint)weight;
                                 }
                             }
                         }
@@ -303,7 +303,7 @@ namespace TournamentSoftware
                             if (int.TryParse(row.ItemArray[j].ToString(), out _))
                             {
                                 int raiting = int.Parse(row.ItemArray[j].ToString());
-                                newParticipant.Participant.CommonRating = raiting;
+                                newParticipant.Participant.CommonRating = (uint)raiting;
                             }
                         }
 
@@ -312,7 +312,7 @@ namespace TournamentSoftware
                             if (int.TryParse(row.ItemArray[j].ToString(), out _))
                             {
                                 int raiting = int.Parse(row.ItemArray[j].ToString());
-                                newParticipant.Participant.ClubRating = raiting;
+                                newParticipant.Participant.ClubRating = (uint)raiting;
                             }
                         }
                     }
