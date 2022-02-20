@@ -322,7 +322,8 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBox Text="{Binding Category,
-                                        UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
+                                        UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"
+                                         PreviewTextInput="StringOnly"
                                          BorderThickness="0" >
                                     <TextBox.Style>
                                         <Style TargetType="TextBox">
