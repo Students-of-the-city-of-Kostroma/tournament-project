@@ -56,9 +56,13 @@ namespace TournamentSoftware
             }
             else if (fightingSystem.Equals("На вылет"))
             {
-                roundsCount = 1;
-                numberOfNextAddedPair = 0;
+                if (battles.Count == 0)
+                {
+                    roundsCount = 0;
+                }
                 battles.Clear();
+                roundsCount++;
+                numberOfNextAddedPair = 0;
                 rools = GetCategoryFromNomination(selectedNomination, selectedCategory).Rools;
                 StagesFormation();
             }
@@ -278,7 +282,7 @@ namespace TournamentSoftware
             };
             Label roundNumberLabel = new Label
             {
-                Content = "Круг " + roundNumber,
+                Content = (fightingSystem.Equals("Круговая") ? "Круг " : "Этап ") + roundNumber,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = 18,
@@ -383,7 +387,7 @@ namespace TournamentSoftware
             roundGrid.Children.Add(header);
             Grid.SetRow(header, 0);
 
-            BattlesFormation(roundNumber); // распределение участников по парам
+            BattlesFormation(roundNumber);
             List<BattleWrapper> battleWrappers = battles[roundNumber];
             foreach (BattleWrapper battle in battleWrappers)
             {
@@ -399,21 +403,33 @@ namespace TournamentSoftware
             return roundGrid;
         }
 
+        private void AddStage(int round)
+        {
+            ColumnDefinition column = new ColumnDefinition
+            {
+                Width = new GridLength(200, GridUnitType.Pixel)
+            };
+            Grid stage = RoundGrid(round);
+            tournamentGrid.ColumnDefinitions.Add(column);
+            tournamentGrid.Children.Add(stage);
+            Grid.SetColumn(stage, tournamentGrid.ColumnDefinitions.Count - 1);
+        }
+
         private void StagesFormation()
         {
             tournamentGrid.Children.Remove(addStageButton);
             tournamentGrid.ColumnDefinitions.RemoveAt(tournamentGrid.ColumnDefinitions.Count - 1);
             int lastRoundNumber = battles.Count;
-            for (int i = 1; i <= roundsCount; i++)
+            if (fightingSystem.Equals("Круговая"))
             {
-                ColumnDefinition column = new ColumnDefinition
+                for (int i = 1; i <= roundsCount; i++)
                 {
-                    Width = new GridLength(200, GridUnitType.Pixel)
-                };
-                Grid stage = RoundGrid(i + lastRoundNumber);
-                tournamentGrid.ColumnDefinitions.Add(column);
-                tournamentGrid.Children.Add(stage);
-                Grid.SetColumn(stage, tournamentGrid.ColumnDefinitions.Count - 1);
+                    AddStage(i + lastRoundNumber);
+                }
+            }
+            else if (fightingSystem.Equals("На вылет"))
+            {
+                AddStage(roundsCount);
             }
             SetAddButtonToLastColumn();
         }
@@ -452,7 +468,7 @@ namespace TournamentSoftware
             else if (fightingSystem.Equals("На вылет"))
             {
                 List<BattleWrapper> battleWrappers = PairsFromation();
-                battles.Add(1, battleWrappers);
+                battles.Add(roundsCount, battleWrappers);
             }
         }
 
