@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using TournamentSoftware.wrapperClasses;
@@ -92,7 +91,6 @@ namespace TournamentSoftware
             participants.RemoveAt(participants.Count - 1);
             BattleWrapper pair = new BattleWrapper(participant, null);
             pairs.Add(pair);
-            Console.WriteLine("add red " + pairs.Count);
             numberOfNextAddedPair = nextPairNumber + 1;
             if (numberOfNextAddedPair >= pairsCount)
             {
@@ -103,7 +101,6 @@ namespace TournamentSoftware
         {
             ParticipantWrapper participant = participants[participants.Count - 1];
             participants.RemoveAt(participants.Count - 1);
-            Console.WriteLine(nextPairNumber + " " + pairs.Count);
             pairs[nextPairNumber].BlueParticipant = participant;
             numberOfNextAddedPair = nextPairNumber + 1;
             if (numberOfNextAddedPair >= pairsCount)
@@ -116,7 +113,6 @@ namespace TournamentSoftware
         {
             if (participants.Count > pairsCount)
             {
-                Console.WriteLine(numberOfNextAddedPair + " " + pairsCount);
                 for (int i = numberOfNextAddedPair; i < pairsCount && participants.Count > 0; i++)
                 {
 
