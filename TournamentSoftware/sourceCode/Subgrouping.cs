@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
 using static TournamentSoftware.TournamentData;
 
 namespace TournamentSoftware
@@ -13,7 +14,7 @@ namespace TournamentSoftware
         private Grid categoriesGrid = new Grid();
         private Grid categorySettingsGrid = new Grid();
         private Grid subgroupsSettingsGrid = new Grid { AllowDrop = true };
-        private Label countInCategory = new Label { FontSize = 30, VerticalAlignment = VerticalAlignment.Center, Foreground = new SolidColorBrush(Colors.White), BorderBrush = new SolidColorBrush(Colors.White), BorderThickness = new Thickness(0, 0, 2, 0)};
+        private Label countInCategory = new Label { FontSize = 30, VerticalAlignment = VerticalAlignment.Center, Foreground = new SolidColorBrush(Colors.White), BorderBrush = new SolidColorBrush(Colors.White), BorderThickness = new Thickness(0, 0, 2, 0) };
         private TextBox countSubgroups = new TextBox
         {
             Width = 50,
@@ -28,7 +29,7 @@ namespace TournamentSoftware
         public bool isPanelOpen = true;
         private List<string> rools = new List<string> { "Правило посевных бойцов", "Правило одноклубников", "Правило города" };
         private static List<string> selectedRools = new List<string> { "Правило посевных бойцов", "Правило одноклубников", "Правило города" };
-        private List<Button> categoriesButtons = new List<Button>();
+        private List<Grid> categoriesButtons = new List<Grid>();
         private Button goNextButton = new Button();
 
         private Label CreateLabel(string content, int fontSize = 24)
@@ -80,18 +81,67 @@ namespace TournamentSoftware
             if (GetGroupByNomination(selectedNomination) == null)
                 MessageBox.Show("В номинации отсутствуют участники", "Ошибка", MessageBoxButton.OK);
             else
-            {               
+            {
                 ((MainWindow)Application.Current.MainWindow).SubgroupFormationLabel.Content = "Формирование групп. Номинация " + nomination;
                 ShowCategoriesForNomination(selectedNomination);
             }
         }
 
-        private void PrepareCategoriesGrid() 
+        private void PrepareCategoriesGrid()
         {
             categoriesGrid.Children.Clear();
             categoriesGrid.RowDefinitions.Clear();
             categoriesButtons.Clear();
             selectedCategory = "";
+        }
+
+        private Grid CategoryButton(CategoryWrapper category)
+        {
+            Grid categoryBtn = new Grid
+            {
+                Margin = new Thickness(5),
+                Height = 30,
+                Tag = category.Name,
+                ShowGridLines = true
+            };
+
+            ColumnDefinition col1 = new ColumnDefinition
+            {
+                Width = new GridLength(30, GridUnitType.Pixel)
+            };
+
+            ColumnDefinition col2 = new ColumnDefinition
+            {
+                Width = new GridLength(1, GridUnitType.Star)
+            };
+
+            Label categoryNameLabel = new Label
+            {
+                Content = category.Name,
+                FontSize = 15,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            Image image = new Image
+            {
+                Tag = "image",
+                Margin = new Thickness(5),
+                Stretch = Stretch.UniformToFill,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+
+            categoryBtn.ColumnDefinitions.Add(col1);
+            categoryBtn.ColumnDefinitions.Add(col2);
+
+            categoryBtn.Children.Add(image);
+            Grid.SetColumn(image, 0);
+
+            categoryBtn.Children.Add(categoryNameLabel);
+            Grid.SetColumn(categoryNameLabel, 1);
+
+            return categoryBtn;
         }
 
         private void ShowCategoriesForNomination(string nominationName)
@@ -103,20 +153,14 @@ namespace TournamentSoftware
             foreach (CategoryWrapper category in GetCategoriesFromNomination(nominationName))
             {
                 RowDefinition row = new RowDefinition();
-                Button categoryButton = new Button
-                {
-                    Margin = new Thickness(5),
-                    Height = 30,
-                    FontSize = 15,
-                    Content = category.Name,
-                    Tag = category.Name
-                };
+
+                Grid categoryButton = CategoryButton(category);
 
                 if (category.ParticipantsCount() < 3)
                 {
                     categoryButton.ToolTip = "В этой категории слишком мало участников";
                 }
-                categoryButton.Click += SelectCategory;
+                categoryButton.MouseLeftButtonUp += SelectCategory;
                 categoriesButtons.Add(categoryButton);
                 categoriesGrid.RowDefinitions.Add(row);
                 categoriesGrid.Children.Add(categoryButton);
@@ -165,7 +209,7 @@ namespace TournamentSoftware
 
         private void SelectCategory(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
+            var button = sender as Grid;
             string kategory = button.Tag.ToString();
             selectedCategory = kategory;
             countInCategory.Content = GetCategoryFromNomination(selectedNomination, kategory).ParticipantsCount();
@@ -217,7 +261,7 @@ namespace TournamentSoftware
             goNextButton.Content = "Продолжить";
             goNextButton.HorizontalAlignment = HorizontalAlignment.Center;
             goNextButton.VerticalAlignment = VerticalAlignment.Top;
-            goNextButton.Background= new SolidColorBrush(Colors.White);
+            goNextButton.Background = new SolidColorBrush(Colors.White);
             goNextButton.Height = 40;
             goNextButton.Click += SubgroupsFormation;
 
@@ -253,7 +297,6 @@ namespace TournamentSoftware
 
         private static void CheckRoolAndLogErrors(string subgroupName, string roolName, ParticipantWrapper controlPartisipant)
         {
-            Console.WriteLine("Проверка правила " + roolName + " для подгруппы " + subgroupName);
             List<ParticipantWrapper> participants = GetCategoryFromNomination(selectedNomination, selectedCategory).GetParticipantsBySubgroup(subgroupName);
             SubgroupWrapper subgroup = GetGroupByNomination(selectedNomination).GetSubgroupByCategory(selectedCategory, subgroupName);
             switch (roolName)
@@ -372,37 +415,6 @@ namespace TournamentSoftware
             }
         }
 
-        private void RemoveShadowFromCategoryButtons()
-        {
-            categoriesButtons.ForEach(button => {
-                button.Effect = null;
-            });
-        }
-
-        private void AddShadowToCategoryButtonWithErrors(CategoryWrapper category)
-        {
-            string categoryName = category.Name;
-            if (category.Subgroups.Exists(subgroup => subgroup.Errors.Count > 0))
-            {
-                Button btn = categoriesButtons.Find(button => button.Tag.ToString().Equals(categoryName));
-
-                btn.Effect = new DropShadowEffect
-                {
-                    Color = orange.Color,
-                    Opacity = 0.5,
-                    BlurRadius = 10,
-                };
-            }
-        }
-
-        private void AddShadowToCategoryButtonsWithErrors()
-        {
-            List<CategoryWrapper> categories = GetCategoriesFromNomination(selectedNomination);
-            categories.ForEach(category => {
-                AddShadowToCategoryButtonWithErrors(category);
-            });
-        }
-
         private void PrepareCategoryForSubgrouping()
         {
             CategoryWrapper category = GetCategoryFromNomination(selectedNomination, selectedCategory);
@@ -450,8 +462,6 @@ namespace TournamentSoftware
                 }
 
                 ShowSubgroups();
-                RemoveShadowFromCategoryButtons();
-                AddShadowToCategoryButtonsWithErrors();
             }
             else
             {
@@ -741,7 +751,7 @@ namespace TournamentSoftware
                 FontSize = 15,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(0,45,0,0)
+                Margin = new Thickness(0, 45, 0, 0)
             };
             subgroupsSettingsGrid.Children.Add(startMessage);
             Grid.SetRow(startMessage, 1);
@@ -764,6 +774,19 @@ namespace TournamentSoftware
             {
                 goNextButton.IsEnabled = true;
             }
+        }
+
+        public void SaveSubgroup()
+        {
+            Grid categoryButton = categoriesButtons.Find(button => button.Tag.Equals(selectedCategory));
+            Image image = (Image)categoryButton.Children.Cast<UIElement>().ToList().Find(child => (child as Image).Tag.Equals("image"));
+            CategoryWrapper category = GetCategoryFromNomination(selectedNomination, selectedCategory);
+            if (category.Subgroups.Exists(subgroup => subgroup.Errors.Count > 0))
+            {
+                image.Source = new BitmapImage(new Uri("/cross.png", UriKind.Relative));
+                return;
+            }
+            image.Source = new BitmapImage(new Uri("/check.png", UriKind.Relative));
         }
     }
 }
