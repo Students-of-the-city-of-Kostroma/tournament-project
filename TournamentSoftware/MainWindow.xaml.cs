@@ -759,7 +759,7 @@ namespace TournamentSoftware
             }
         }
 
-        private void saveSubgroups_Click(object sender, RoutedEventArgs e)
+        private void SaveSubgroups(object sender, RoutedEventArgs e)
         {
             subgroupsFormation.SaveSubgroup();
         }

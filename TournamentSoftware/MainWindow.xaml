@@ -560,7 +560,7 @@
                             Background="#FFFDAC61" 
                             Content="Сохранить" 
                             Width="100" 
-                            Height="30" Click="saveSubgroups_Click" >
+                            Height="30" Click="SaveSubgroups" >
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5"/>
