@@ -119,7 +119,6 @@ namespace TournamentSoftware
             {
                 for (int i = numberOfNextAddedPair; i < pairsCount && participants.Count > 0; i++)
                 {
-
                     AddRedParticipantToPair(ref pairs, ref participants, i, pairsCount);
                 }
                 for (int i = 0; i < pairsCount && participants.Count > 0; i++)
