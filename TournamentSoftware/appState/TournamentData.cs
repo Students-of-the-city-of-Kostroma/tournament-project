@@ -26,8 +26,6 @@ namespace TournamentSoftware
         public static SolidColorBrush red = new SolidColorBrush(Color.FromRgb(255, 105, 97));
         public static SolidColorBrush blue = new SolidColorBrush(Color.FromRgb(174, 198, 207));
 
-        public static DataBaseHandler dataBaseHandler = new DataBaseHandler(dataBasePath);
-
         public static Style GetCellStyle()
         {
             Style cellStyle = new Style(typeof(DataGridCell));
