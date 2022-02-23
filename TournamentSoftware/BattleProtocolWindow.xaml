@@ -6,40 +6,23 @@
         xmlns:local="clr-namespace:TournamentSoftware"
         xmlns:Collections="clr-namespace:System.Collections;assembly=mscorlib" x:Class="TournamentSoftware.BattleProtocolWindow"
         mc:Ignorable="d"
-        Title="Протокол боя" DataContext="{Binding RelativeSource={RelativeSource Self}}" MinWidth="350" MaxWidth="350" MaxHeight="410" MinHeight="410" Height="410" >
+        Title="Протокол боя" DataContext="{Binding RelativeSource={RelativeSource Self}}" MinWidth="350" MaxWidth="350" MaxHeight="500" MinHeight="500" Height="500" >
 
     <Grid x:Name="mainGrid" Margin="10,10,10,10">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
             <RowDefinition Height="266"/>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid>
+        <Label x:Name="fightersNamesLabel"
+            Content="Протокол Боя " 
+            HorizontalContentAlignment="Center"  
+            FontSize="15" VerticalContentAlignment="Center" />
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="241*" />
-                <ColumnDefinition Width="89*" />
-            </Grid.ColumnDefinitions>
 
-            <Label x:Name="fightersNamesLabel"
-               Content="Протокол Боя " 
-               HorizontalContentAlignment="Right"  
-               FontSize="15" VerticalContentAlignment="Center" 
-               Grid.Column="0"/>
-
-            <Button Content="..." Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" >
-                <Button.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Добавить судью" Click="AddJudgeMenuItem_Click" />
-                        <MenuItem Header="Удалить судью" Click="DeleteJudgeMenuItem_Click" />
-                    </ContextMenu>
-                </Button.ContextMenu>
-            </Button>
-        </Grid>
-
-        <DataGrid x:Name="FightProtocolTable" 
+        <DataGrid x:Name="fightProtocolTable"
                 GridLinesVisibility="All" 
                 HeadersVisibility="All"  
                 HorizontalScrollBarVisibility="Auto" 
@@ -50,121 +33,87 @@
                 VerticalGridLinesBrush="White"
                 BorderBrush="#FF808C6C"
                 Grid.Row="1" Background="White"
-                ItemsSource="{Binding FighterBattleResult}" CanUserDeleteRows="False" CanUserAddRows="False" BorderThickness="0,0,0,0" CanUserResizeRows="False" MaxColumnWidth="30" MinColumnWidth="30" CanUserSortColumns="False" CanUserResizeColumns="False" CanUserReorderColumns="False" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" RowHeight="40">
+                CanUserDeleteRows="False" CanUserAddRows="False" BorderThickness="0,0,0,0" CanUserResizeRows="False" MaxColumnWidth="30" MinColumnWidth="30" CanUserSortColumns="False" CanUserResizeColumns="False" CanUserReorderColumns="False" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" RowHeight="50">
 
             <DataGrid.Columns>
 
-                <DataGridTemplateColumn>
-                    <DataGridTemplateColumn.HeaderTemplate>
-                        <DataTemplate>
-                            <ComboBox ItemsSource="{Binding Path=DataContext.AvailableJudges,
-                                        RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window},
-                                        UpdateSourceTrigger=PropertyChanged}"
-                                         
-                                         BorderThickness="0"
-                                         IsTextSearchEnabled="False" Width="180" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.HeaderTemplate>
+                <DataGridTemplateColumn Header="Очки">
 
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBox BorderThickness="0" Text="{Binding FirstJudge, 
+                            <TextBox BorderThickness="0" Text="{Binding Score, 
                                                 UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn>
-                    <DataGridTemplateColumn.HeaderTemplate>
-                        <DataTemplate>
-                            <ComboBox ItemsSource="{Binding Path=DataContext.AvailableJudges,
-                                        RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window},
-                                        UpdateSourceTrigger=PropertyChanged}"
-                                         
-                                         BorderThickness="0"
-                                         IsTextSearchEnabled="False" Width="180" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.HeaderTemplate>
+                <DataGridTemplateColumn Header="Разница">
 
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBox BorderThickness="0" Text="{Binding SecondJudge, 
+                            <TextBox BorderThickness="0" Text="{Binding Difference, 
                                                 UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn>
-                    <DataGridTemplateColumn.HeaderTemplate>
-                        <DataTemplate>
-                            <ComboBox ItemsSource="{Binding Path=DataContext.AvailableJudges,
-                                        RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window},
-                                        UpdateSourceTrigger=PropertyChanged}"
-                                         
-                                         BorderThickness="0"
-                                         IsTextSearchEnabled="False" Width="180" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.HeaderTemplate>
+                <DataGridTemplateColumn Header="Баллы">
 
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBox BorderThickness="0" Text="{Binding ThirdJudge, 
-                                                UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
-                <DataGridTemplateColumn Header="Предупреждение">
-
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBox BorderThickness="0" Text="{Binding Warnings, 
+                            <TextBox BorderThickness="0" Text="{Binding Point, 
                                                 UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Доп. баллы">
+                <DataGridTemplateColumn Header="Замечания">
 
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBox BorderThickness="0" Text="{Binding ExtraPoints, 
+                            <TextBox BorderThickness="0" Text="{Binding Comment, 
                                                 UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Выбывшие бойцы">
+                <DataGridTemplateColumn Header="Количество замечаний">
 
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBox BorderThickness="0" Text="{Binding RetiredFighters, 
+                            <TextBox BorderThickness="0" Text="{Binding CountOfComment, 
                                                 UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Отметка о доср. окончании боя">
+                <DataGridTemplateColumn Header="Примечание">
 
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBox BorderThickness="0" Text="{Binding EarlyEndOfTheFight, 
+                            <TextBox BorderThickness="0" Text="{Binding Note, 
                                                 UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Результат">
+                <DataGridTemplateColumn Header="Итог раунда">
 
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBox BorderThickness="0" Text="{Binding Result, 
+                            <TextBox BorderThickness="0" Text="{Binding Total, 
                                                 UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
             </DataGrid.Columns>
+
+            <DataGrid.RowHeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding RowHeader}"/>
+                </DataTemplate>
+            </DataGrid.RowHeaderTemplate>
 
             <DataGrid.LayoutTransform>
                 <TransformGroup>
@@ -173,8 +122,7 @@
                 </TransformGroup>
             </DataGrid.LayoutTransform>
             <DataGrid.ColumnHeaderStyle>
-                <Style TargetType="{x:Type DataGridColumnHeader}"
-                BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
                     <Setter Property="LayoutTransform">
                         <Setter.Value>
                             <TransformGroup>
@@ -185,6 +133,18 @@
                     </Setter>
                 </Style>
             </DataGrid.ColumnHeaderStyle>
+            <DataGrid.RowHeaderStyle>
+                <Style TargetType="{x:Type DataGridRowHeader}" BasedOn="{StaticResource {x:Type DataGridRowHeader}}">
+                    <Setter Property="LayoutTransform">
+                        <Setter.Value>
+                            <TransformGroup>
+                                <RotateTransform Angle="-90"/>
+                                <ScaleTransform ScaleX="1" ScaleY="-1" />
+                            </TransformGroup>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </DataGrid.RowHeaderStyle>
             <DataGrid.CellStyle>
                 <Style  TargetType="DataGridCell">
                     <Setter Property="LayoutTransform">
@@ -212,18 +172,99 @@
 
         <Grid Grid.Row="2">
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="30px"/>
+            </Grid.RowDefinitions>
 
-            <Button x:Name="editButton" 
-                    Content="Внести изменения" 
-                    Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="110" Height="25" />
+            <Grid Grid.Row="0">
 
-            <Button x:Name="printButton" 
-                    Content="Печать" 
-                    Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="110" Height="25" />
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="2*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Column="0" Grid.Row="0">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button x:Name="prevRoundButton" 
+                    Content="Пред. раунд" 
+                    Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Click="prevRoundButton_Click" />
+
+                    <TextBlock Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="Раунд: {0}/{1}">
+                                <Binding Path="DataContext.NumberOfCurrentRound" RelativeSource="{RelativeSource AncestorType=Window}" Mode="OneWay"/>
+                                <Binding Path="DataContext.RoundResult.Count" RelativeSource="{RelativeSource AncestorType=Window}" Mode="OneWay"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+
+                    <Button x:Name="nextRoundButton" 
+                        Content="След. раунд" 
+                        Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Click="nextRoundButton_Click" />
+
+                </Grid>
+
+                <Button x:Name="endTheFightButton" 
+                    Content="Завершить бой" 
+                    Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Click="endTheFightButton_Click" />
+
+                <Grid Grid.Column="0" Grid.Row="1">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <Label Content="Судьи: " Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                    <Button x:Name="addJudgeButton" 
+                        Content="Добавить судью" 
+                        Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Click="addJudgeButton_Click" />
+
+                    <Button x:Name="deleteJudgButtone" 
+                        Content="Удалить судью" 
+                        Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Click="deleteJudgButtone_Click" />
+
+                </Grid>
+
+                <Grid Grid.Column="1" Grid.Row="1">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <Label Content="Раунд:" Grid.Row="0" HorizontalAlignment="Center"/>
+
+                    <Button x:Name="addRoundButton" 
+                        Content="Добавить раунд" 
+                        Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Click="addRoundButton_Click" />
+
+                    <Button x:Name="deleteRoundButton" 
+                        Content="Удалить раунд" 
+                        Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Click="deleteRoundButton_Click" />
+
+                </Grid>
+            </Grid>
+
+            <Button x:Name="showResultButton" 
+                    Content="Вывести конечный результат" 
+                    Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            
         </Grid>
 
     </Grid>
