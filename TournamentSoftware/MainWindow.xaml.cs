@@ -22,7 +22,8 @@ namespace TournamentSoftware
         private static ParticipantsReagistrator registrator = new ParticipantsReagistrator();
         public ApplicationState appState = new ApplicationState();
         private bool isPanelOpen = true;
-        private DataBaseHandler dataBaseHandler;
+        public bool stateExportButton;
+        public bool stateDeleteParticipantButton;
 
         public static ParticipantsReagistrator GetReagistrator { get { return registrator; } }
         public static ObservableCollection<ParticipantWrapper> GetPartisipants { get { return participants; } }
@@ -51,7 +52,6 @@ namespace TournamentSoftware
             StartWindow startWindow = new StartWindow();
             startWindow.Show();
             startWindow.Closed += StartWindow_Closed;
-            dataBaseHandler = new DataBaseHandler(dataBasePath);
         }
 
         private void StartWindow_Closed(object sender, EventArgs e)
@@ -390,7 +390,19 @@ namespace TournamentSoftware
         private void ShowRegistrationModuleSettings(object sender, RoutedEventArgs e)
         {
             ViewSettingsWindow settings = new ViewSettingsWindow();
+            settings.Owner = this;
             settings.Show();
+
+            stateDeleteParticipantButton = deleteParticipantButton.IsEnabled;
+            stateExportButton = exportButton.IsEnabled;
+
+            addParticipantButton.IsEnabled = false;
+            loadFromFile.IsEnabled = false;
+            deleteParticipantButton.IsEnabled = false;
+            exportButton.IsEnabled = false;
+            viewSettingsButton.IsEnabled = false;
+            goHomeButton.IsEnabled = false;
+            goTournament.IsEnabled = false;
         }
 
         /// <summary>
@@ -533,6 +545,14 @@ namespace TournamentSoftware
             return true;
         }
 
+        private void ClearSubgroupingLayout()
+        {
+            categoriesStackPanel.Children.Clear();
+            categorySettingsGrid.Children.Clear();
+            subgroupsStackPanel.Children.Clear();
+            nominationsStackPanel.Children.Clear();
+        }
+
         /// <summary>
         /// Переходим к турнирной сетке
         /// </summary>
@@ -544,16 +564,9 @@ namespace TournamentSoftware
             {
                 appState.isRegistrationComplited = true;
                 appGrid.Visibility = Visibility.Hidden;
-                if (SubgroupsFormationGrid.Children.Count > 5)
-                {
-                    while (SubgroupsFormationGrid.Children.Count != 5)
-                    {
-                        SubgroupsFormationGrid.Children.RemoveAt(4);
-                    }
-                }
-                nominationsStackPanel.Children.Clear();
-                categoriesStackPanel.Children.Clear();
-                subgroupsStackPanel.Children.Clear();
+
+                ClearSubgroupingLayout();
+
                 SubgroupFormationLabel.Content = "Формирование групп";
                 SubgroupsFormationGridParent.Visibility = Visibility.Visible;
                 subgroupsFormation = new Subgrouping();
@@ -611,10 +624,6 @@ namespace TournamentSoftware
         private void BackToRegistratioinTable(object sender, RoutedEventArgs e)
         {
             SubgroupsFormationGridParent.Visibility = Visibility.Hidden;
-            while (SubgroupsFormationGrid.Children.Count >= 6)
-            {
-                SubgroupsFormationGrid.Children.RemoveAt(5);
-            }
             appGrid.Visibility = Visibility.Visible;
         }
 
@@ -748,6 +757,11 @@ namespace TournamentSoftware
             {
                 (sender as TextBox).Background = (Brush)new BrushConverter().ConvertFrom("#FFF5F1DA");
             }
+        }
+
+        private void SaveSubgroups(object sender, RoutedEventArgs e)
+        {
+            subgroupsFormation.SaveSubgroup();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using TournamentSoftware.wrapperClasses;
@@ -314,6 +315,8 @@ namespace TournamentSoftware
                 VerticalAlignment = VerticalAlignment.Center,
                 Content = "+"
             };
+            battleProtocolButton.Click += new RoutedEventHandler(this.OpenBattleProtocolWindow);
+
             ColumnDefinition protocolColumn = new ColumnDefinition
             {
                 Width = new GridLength(30, GridUnitType.Pixel)
@@ -372,6 +375,12 @@ namespace TournamentSoftware
             battleGrid.Children.Add(participantsGrid);
             Grid.SetColumn(participantsGrid, 2);
             return battleGrid;
+        }
+
+        private void OpenBattleProtocolWindow(Object sender, EventArgs e)
+        {
+            BattleProtocolWindow battleProtocolWindow = new BattleProtocolWindow();
+            battleProtocolWindow.Show();
         }
 
         private Grid RoundGrid(int roundNumber)

@@ -15,6 +15,22 @@ namespace TournamentSoftware
         public ViewSettingsWindow()
         {
             InitializeComponent();
+            this.Closed += ViewSettingsWindow_Closed;
+        }
+
+        private void ViewSettingsWindow_Closed(object sender, EventArgs e)
+        {
+            MainWindow main = this.Owner as MainWindow;
+            if (main != null)
+            {
+                main.addParticipantButton.IsEnabled = true;
+                main.loadFromFile.IsEnabled = true;
+                main.deleteParticipantButton.IsEnabled = main.stateDeleteParticipantButton;
+                main.exportButton.IsEnabled = main.stateExportButton;
+                main.viewSettingsButton.IsEnabled = true;
+                main.goHomeButton.IsEnabled = true;
+                main.goTournament.IsEnabled = true;
+            }
         }
 
         private List<CheckBox> checkBoxes = new List<CheckBox>();

@@ -48,6 +48,7 @@
                         <RowDefinition Height="50"/>
                         <RowDefinition Height="250"/>
                         <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
                     </Grid.RowDefinitions>
                     <Label x:Name="nominationLabel" HorizontalAlignment="Center" 
                            VerticalAlignment="Center" FontSize="15" 
