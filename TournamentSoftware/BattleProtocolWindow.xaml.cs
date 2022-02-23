@@ -78,6 +78,7 @@ namespace TournamentSoftware
             // Create the ComboBox
             FrameworkElementFactory comboFactory = new FrameworkElementFactory(typeof(ComboBox));
             comboFactory.SetValue(ComboBox.DataContextProperty, DataContext as BattleProtocolWrapper);
+            comboFactory.SetValue(ComboBox.NameProperty, "judgeCombobox_" + ((DataContext as BattleProtocolWrapper).SelectedJudges.Count - 1));
             comboFactory.SetValue(ComboBox.IsTextSearchEnabledProperty, false);
             comboFactory.SetValue(ComboBox.WidthProperty, 180.0);
             comboFactory.SetValue(ComboBox.DisplayMemberPathProperty, "Surname");
