@@ -63,11 +63,6 @@
                             Margin="5"
                             VerticalAlignment="Center" 
                             Content="Регистрация судей" Grid.Row="2" Click="JudgesRegistrationButton_Click"/>
-                    <Button x:Name="openFightProtocolButton" 
-                            HorizontalAlignment="Stretch"
-                            Margin="5"
-                            VerticalAlignment="Center" 
-                            Content="Протокол боя" Grid.Row="3" Click="openFightProtocolButton_Click" />
                 </Grid>
             </Grid>
         </Grid>
