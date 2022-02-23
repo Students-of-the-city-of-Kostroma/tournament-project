@@ -758,5 +758,10 @@ namespace TournamentSoftware
                 (sender as TextBox).Background = (Brush)new BrushConverter().ConvertFrom("#FFF5F1DA");
             }
         }
+
+        private void SaveSubgroups(object sender, RoutedEventArgs e)
+        {
+            subgroupsFormation.SaveSubgroup();
+        }
     }
 }

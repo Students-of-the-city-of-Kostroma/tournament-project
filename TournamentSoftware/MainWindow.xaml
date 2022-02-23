@@ -497,23 +497,23 @@
                 </Grid.ColumnDefinitions>
 
                 <Grid Grid.Column="0" Background="#FFF5F1DA" Margin="15,0,15,0" >
-                    
+
                     <Grid.RowDefinitions>
                         <RowDefinition Height="40px"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    
+
                     <Label Grid.Row="0" 
                        Content="Группы номинации" 
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
                        FontSize="20" 
                        Foreground="Black" />
-                    
+
                     <ScrollViewer x:Name="scrollViewer1" Margin="5,0,5,0" Grid.Column="0" Grid.Row="1" VerticalScrollBarVisibility="Auto">
                         <StackPanel x:Name="categoriesStackPanel"></StackPanel>
                     </ScrollViewer>
-                    
+
                 </Grid>
 
                 <Grid Grid.Column="1" Background="#808C6C" Margin="15,0,15,0" >
@@ -535,20 +535,20 @@
                 </Grid>
 
                 <Grid x:Name="subgroupsGrid" Grid.Column="2" Background="#FFF5F1DA" Margin="15,0,15,0">
-                    
+
                     <Grid.RowDefinitions>
                         <RowDefinition Height="40px"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="40px"/>
                     </Grid.RowDefinitions>
-                    
+
                     <Label Content="Подгруппы"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
                        FontSize="20" 
                        Grid.Row="0" 
                        Foreground="Black" />
-                    
+
                     <ScrollViewer x:Name="scrollViewer2" Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="5,0,5,0">
                         <StackPanel x:Name="subgroupsStackPanel"></StackPanel>
                     </ScrollViewer>
@@ -560,14 +560,14 @@
                             Background="#FFFDAC61" 
                             Content="Сохранить" 
                             Width="100" 
-                            Height="30" >
+                            Height="30" Click="SaveSubgroups" >
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5"/>
                             </Style>
                         </Button.Resources>
                     </Button>
-                    
+
                 </Grid>
             </Grid>
 
