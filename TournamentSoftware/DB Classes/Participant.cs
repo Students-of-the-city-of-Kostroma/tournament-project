@@ -30,16 +30,16 @@ namespace TournamentSoftware
         public int DateOfBirth { get; set; }
 
         [Column("height")]
-        public int Height { get; set; }
+        public uint Height { get; set; }
 
         [Column("weight")]
-        public int Weight { get; set; }
+        public uint Weight { get; set; }
 
         [Column("common_rating")]
-        public int CommonRating { get; set; }
+        public uint CommonRating { get; set; }
 
         [Column("club_rating")]
-        public int ClubRating 
+        public uint ClubRating 
         { get; set; }
 
         [Column("club_id"), Indexed]

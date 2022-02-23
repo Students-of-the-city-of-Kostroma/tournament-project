@@ -15,12 +15,14 @@
             
             <Grid x:Name="tabsGrid" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="60"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <Grid x:Name="tabsGridRow" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0"></Grid>
-                <TabControl x:Name="kategoriesTabs" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Stretch">
-                </TabControl>
+                <Grid x:Name="categoryTabsGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0"></Grid>
+                <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <Grid x:Name="tournamentGrid" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Stretch">
+                    </Grid>
+                </ScrollViewer>
             </Grid>
             
             <Grid x:Name="instrumentsPanelGrid" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -61,11 +63,6 @@
                             Margin="5"
                             VerticalAlignment="Center" 
                             Content="Регистрация судей" Grid.Row="2" Click="JudgesRegistrationButton_Click"/>
-                    <Button x:Name="openFightProtocolButton" 
-                            HorizontalAlignment="Stretch"
-                            Margin="5"
-                            VerticalAlignment="Center" 
-                            Content="Протокол боя" Grid.Row="3" Click="openFightProtocolButton_Click" />
                 </Grid>
             </Grid>
         </Grid>
