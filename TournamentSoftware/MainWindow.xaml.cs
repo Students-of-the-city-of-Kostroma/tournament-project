@@ -87,7 +87,7 @@ namespace TournamentSoftware
         private void StringOnly(object sender, TextCompositionEventArgs e)
         {
             char CheckString = char.ToLower(e.Text[0]);
-            if ((CheckString >= 'a' && CheckString <= 'z') || (CheckString >= 'а' && CheckString <= 'я'))
+            if ((CheckString >= 'a' && CheckString <= 'z') || (CheckString >= 'а' && CheckString <= 'я') || CheckString == 'ё')
                 e.Handled = false;
             else
                 e.Handled = true;
