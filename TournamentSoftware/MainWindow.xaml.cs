@@ -79,6 +79,20 @@ namespace TournamentSoftware
             }
         }
 
+        /// <summary>
+        /// Проверка на валидность строки
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void StringOnly(object sender, TextCompositionEventArgs e)
+        {
+            char CheckString = char.ToLower(e.Text[0]);
+            if ((CheckString >= 'a' && CheckString <= 'z') || (CheckString >= 'а' && CheckString <= 'я') || CheckString == 'ё')
+                e.Handled = false;
+            else
+                e.Handled = true;
+        }
+
         private void AddParticipant(object sender, RoutedEventArgs e)
         {
             Participant participant = new Participant()
