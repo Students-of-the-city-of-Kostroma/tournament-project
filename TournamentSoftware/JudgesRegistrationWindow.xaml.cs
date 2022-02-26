@@ -163,5 +163,11 @@ namespace TournamentSoftware
             JudesTable.Items.Clear();
             JudesTable.ItemsSource = judgesList;
         }
+
+        private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            if ((sender as System.Windows.Controls.TextBox).Text == " ")
+                (sender as System.Windows.Controls.TextBox).Text = "";
+        }
     }
 }

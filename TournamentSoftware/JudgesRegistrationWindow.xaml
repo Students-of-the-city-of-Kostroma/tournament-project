@@ -68,6 +68,7 @@
                             <TextBox Text="{Binding Name, 
                                             UpdateSourceTrigger = PropertyChanged,
                                             Mode=TwoWay}" 
+                                         TextChanged="TextBox_TextChanged"
                                          BorderThickness="0" >
                                 <TextBox.Style>
                                     <Style TargetType="TextBox">
@@ -89,7 +90,8 @@
                         <DataTemplate>
                             <TextBox Text="{Binding Surname,
                                             UpdateSourceTrigger = PropertyChanged, 
-                                            Mode=TwoWay}" 
+                                            Mode=TwoWay}"
+                                         TextChanged="TextBox_TextChanged"
                                          BorderThickness="0" >
                                 <TextBox.Style>
                                     <Style TargetType="TextBox">
@@ -111,7 +113,8 @@
                         <DataTemplate>
                             <TextBox Text="{Binding Patronymic,
                                             UpdateSourceTrigger = PropertyChanged, 
-                                            Mode=TwoWay}" 
+                                            Mode=TwoWay}"
+                                         TextChanged="TextBox_TextChanged"
                                          BorderThickness="0" >
                                 <TextBox.Style>
                                     <Style TargetType="TextBox">
@@ -128,7 +131,8 @@
                         <DataTemplate>
                             <TextBox Text="{Binding City,
                                             UpdateSourceTrigger = PropertyChanged, 
-                                            Mode=TwoWay}" 
+                                            Mode=TwoWay}"
+                                         TextChanged="TextBox_TextChanged"
                                          BorderThickness="0" >
                                 <TextBox.Style>
                                     <Style TargetType="TextBox">
@@ -145,7 +149,8 @@
                         <DataTemplate>
                             <TextBox Text="{Binding Club,
                                             UpdateSourceTrigger = PropertyChanged, 
-                                            Mode=TwoWay}" 
+                                            Mode=TwoWay}"
+                                         TextChanged="TextBox_TextChanged"
                                          BorderThickness="0" >
                                 <TextBox.Style>
                                     <Style TargetType="TextBox">
