@@ -13,13 +13,14 @@ namespace TournamentSoftware
         {
             _db = new SQLiteConnection(dataBasePath);
 
+            _db.CreateTable<Club>();
+            _db.CreateTable<Participant>();
             _db.CreateTable<TournamentGrid>();
             _db.CreateTable<Nomination>();
             _db.CreateTable<Category>();
             _db.CreateTable<TournamentGroup>();
             _db.CreateTable<Subgroup>();
-            _db.CreateTable<Club>();
-            _db.CreateTable<Participant>();
+            _db.CreateTable<Subgroup_Participant>();
             _db.CreateTable<Judge>();
             _db.CreateTable<Fighter>();
             _db.CreateTable<BattleProtocol>();
@@ -30,10 +31,27 @@ namespace TournamentSoftware
             _db.CreateTable<Punishment>();
         }
 
-        //public dynamic GetData(string request)
-        //{
-        //    return _db.Query(request);
-        //}
+        public void AddClub(Club club)
+        {
+            _db.Insert(club);
+        }
+
+        public List<Club> GetClubsData(string request)
+        {
+            List<Club> clubs = _db.Query<Club>(request);
+            return clubs;
+        }
+
+        public void AddParticipant(Participant participant)
+        {
+            _db.Insert(participant);
+        }
+
+        public List<Participant> GetParticipantsData(string request)
+        {
+            List<Participant> participants = _db.Query<Participant>(request);
+            return participants;
+        }
 
         public void AddTournamentGrid(TournamentGrid tournamentGrid)
         {
@@ -90,26 +108,15 @@ namespace TournamentSoftware
             return subgroups;
         }
 
-        public void AddClub(Club club)
+        public void AddSubgroup_Participant(Subgroup_Participant subgroup)
         {
-            _db.Insert(club);
+            _db.Insert(subgroup);
         }
 
-        public List<Club> GetClubsData(string request)
+        public List<Subgroup_Participant> GetSubgroup_ParticipantsData(string request)
         {
-            List<Club> clubs = _db.Query<Club>(request);
-            return clubs;
-        }
-
-        public void AddParticipant(Participant participant)
-        {
-            _db.Insert(participant);
-        }
-
-        public List<Participant> GetParticipantsData(string request)
-        {
-            List<Participant> participants = _db.Query<Participant>(request);
-            return participants;
+            List<Subgroup_Participant> subgroups = _db.Query<Subgroup_Participant>(request);
+            return subgroups;
         }
 
         public void AddJudge(Judge judge)
