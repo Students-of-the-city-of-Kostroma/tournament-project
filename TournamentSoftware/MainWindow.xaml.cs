@@ -10,10 +10,10 @@ using System.Windows.Data;
 using Newtonsoft.Json;
 using System.Windows.Media;
 using System.Linq;
+using TournamentSoftware.DB_Classes;
 using static TournamentSoftware.ApplicationResourcesPaths;
 using static TournamentSoftware.ApplicationStringValues;
 using static TournamentSoftware.TournamentData;
-using TournamentSoftware.DB_Classes;
 
 namespace TournamentSoftware
 {
