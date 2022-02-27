@@ -10,6 +10,7 @@ using System.Windows.Data;
 using Newtonsoft.Json;
 using System.Windows.Media;
 using System.Linq;
+using TournamentSoftware.DB_Classes;
 using static TournamentSoftware.ApplicationResourcesPaths;
 using static TournamentSoftware.ApplicationStringValues;
 using static TournamentSoftware.TournamentData;
@@ -681,6 +682,38 @@ namespace TournamentSoftware
             dataBaseHandler.AddTournamentGrid(tournamentGrid);
             tournamentGrid = dataBaseHandler.GetTournamentGridsData("SELECT id FROM TournamentGrid WHERE name=\"" + tournamentGrid.Name + "\";")[0];
 
+            // добавление участников
+            for (int i = 0; i < participants.Count; i++)
+            {
+                Club club = new Club();
+                if (dataBaseHandler.GetClubsData("SELECT * FROM Club WHERE name=\"" + participants[i].Club + "\" AND city=\"" + participants[i].City + "\";").Count == 0)
+                {
+                    club.Name = participants[i].Club;
+                    club.City = participants[i].City;
+                    dataBaseHandler.AddClub(club);
+                }
+                club.Id = dataBaseHandler.GetClubsData("SELECT * FROM Club WHERE name=\"" + participants[i].Club + "\" AND city=\"" + participants[i].City + "\";")[0].Id;
+
+                if (dataBaseHandler.GetParticipantsData("SELECT * FROM Participant WHERE surname=\"" + participants[i].Participant.Surname + "\" AND name=\"" + participants[i].Participant.Name + "\" AND date_of_birth=\"" + participants[i].Participant.DateOfBirth + "\";").Count != 0)
+                {
+                    continue;
+                }
+                Participant participant = new Participant();
+                participant.Surname = participants[i].Participant.Surname;
+                participant.Name = participants[i].Participant.Name;
+                participant.Patronymic = participants[i].Participant.Patronymic;
+                participant.Pseudonym = participants[i].Participant.Pseudonym;
+                participant.Leader = participants[i].Participant.Leader;
+                participant.Sex = participants[i].Participant.Sex;
+                participant.DateOfBirth = participants[i].Participant.DateOfBirth;
+                participant.Height = participants[i].Participant.Height;
+                participant.Weight = participants[i].Participant.Weight;
+                participant.CommonRating = participants[i].Participant.CommonRating;
+                participant.ClubRating = participants[i].Participant.ClubRating;
+                participant.ClubId = club.Id;
+                dataBaseHandler.AddParticipant(participant);
+            }
+
             // номинации
             foreach (GroupWrapper groupWrapper in groups)
             {
@@ -720,40 +753,17 @@ namespace TournamentSoftware
                         subgroup.Name = subgroupWrapper.Name;
                         subgroup.GroupId = group.Id;
                         dataBaseHandler.AddSubgroup(subgroup);
+                        subgroup = dataBaseHandler.GetSubgroupsData("SELECT * FROM Subgroup WHERE name=\"" + subgroup.Name + "\" AND group_id=" + subgroup.GroupId + ";")[0];
+
+                        foreach (ParticipantWrapper participantWrapper in subgroupWrapper.Participants)
+                        {
+                            Subgroup_Participant subgroup_participant = new Subgroup_Participant();
+                            subgroup_participant.SubgroupId = subgroup.Id;
+                            subgroup_participant.ParticipantId = dataBaseHandler.GetParticipantsData("SELECT * FROM Participant WHERE surname=\"" + participantWrapper.Participant.Surname + "\" AND name=\"" + participantWrapper.Participant.Name + "\" AND date_of_birth=\"" + participantWrapper.Participant.DateOfBirth + "\";")[0].Id;
+                            dataBaseHandler.AddSubgroup_Participant(subgroup_participant);
+                        }
                     }
                 }
-            }
-
-            // добавление участников
-            for (int i = 0; i < participants.Count; i++)
-            {
-                Club club = new Club();
-                if (dataBaseHandler.GetClubsData("SELECT * FROM Club WHERE name=\"" + participants[i].Club + "\" AND city=\"" + participants[i].City + "\";").Count == 0)
-                {
-                    club.Name = participants[i].Club;
-                    club.City = participants[i].City;
-                    dataBaseHandler.AddClub(club);
-                }
-                club.Id = dataBaseHandler.GetClubsData("SELECT * FROM Club WHERE name=\"" + participants[i].Club + "\" AND city=\"" + participants[i].City + "\";")[0].Id;
-
-                if (dataBaseHandler.GetParticipantsData("SELECT * FROM Participant WHERE surname=\"" + participants[i].Participant.Surname + "\" AND name=\"" + participants[i].Participant.Name + "\" AND date_of_birth=\"" + participants[i].Participant.DateOfBirth + "\";").Count != 0)
-                {
-                    continue;
-                }
-                Participant participant = new Participant();
-                participant.Surname = participants[i].Participant.Surname;
-                participant.Name = participants[i].Participant.Name;
-                participant.Patronymic = participants[i].Participant.Patronymic;
-                participant.Pseudonym = participants[i].Participant.Pseudonym;
-                participant.Leader = participants[i].Participant.Leader;
-                participant.Sex = participants[i].Participant.Sex;
-                participant.DateOfBirth = participants[i].Participant.DateOfBirth;
-                participant.Height = participants[i].Participant.Height;
-                participant.Weight = participants[i].Participant.Weight;
-                participant.CommonRating = participants[i].Participant.CommonRating;
-                participant.ClubRating = participants[i].Participant.ClubRating;
-                participant.ClubId = club.Id;
-                dataBaseHandler.AddParticipant(participant);
             }
 
             TournamentGridWindow tournamentGridWindow = new TournamentGridWindow();
