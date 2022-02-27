@@ -166,8 +166,12 @@ namespace TournamentSoftware
 
         private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
-            if ((sender as System.Windows.Controls.TextBox).Text == " ")
-                (sender as System.Windows.Controls.TextBox).Text = "";
+            var sd = (sender as System.Windows.Controls.TextBox);
+            if (sd.Text == " ")
+                sd.Text = "";
+            else if (sd.Text.Length > 0)
+                if (sd.Text[0] == ' ')
+                    sd.Text = sd.Text.Replace(" ", "");
         }
     }
 }
