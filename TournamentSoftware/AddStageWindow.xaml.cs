@@ -44,7 +44,7 @@ namespace TournamentSoftware
             if (fightingSystemsCombobox.SelectedValue.ToString() == "Круговая")
             {
                 if (!int.TryParse(rounds.Text, out int roundsCount))
-                    MessageBox.Show("Введите количество кругов", "Ошибка");
+                    MessageBox.Show("Введено некорректное количество кругов", "Ошибка");
                 else
                 {
                     TournamentGridWindow.roundsCount = roundsCount;
