@@ -117,6 +117,7 @@
     <Compile Include="sourceCode\ParticipantsReagistrator.cs" />
     <Compile Include="sourceCode\Subgrouping.cs" />
     <Compile Include="wrapperClasses\BattleProtocolWrapper.cs" />
+    <Compile Include="wrapperClasses\BattleWrapper.cs" />
     <Compile Include="wrapperClasses\CategoryWrapper.cs" />
     <Compile Include="wrapperClasses\FighterBattleResultWrapper.cs" />
     <Compile Include="wrapperClasses\FighterRoundResultWrapper.cs" />

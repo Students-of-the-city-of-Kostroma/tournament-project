@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using TournamentSoftware.wrapperClasses;
@@ -15,7 +14,9 @@ namespace TournamentSoftware
         private string selectedSubgroup = "";
         public static int roundsCount = 0;
         public static string fightingSystem = "";
+        private int numberOfNextAddedPair = 0;
         private List<Button> categoryButtons = new List<Button>();
+        private List<string> rools = new List<string>();
         private Button addStageButton = new Button
         {
             HorizontalAlignment = HorizontalAlignment.Center,
@@ -53,6 +54,164 @@ namespace TournamentSoftware
                 }
                 roundsCount = 0;
             }
+            else if (fightingSystem.Equals("На вылет"))
+            {
+                if (battles.Count == 0)
+                {
+                    roundsCount = 0;
+                }
+                battles.Clear();
+                roundsCount++;
+                numberOfNextAddedPair = 0;
+                rools = GetCategoryFromNomination(selectedNomination, selectedCategory).Rools;
+                StagesFormation();
+            }
+        }
+
+        private int CountPairs(List<ParticipantWrapper> participants)
+        {
+            return (participants.Count % 2) + (participants.Count / 2);
+        }
+
+        private List<BattleWrapper> SortByCityAndClub(List<BattleWrapper> pairs, List<ParticipantWrapper> participants, int pairsCount)
+        {
+            Dictionary<string, List<ParticipantWrapper>> participantsByCity = Subgrouping.FilterParticipantsForCities(participants);
+            foreach (KeyValuePair<string, List<ParticipantWrapper>> keyValue in participantsByCity)
+            {
+                List<ParticipantWrapper> participantsList = keyValue.Value;
+                Dictionary<string, List<ParticipantWrapper>> participantsByClub = Subgrouping.FilterParticipantsForClubs(participantsList);
+                foreach (KeyValuePair<string, List<ParticipantWrapper>> clubKeyValue in participantsByClub)
+                {
+                    List<ParticipantWrapper> participantsByClubList = clubKeyValue.Value;
+                    pairs = SortToPairs(pairs, participantsByClubList, pairsCount);
+                }
+            }
+            return pairs;
+        }
+
+        private void AddRedParticipantToPair(ref List<BattleWrapper> pairs, ref List<ParticipantWrapper> participants, int nextPairNumber, int pairsCount)
+        {
+            ParticipantWrapper participant = participants[participants.Count - 1];
+            participants.RemoveAt(participants.Count - 1);
+            BattleWrapper pair = new BattleWrapper(participant, null);
+            pairs.Add(pair);
+            numberOfNextAddedPair = nextPairNumber + 1;
+            if (numberOfNextAddedPair >= pairsCount)
+            {
+                numberOfNextAddedPair = 0;
+            }
+        }
+        private void AddBlueParticipantToPair(ref List<BattleWrapper> pairs, ref List<ParticipantWrapper> participants, int nextPairNumber, int pairsCount)
+        {
+            ParticipantWrapper participant = participants[participants.Count - 1];
+            participants.RemoveAt(participants.Count - 1);
+            pairs[nextPairNumber].BlueParticipant = participant;
+            numberOfNextAddedPair = nextPairNumber + 1;
+            if (numberOfNextAddedPair >= pairsCount)
+            {
+                numberOfNextAddedPair = 0;
+            }
+        }
+
+        private List<BattleWrapper> SortToPairs(List<BattleWrapper> pairs, List<ParticipantWrapper> participants, int pairsCount)
+        {
+            if (participants.Count > pairsCount)
+            {
+                for (int i = numberOfNextAddedPair; i < pairsCount && participants.Count > 0; i++)
+                {
+                    AddRedParticipantToPair(ref pairs, ref participants, i, pairsCount);
+                }
+                for (int i = 0; i < pairsCount && participants.Count > 0; i++)
+                {
+                    AddBlueParticipantToPair(ref pairs, ref participants, i, pairsCount);
+                }
+            }
+            else
+            {
+                for (int i = numberOfNextAddedPair; i < pairsCount && participants.Count > 0; i++)
+                {
+                    if (pairs.Count == pairsCount)
+                    {
+                        AddBlueParticipantToPair(ref pairs, ref participants, i, pairsCount);
+                    }
+                    else
+                    {
+                        AddRedParticipantToPair(ref pairs, ref participants, i, pairsCount);
+                    }
+                }
+            }
+            return pairs;
+        }
+
+        private List<BattleWrapper> SortByCity(List<BattleWrapper> pairs, List<ParticipantWrapper> participants, int pairsCount)
+        {
+            Dictionary<string, List<ParticipantWrapper>> participantsByCity = Subgrouping.FilterParticipantsForCities(participants);
+            foreach (KeyValuePair<string, List<ParticipantWrapper>> keyValue in participantsByCity)
+            {
+                List<ParticipantWrapper> participantsList = keyValue.Value;
+                pairs = SortToPairs(pairs, participantsList, pairsCount);
+            }
+            return pairs;
+        }
+
+        private List<BattleWrapper> SortByClub(List<BattleWrapper> pairs, List<ParticipantWrapper> participants, int pairsCount)
+        {
+            Dictionary<string, List<ParticipantWrapper>> participantsByClub = Subgrouping.FilterParticipantsForClubs(participants);
+            foreach (KeyValuePair<string, List<ParticipantWrapper>> keyValue in participantsByClub)
+            {
+                List<ParticipantWrapper> participantsList = keyValue.Value;
+                pairs = SortToPairs(pairs, participantsList, pairsCount);
+            }
+            return pairs;
+        }
+
+        private List<BattleWrapper> PairsFromation()
+        {
+            List<ParticipantWrapper> participants = GetCategoryFromNomination(selectedNomination, selectedCategory)
+                .GetParticipantsBySubgroup(selectedSubgroup);
+            int pairsCount = CountPairs(participants);
+            List<BattleWrapper> pairs = new List<BattleWrapper>();
+
+            if (rools.Contains("Правило посевных бойцов"))
+            {
+                List<ParticipantWrapper> posevParticipants = participants.FindAll(participant => participant.Participant.Leader == true);
+                List<ParticipantWrapper> notPosevParticipants = participants.FindAll(participant => participant.Participant.Leader == false);
+
+                if (rools.Contains("Правило города"))
+                {
+                    pairs = rools.Contains("Правило одноклубников") ?
+                        SortByCityAndClub(pairs, posevParticipants, pairsCount) : SortByCity(pairs, posevParticipants, pairsCount);
+                    pairs = rools.Contains("Правило одноклубников") ?
+                        SortByCityAndClub(pairs, notPosevParticipants, pairsCount) : SortByCity(pairs, notPosevParticipants, pairsCount);
+                }
+                else
+                {
+                    pairs = rools.Contains("Правило одноклубников") ?
+                        SortByClub(pairs, posevParticipants, pairsCount) : SortToPairs(pairs, posevParticipants, pairsCount);
+                    pairs = rools.Contains("Правило одноклубников") ?
+                        SortByClub(pairs, notPosevParticipants, pairsCount) : SortToPairs(pairs, notPosevParticipants, pairsCount);
+                }
+            }
+            else if (rools.Contains("Правило города"))
+            {
+                if (rools.Contains("Правило одноклубников"))
+                {
+                    pairs = SortByCityAndClub(pairs, participants, pairsCount);
+                }
+                else
+                {
+                    pairs = SortByCity(pairs, participants, pairsCount);
+                }
+            }
+            else if (rools.Contains("Правило одноклубников"))
+            {
+                pairs = SortByClub(pairs, participants, pairsCount);
+            }
+            else
+            {
+                pairs = SortToPairs(pairs, participants, pairsCount);
+            }
+            return pairs;
         }
 
         private Grid ParticipantsInSubgroup()
@@ -122,7 +281,7 @@ namespace TournamentSoftware
             };
             Label roundNumberLabel = new Label
             {
-                Content = "Круг " + roundNumber,
+                Content = (fightingSystem.Equals("Круговая") ? "Круг " : "Этап ") + roundNumber,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = 18,
@@ -145,7 +304,10 @@ namespace TournamentSoftware
 
         private Grid BattleGrid(BattleWrapper battle)
         {
-            Grid battleGrid = new Grid();
+            Grid battleGrid = new Grid
+            {
+                Margin = new Thickness(0, 0, 0, 10)
+            };
             Button battleProtocolButton = new Button
             {
                 HorizontalAlignment = HorizontalAlignment.Center,
@@ -171,7 +333,7 @@ namespace TournamentSoftware
                 VerticalAlignment = VerticalAlignment.Stretch,
                 HorizontalContentAlignment = HorizontalAlignment.Center,
                 VerticalContentAlignment = VerticalAlignment.Center,
-                Content = battle.RedParticipant.Participant.Name + " " + battle.RedParticipant.Participant.Surname
+                Content = battle.RedParticipant.Participant.Name + " " + battle.RedParticipant.Participant.Surname,
             };
 
             Label blueParticipant = new Label
@@ -182,8 +344,21 @@ namespace TournamentSoftware
                 VerticalAlignment = VerticalAlignment.Stretch,
                 HorizontalContentAlignment = HorizontalAlignment.Center,
                 VerticalContentAlignment = VerticalAlignment.Center,
-                Content = battle.BlueParticipant.Participant.Name + " " + battle.BlueParticipant.Participant.Surname,
+                Content = battle.BlueParticipant != null ?
+                battle.BlueParticipant.Participant.Name + " " + battle.BlueParticipant.Participant.Surname : "нет пары",
             };
+
+            if (battle.RedParticipant != null)
+            {
+                redParticipant.ToolTip = "Посев: " + battle.RedParticipant.Participant.Leader + "\nКлуб: "
+                    + battle.RedParticipant.Club + "\nГород: " + battle.RedParticipant.City;
+            }
+
+            if (battle.BlueParticipant != null)
+            {
+                blueParticipant.ToolTip = "Посев: " + battle.BlueParticipant.Participant.Leader + "\nКлуб: "
+                    + battle.BlueParticipant.Club + "\nГород: " + battle.BlueParticipant.City;
+            }
 
             participantsGrid.RowDefinitions.Add(redParticipantRow);
             participantsGrid.RowDefinitions.Add(blueParticipantRow);
@@ -223,8 +398,10 @@ namespace TournamentSoftware
             List<BattleWrapper> battleWrappers = battles[roundNumber];
             foreach (BattleWrapper battle in battleWrappers)
             {
-                RowDefinition ballteRow = new RowDefinition();
-                ballteRow.Height = new GridLength(70, GridUnitType.Pixel);
+                RowDefinition ballteRow = new RowDefinition
+                {
+                    Height = new GridLength(80, GridUnitType.Pixel)
+                };
                 Grid battleGrid = BattleGrid(battle);
                 roundGrid.RowDefinitions.Add(ballteRow);
                 roundGrid.Children.Add(battleGrid);
@@ -233,21 +410,33 @@ namespace TournamentSoftware
             return roundGrid;
         }
 
+        private void AddStage(int round)
+        {
+            ColumnDefinition column = new ColumnDefinition
+            {
+                Width = new GridLength(200, GridUnitType.Pixel)
+            };
+            Grid stage = RoundGrid(round);
+            tournamentGrid.ColumnDefinitions.Add(column);
+            tournamentGrid.Children.Add(stage);
+            Grid.SetColumn(stage, tournamentGrid.ColumnDefinitions.Count - 1);
+        }
+
         private void StagesFormation()
         {
             tournamentGrid.Children.Remove(addStageButton);
             tournamentGrid.ColumnDefinitions.RemoveAt(tournamentGrid.ColumnDefinitions.Count - 1);
             int lastRoundNumber = battles.Count;
-            for (int i = 1; i <= roundsCount; i++)
+            if (fightingSystem.Equals("Круговая"))
             {
-                ColumnDefinition column = new ColumnDefinition
+                for (int i = 1; i <= roundsCount; i++)
                 {
-                    Width = new GridLength(200, GridUnitType.Pixel)
-                };
-                Grid stage = RoundGrid(i + lastRoundNumber);
-                tournamentGrid.ColumnDefinitions.Add(column);
-                tournamentGrid.Children.Add(stage);
-                Grid.SetColumn(stage, tournamentGrid.ColumnDefinitions.Count - 1);
+                    AddStage(i + lastRoundNumber);
+                }
+            }
+            else if (fightingSystem.Equals("На вылет"))
+            {
+                AddStage(roundsCount);
             }
             SetAddButtonToLastColumn();
         }
@@ -266,20 +455,28 @@ namespace TournamentSoftware
 
         private void BattlesFormation(int roundNumber)
         {
-            List<ParticipantWrapper> participants = GetCategoryFromNomination(selectedNomination, selectedCategory)
-                .GetParticipantsBySubgroup(selectedSubgroup);
-            List<BattleWrapper> battleWrappers = new List<BattleWrapper>();
-            for (int i = 0; i < participants.Count - 1; i++)
+            if (fightingSystem.Equals("Круговая"))
             {
-                ParticipantWrapper redParticipant = participants[i];
-                for (int j = i + 1; j < participants.Count; j++)
+                List<ParticipantWrapper> participants = GetCategoryFromNomination(selectedNomination, selectedCategory)
+                .GetParticipantsBySubgroup(selectedSubgroup);
+                List<BattleWrapper> battleWrappers = new List<BattleWrapper>();
+                for (int i = 0; i < participants.Count - 1; i++)
                 {
-                    ParticipantWrapper blueParticipant = participants[j];
-                    BattleWrapper battle = new BattleWrapper(redParticipant, blueParticipant);
-                    battleWrappers.Add(battle);
+                    ParticipantWrapper redParticipant = participants[i];
+                    for (int j = i + 1; j < participants.Count; j++)
+                    {
+                        ParticipantWrapper blueParticipant = participants[j];
+                        BattleWrapper battle = new BattleWrapper(redParticipant, blueParticipant);
+                        battleWrappers.Add(battle);
+                    }
                 }
+                battles.Add(roundNumber, battleWrappers);
             }
-            battles.Add(roundNumber, battleWrappers);
+            else if (fightingSystem.Equals("На вылет"))
+            {
+                List<BattleWrapper> battleWrappers = PairsFromation();
+                battles.Add(roundsCount, battleWrappers);
+            }
         }
 
         private void HideInstrumentsPanel(object sender, RoutedEventArgs e)
