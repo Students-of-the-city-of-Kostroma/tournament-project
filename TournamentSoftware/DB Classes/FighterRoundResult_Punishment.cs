@@ -2,7 +2,7 @@
 
 namespace TournamentSoftware
 {
-    [Table("FighterRoundResultPunishment")]
+    [Table("FighterRoundResult_Punishment")]
     public class FighterRoundResult_Punishment
     {
         [Column("fighter_round_result_id"), Indexed]

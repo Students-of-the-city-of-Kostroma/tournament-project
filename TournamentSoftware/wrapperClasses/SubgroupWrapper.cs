@@ -4,7 +4,7 @@ namespace TournamentSoftware
 {
     public class SubgroupWrapper
     {
-        private string name = "";
+        private Subgroup subgroup = new Subgroup();
         private List<ParticipantWrapper> participants = new List<ParticipantWrapper>();
         private List<string> errors = new List<string>();
         public SubgroupWrapper() { }
@@ -14,10 +14,10 @@ namespace TournamentSoftware
 
         public SubgroupWrapper(string subgroupName)
         {
-            Name = subgroupName;
+            subgroup.Name = subgroupName;
         }
 
-        public string Name { get { return name; } set { name = value; } }
+        public Subgroup Subgroup { get { return subgroup; } set { subgroup = value; } }
 
         public List<ParticipantWrapper> Participants
         {

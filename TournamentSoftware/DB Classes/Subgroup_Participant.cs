@@ -2,7 +2,7 @@
 
 namespace TournamentSoftware.DB_Classes
 {
-    [Table("SubgroupParticipant")]
+    [Table("Subgroup_Participant")]
     public class Subgroup_Participant
     {
         [Column("id"), PrimaryKey, AutoIncrement]

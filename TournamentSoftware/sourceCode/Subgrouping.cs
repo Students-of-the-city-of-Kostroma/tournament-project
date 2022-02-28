@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using TournamentSoftware.DB_Classes;
 using static TournamentSoftware.TournamentData;
 
 namespace TournamentSoftware
@@ -27,10 +28,15 @@ namespace TournamentSoftware
         private static string selectedNomination = "";
         private static string selectedCategory = "";
         public bool isPanelOpen = true;
-        private List<string> rools = new List<string> { "Правило посевных бойцов", "Правило одноклубников", "Правило города" };
-        private static List<string> selectedRools = new List<string> { "Правило посевных бойцов", "Правило одноклубников", "Правило города" };
+        private static List<string> selectedRules = new List<string>();
         private List<Grid> categoriesButtons = new List<Grid>();
         private Button goNextButton = new Button();
+
+        public Subgrouping()
+        {
+            foreach (GroupRule groupRule in rules)
+                selectedRules.Add(groupRule.Name);
+        }
 
         private Label CreateLabel(string content, int fontSize = 24)
         {
@@ -101,7 +107,7 @@ namespace TournamentSoftware
             {
                 Margin = new Thickness(5),
                 Height = 30,
-                Tag = category.Name,
+                Tag = category.Category.Name,
                 ShowGridLines = true
             };
 
@@ -117,7 +123,7 @@ namespace TournamentSoftware
 
             Label categoryNameLabel = new Label
             {
-                Content = category.Name,
+                Content = category.Category.Name,
                 FontSize = 15,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
@@ -347,7 +353,7 @@ namespace TournamentSoftware
                         category.GetSubgroupByName(subgroupName).AddParticipant(participant);
                         lastAddedGroup1++;
                     }
-                    foreach (string roolName in selectedRools)
+                    foreach (string roolName in selectedRules)
                     {
                         CheckRoolAndLogErrors(subgroupName, roolName, participant);
                     }
@@ -372,7 +378,7 @@ namespace TournamentSoftware
                             category.GetSubgroupByName(subgroupName).AddParticipant(participant);
                             lastAddedGroup1++;
                         }
-                        foreach (string roolName in selectedRools)
+                        foreach (string roolName in selectedRules)
                         {
                             CheckRoolAndLogErrors(subgroupName, roolName, participant);
                         }
@@ -384,13 +390,13 @@ namespace TournamentSoftware
 
         private static void ParticipantsSortWithRools(List<ParticipantWrapper> participants, ref int lastAddedGroup)
         {
-            if (selectedRools.Contains("Правило города"))
+            if (selectedRules.Contains("Правило города"))
             {
                 // город - участники
                 Dictionary<string, List<ParticipantWrapper>> city = FilterParticipantsForCities(participants);
                 foreach (KeyValuePair<string, List<ParticipantWrapper>> entry in city)
                 {
-                    if (selectedRools.Contains("Правило одноклубников"))
+                    if (selectedRules.Contains("Правило одноклубников"))
                     {
                         Dictionary<string, List<ParticipantWrapper>> club = FilterParticipantsForClubs(entry.Value);
                         ParticipantsSort(entry.Value, ref lastAddedGroup, club);
@@ -403,7 +409,7 @@ namespace TournamentSoftware
             }
             else
             {
-                if (selectedRools.Contains("Правило одноклубников"))
+                if (selectedRules.Contains("Правило одноклубников"))
                 {
                     Dictionary<string, List<ParticipantWrapper>> club = FilterParticipantsForClubs(participants);
                     ParticipantsSort(participants, ref lastAddedGroup, club);
@@ -449,7 +455,7 @@ namespace TournamentSoftware
                 List<ParticipantWrapper> not_posevParticipants = participantsInCategory.FindAll(p => p.Participant.Leader == false);
 
                 // учет правила посевных бойцов
-                if (selectedRools.Contains("Правило посевных бойцов"))
+                if (selectedRules.Contains("Правило посевных бойцов"))
                 {
                     ParticipantsSortWithRools(posevParticipants, ref lastAddedGroup);
 
@@ -533,7 +539,7 @@ namespace TournamentSoftware
 
                 RowDefinition gridFirstRow = new RowDefinition();
 
-                Label subgroupName = CreateLabel(subgroups[i].Name, 25);
+                Label subgroupName = CreateLabel(subgroups[i].Subgroup.Name, 25);
                 subgroupName.HorizontalAlignment = HorizontalAlignment.Left;
 
                 string errors = "";
@@ -606,10 +612,10 @@ namespace TournamentSoftware
             grid.Children.Add(label);
             Grid.SetRow(label, 0);
 
-            rools.ForEach(rool =>
+            rules.ForEach(rule =>
             {
                 RowDefinition row = new RowDefinition { Height = new GridLength(30, GridUnitType.Pixel) };
-                CheckBox checkBox = new CheckBox { Content = rool, Tag = rool };
+                CheckBox checkBox = new CheckBox { Content = rule.Name, Tag = rule };
                 checkBox.Margin = new Thickness(5, 0, 0, 0);
                 checkBox.IsChecked = true;
                 checkBox.Checked += CheckBox_Checked;
@@ -628,14 +634,14 @@ namespace TournamentSoftware
         {
             var checkBox = sender as CheckBox;
             string rool = checkBox.Tag.ToString();
-            if (selectedRools.Contains(rool)) selectedRools.Remove(rool);
+            if (selectedRules.Contains(rool)) selectedRules.Remove(rool);
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             var checkBox = sender as CheckBox;
-            string rool = checkBox.Tag.ToString();
-            if (!selectedRools.Contains(rool)) selectedRools.Add(rool);
+            GroupRule groupRule = checkBox.Tag as GroupRule;
+            if (!selectedRules.Contains(groupRule.Name)) selectedRules.Add(groupRule.Name);
         }
 
         private UIElement CountOfSubgroupsGrid()

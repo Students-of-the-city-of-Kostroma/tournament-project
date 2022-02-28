@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using TournamentSoftware.DB_Classes;
 using TournamentSoftware.wrapperClasses;
 using static TournamentSoftware.TournamentData;
 
@@ -33,6 +35,54 @@ namespace TournamentSoftware
             InitializeComponent();
             WindowState = WindowState.Maximized;
             addStageButton.Click += AddStage;
+            LoadDBData();
+        }
+
+        private void LoadDBData()
+        {
+            nominations.Clear();
+            groups.Clear();
+           
+            List<Nomination> dbNominations = dataBaseHandler.GetData<Nomination>("SELECT * FROM Nomination WHERE id IN (SELECT DISTINCT nomination_id FROM TournamentGroup WHERE tournament_grid_id=" + Tournament.Id + ");");
+            foreach (Nomination dbNomination in dbNominations)
+            {
+                NominationWrapper nominationWrapper = new NominationWrapper();
+                nominationWrapper.Nomination = dbNomination;
+                nominations.Add(nominationWrapper);
+
+                GroupWrapper group = new GroupWrapper();
+                group.NominationWrapper.Nomination = dbNomination;
+                List<Category> dbCategorys = dataBaseHandler.GetData<Category>("SELECT * FROM Category WHERE id IN (SELECT DISTINCT category_id FROM TournamentGroup WHERE tournament_grid_id=" + Tournament.Id + " AND nomination_id=" + dbNomination.Id + ");");
+                foreach (Category dbCategory in dbCategorys)
+                {
+                    CategoryWrapper categoryWrapper = new CategoryWrapper();
+                    categoryWrapper.Category = dbCategory;
+
+                    List<TournamentGroup> dbTournamentGroups = dataBaseHandler.GetData<TournamentGroup>("SELECT * FROM TournamentGroup WHERE tournament_grid_id=" + Tournament.Id + " AND nomination_id=" + dbNomination.Id + " AND category_id=" + dbCategory.Id + ";");
+
+                    categoryWrapper.SelectedRules = dataBaseHandler.GetData<GroupRule>("SELECT * FROM GroupRule WHERE id IN (SELECT group_role_id FROM GroupRule_Group WHERE tournament_group_id=" + dbTournamentGroups[0].Id + ");");
+
+                    List<Subgroup> dbSubgroups = dataBaseHandler.GetData<Subgroup>("SELECT * FROM Subgroup WHERE group_id=" + dbTournamentGroups[0].Id + ";");
+                    foreach (Subgroup dbSubgroup in dbSubgroups)
+                    {
+                        SubgroupWrapper subgroupWrapper = new SubgroupWrapper();
+                        subgroupWrapper.Subgroup = dbSubgroup;
+
+                        List<Participant> dbParticipants = dataBaseHandler.GetData<Participant>("SELECT * FROM Participant WHERE id IN (SELECT participant_id FROM Subgroup_Participant WHERE subgroup_id=" + dbSubgroup.Id + ");");
+                        foreach (Participant dbParticipant in dbParticipants)
+                        {
+                            ParticipantWrapper participantWrapper = new ParticipantWrapper();
+                            participantWrapper.Participant = dbParticipant;
+                            subgroupWrapper.Participants.Add(participantWrapper);
+                        }
+
+                        categoryWrapper.Subgroups.Add(subgroupWrapper);
+                    }
+
+                    group.Categories.Add(categoryWrapper);
+                }
+                groups.Add(group);
+            }
         }
 
         private void AddStage(object sender, RoutedEventArgs e)
@@ -63,7 +113,8 @@ namespace TournamentSoftware
                 battles.Clear();
                 roundsCount++;
                 numberOfNextAddedPair = 0;
-                rools = GetCategoryFromNomination(selectedNomination, selectedCategory).Rools;
+                foreach (GroupRule groupRule in GetCategoryFromNomination(selectedNomination, selectedCategory).SelectedRules)
+                    rools.Add(groupRule.Name);
                 StagesFormation();
             }
         }
@@ -501,7 +552,7 @@ namespace TournamentSoftware
                 {
                     Content = nominationName,
                     Margin = new Thickness(5),
-                    Tag = nominationName
+                    Tag = nomination
                 };
                 niminationButton.Click += SelectNomination;
                 nominationsStackPanel.Children.Add(niminationButton);
@@ -518,7 +569,7 @@ namespace TournamentSoftware
         private void SelectNomination(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            selectedNomination = button.Tag.ToString();
+            selectedNomination = ((NominationWrapper)button.Tag).Nomination.Name;
             selectedCategory = "";
             selectedSubgroup = "";
             CleanTournamentGrid();
@@ -541,7 +592,7 @@ namespace TournamentSoftware
                 {
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                     VerticalAlignment = VerticalAlignment.Stretch,
-                    Content = subgroup.Name,
+                    Content = subgroup.Subgroup.Name,
                     Tag = subgroup,
                 };
                 subgroupButton.Click += SelectSubgroup;
@@ -586,7 +637,7 @@ namespace TournamentSoftware
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,
-                Content = category.Name,
+                Content = category.Category.Name,
                 Tag = categoryTab
             };
             categoryButton.Click += SelectCategory;

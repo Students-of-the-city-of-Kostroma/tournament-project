@@ -1,34 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using TournamentSoftware.DB_Classes;
 
 namespace TournamentSoftware
 {
     public class CategoryWrapper
     {
-        private List<string> rools = new List<string>();
+        private List<GroupRule> selectedRules = new List<GroupRule>();
         private List<ParticipantWrapper> participantsBuffer = new List<ParticipantWrapper>();
         private List<SubgroupWrapper> subgroups = new List<SubgroupWrapper>();
         public bool ContainsSubgroups { get { return subgroups.Count > 0; } }
-        public string Name { get; set; }
-        public List<string> Rools { get { return rools; } set { rools = value; } }
-        public void AddRool(string rool)
+
+        private Category _category = new Category()
         {
-            if (!rools.Contains(rool))
-            {
-                rools.Add(rool);
-            }
+            Name = "",
+            Id = 0,
+        };
+
+        public Category Category
+        {
+            get { return _category; }
+            set { _category = value; }
         }
+
+        public List<GroupRule> SelectedRules { get { return selectedRules; } set { selectedRules = value; } }
         public List<SubgroupWrapper> Subgroups { get { return subgroups; } set { subgroups = value; } }
         public CategoryWrapper() { Subgroups = new List<SubgroupWrapper>(); }
         public CategoryWrapper(ParticipantWrapper participant)
         {
-            Name = participant.Category;
+            Category.Name = participant.Category;
             participantsBuffer.Add(participant);
         }
 
         public CategoryWrapper(string categoryName)
         {
-            Name = categoryName;
+            Category.Name = categoryName;
         }
 
         public int ParticipantsCount()
@@ -80,18 +86,20 @@ namespace TournamentSoftware
         {
             if (!IsSubgroupExists(subgroupName))
             {
-                subgroups.Add(new SubgroupWrapper() { Name = subgroupName });
+                SubgroupWrapper subgroupWrapper = new SubgroupWrapper();
+                subgroupWrapper.Subgroup.Name = subgroupName;
+                subgroups.Add(subgroupWrapper);
             }
         }
 
         public bool IsSubgroupExists(string subgroupName)
         {
-            return subgroups.Exists(subgroup => subgroup.Name.Equals(subgroupName));
+            return subgroups.Exists(subgroup => subgroup.Subgroup.Name.Equals(subgroupName));
         }
 
         public SubgroupWrapper GetSubgroupByName(string subgroupName)
         {
-            return subgroups.Find(subgroup => subgroup.Name.Equals(subgroupName));
+            return subgroups.Find(subgroup => subgroup.Subgroup.Name.Equals(subgroupName));
         }
 
         public List<ParticipantWrapper> GetParticipantsBySubgroup(string subgroupName)
