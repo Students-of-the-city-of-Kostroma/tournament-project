@@ -6,7 +6,11 @@ namespace TournamentSoftware
     {
         public NominationWrapper NominationWrapper { get; set; }
         public List<CategoryWrapper> Categories { get; set; }
-        public GroupWrapper() { }
+        public GroupWrapper() 
+        {
+            NominationWrapper = new NominationWrapper();
+            Categories = new List<CategoryWrapper>();
+        }
         public GroupWrapper(NominationWrapper nomination, ParticipantWrapper participant)
         {
             NominationWrapper = nomination;
@@ -15,7 +19,7 @@ namespace TournamentSoftware
 
         public bool IsCategoryExists(string categoryName)
         {
-            return Categories.Exists(category => category.Name.Equals(categoryName));
+            return Categories.Exists(category => category.Category.Name.Equals(categoryName));
         }
 
         public void AddCategory(string categoryName)
@@ -30,12 +34,12 @@ namespace TournamentSoftware
         {
             string categoryName = participant.Category;
             AddCategory(categoryName);
-            Categories.Find(category => category.Name.Equals(categoryName)).AddParticipant(participant);
+            Categories.Find(category => category.Category.Name.Equals(categoryName)).AddParticipant(participant);
         }
 
         public CategoryWrapper GetCategory(string categoryName)
         {
-            return Categories.Find(category => category.Name.Equals(categoryName));
+            return Categories.Find(category => category.Category.Name.Equals(categoryName));
         }
 
         public List<string> GetCategoryNames()
@@ -43,9 +47,9 @@ namespace TournamentSoftware
             List<string> categories = new List<string>();
             foreach (CategoryWrapper category in Categories)
             {
-                if (!categories.Contains(category.Name))
+                if (!categories.Contains(category.Category.Name))
                 {
-                    categories.Add(category.Name);
+                    categories.Add(category.Category.Name);
                 }
             }
             return categories;
