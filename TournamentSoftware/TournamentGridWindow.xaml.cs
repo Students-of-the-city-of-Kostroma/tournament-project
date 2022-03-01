@@ -418,6 +418,8 @@ namespace TournamentSoftware
             participantsGrid.Children.Add(blueParticipant);
             Grid.SetRow(blueParticipant, 1);
 
+            battleProtocolButton.Tag = new object[] { battle, new Label[] { redParticipant, blueParticipant } };
+
             battleGrid.ColumnDefinitions.Add(protocolColumn);
             battleGrid.Children.Add(battleProtocolButton);
             Grid.SetColumn(battleProtocolButton, 0);
@@ -430,6 +432,7 @@ namespace TournamentSoftware
         private void OpenBattleProtocolWindow(Object sender, EventArgs e)
         {
             BattleProtocolWindow battleProtocolWindow = new BattleProtocolWindow();
+            battleProtocolWindow.Tag  = (sender as Button).Tag;
             battleProtocolWindow.Show();
         }
 
