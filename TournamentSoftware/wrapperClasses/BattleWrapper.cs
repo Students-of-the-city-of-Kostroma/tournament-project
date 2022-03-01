@@ -11,13 +11,21 @@ namespace TournamentSoftware.wrapperClasses
         private ParticipantWrapper redParticipant;
         private ParticipantWrapper blueParticipant;
 
+        private bool winner;
+
         public ParticipantWrapper RedParticipant { get { return redParticipant; } set { redParticipant = value; } }
         public ParticipantWrapper BlueParticipant { get { return blueParticipant; } set { blueParticipant = value; } }
+        
+        /// <summary>
+        /// Тестовое, true - red, false - blue
+        /// </summary>
+        public bool Winner { get { return winner; } set { winner = value; } }
 
         public BattleWrapper(ParticipantWrapper redParticipant, ParticipantWrapper blueParticipant)
         {
             this.redParticipant = redParticipant;
             this.blueParticipant = blueParticipant;
+            this.winner = true;
         }
     }
 }

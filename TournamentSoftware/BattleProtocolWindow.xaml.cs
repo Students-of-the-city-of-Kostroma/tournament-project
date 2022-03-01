@@ -133,11 +133,11 @@ namespace TournamentSoftware
                             break;
                         }
                         countOfRoundResult++;
-                    } 
+                    }
                     break;
                 }
                 countOfRound++;
-            }   
+            }
         }
 
         private void addJudgeButton_Click(object sender, RoutedEventArgs e)
@@ -169,6 +169,13 @@ namespace TournamentSoftware
 
         private void endTheFightButton_Click(object sender, RoutedEventArgs e)
         {
+
+            BattleWrapper battle = ((object[])this.Tag)[0] as BattleWrapper;
+            Label[] labels = ((object[])this.Tag)[1] as Label[];
+            if (battle.Winner)
+                labels[0].Content = $"П {labels[0].Content}";
+            else
+                labels[1].Content = $"П {labels[1].Content}";
             this.Close();
         }
     }
