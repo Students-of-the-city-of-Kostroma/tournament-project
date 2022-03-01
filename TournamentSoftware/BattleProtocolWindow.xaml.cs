@@ -169,7 +169,6 @@ namespace TournamentSoftware
 
         private void endTheFightButton_Click(object sender, RoutedEventArgs e)
         {
-
             BattleWrapper battle = ((object[])this.Tag)[0] as BattleWrapper;
             Label[] labels = ((object[])this.Tag)[1] as Label[];
             if (battle.Winner)
