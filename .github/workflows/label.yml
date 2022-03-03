@@ -16,6 +16,7 @@ jobs:
     - uses: actions/stale@v3
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
+        exempt-issue-labels: 'bug,epic'
         stale-issue-message: 'В задаче нет активности. Пожалуйста, уточните сроки ее реализации в комментариях'
         stale-pr-message: 'В запрое на слияние нет активности. Пожалуйста, напишите в общий чат о необходимости проверить этот запрос.'
         stale-issue-label: 'no-issue-activity'
