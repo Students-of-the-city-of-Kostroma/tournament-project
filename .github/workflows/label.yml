@@ -17,7 +17,7 @@ jobs:
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         exempt-issue-labels: 'backlog,epic'
-        stale-issue-message: 'В задаче нет активности. Пожалуйста, уточните сроки ее реализации в комментариях'
+        stale-issue-message: 'Пожалуйста, уточните что осталось доделать в этой задаче и сколько времени этой займет?'
         stale-pr-message: 'В запрое на слияние нет активности. Пожалуйста, напишите в общий чат о необходимости проверить этот запрос.'
         stale-issue-label: 'no-issue-activity'
         stale-pr-label: 'no-pr-activity'
