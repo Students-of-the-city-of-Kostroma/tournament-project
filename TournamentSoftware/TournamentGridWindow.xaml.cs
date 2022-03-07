@@ -366,6 +366,7 @@ namespace TournamentSoftware
             {
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
+                Tag = battle.BattleProtocol,
                 Content = "+"
             };
             battleProtocolButton.Click += new RoutedEventHandler(this.OpenBattleProtocolWindow);
@@ -421,7 +422,7 @@ namespace TournamentSoftware
             participantsGrid.Children.Add(blueParticipant);
             Grid.SetRow(blueParticipant, 1);
 
-            battleProtocolButton.Tag = new object[] { battle, new Label[] { redParticipant, blueParticipant } };
+            //battleProtocolButton.Tag = new object[] { battle, new Label[] { redParticipant, blueParticipant } };
 
             battleGrid.ColumnDefinitions.Add(protocolColumn);
             battleGrid.Children.Add(battleProtocolButton);
@@ -434,7 +435,7 @@ namespace TournamentSoftware
 
         private void OpenBattleProtocolWindow(Object sender, EventArgs e)
         {
-            BattleProtocolWindow battleProtocolWindow = new BattleProtocolWindow();
+            BattleProtocolWindow battleProtocolWindow = new BattleProtocolWindow((sender as Button).Tag as BattleProtocol);
             battleProtocolWindow.Tag  = (sender as Button).Tag;
             battleProtocolWindow.Show();
         }

@@ -17,7 +17,7 @@ namespace TournamentSoftware
     /// </summary>
     public partial class BattleProtocolWindow : Window
     {
-        public BattleProtocolWindow()
+        public BattleProtocolWindow(BattleProtocol battleProtocol)
         {
             InitializeComponent();
             DataContext = new BattleProtocolWrapper();
