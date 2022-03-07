@@ -15,7 +15,7 @@ namespace TournamentSoftware
         public static ObservableCollection<ParticipantWrapper> participants = new ObservableCollection<ParticipantWrapper>();
         public static ObservableCollection<NominationWrapper> nominations = new ObservableCollection<NominationWrapper>();
         public static List<GroupWrapper> groups = new List<GroupWrapper>();
-        public static List<string> fightingSystems = new List<string>() { "Круговая", "На вылет", "Смешанная" };
+        public static List<FightSystem> fightSystem = new List<FightSystem>();
         public static List<GroupRule> rules = new List<GroupRule>();
         public static string cellsColor = "#F5F1DA";
         public static SolidColorBrush white = new SolidColorBrush(Color.FromRgb(255, 255, 255));

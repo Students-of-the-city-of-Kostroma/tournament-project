@@ -43,7 +43,7 @@ namespace TournamentSoftware
             nominations.Clear();
             groups.Clear();
            
-            List<Nomination> dbNominations = dataBaseHandler.GetData<Nomination>("SELECT * FROM Nomination WHERE id IN (SELECT DISTINCT nomination_id FROM TournamentGroup WHERE tournament_grid_id=" + Tournament.Id + ");");
+            List<Nomination> dbNominations = dataBaseHandler.Query<Nomination>("SELECT * FROM Nomination WHERE id IN (SELECT DISTINCT nomination_id FROM TournamentGroup WHERE tournament_grid_id=" + Tournament.Id + ");");
             foreach (Nomination dbNomination in dbNominations)
             {
                 NominationWrapper nominationWrapper = new NominationWrapper();
@@ -52,23 +52,23 @@ namespace TournamentSoftware
 
                 GroupWrapper group = new GroupWrapper();
                 group.NominationWrapper.Nomination = dbNomination;
-                List<Category> dbCategorys = dataBaseHandler.GetData<Category>("SELECT * FROM Category WHERE id IN (SELECT DISTINCT category_id FROM TournamentGroup WHERE tournament_grid_id=" + Tournament.Id + " AND nomination_id=" + dbNomination.Id + ");");
+                List<Category> dbCategorys = dataBaseHandler.Query<Category>("SELECT * FROM Category WHERE id IN (SELECT DISTINCT category_id FROM TournamentGroup WHERE tournament_grid_id=" + Tournament.Id + " AND nomination_id=" + dbNomination.Id + ");");
                 foreach (Category dbCategory in dbCategorys)
                 {
                     CategoryWrapper categoryWrapper = new CategoryWrapper();
                     categoryWrapper.Category = dbCategory;
 
-                    List<TournamentGroup> dbTournamentGroups = dataBaseHandler.GetData<TournamentGroup>("SELECT * FROM TournamentGroup WHERE tournament_grid_id=" + Tournament.Id + " AND nomination_id=" + dbNomination.Id + " AND category_id=" + dbCategory.Id + ";");
+                    List<TournamentGroup> dbTournamentGroups = dataBaseHandler.Query<TournamentGroup>("SELECT * FROM TournamentGroup WHERE tournament_grid_id=" + Tournament.Id + " AND nomination_id=" + dbNomination.Id + " AND category_id=" + dbCategory.Id + ";");
 
-                    categoryWrapper.SelectedRules = dataBaseHandler.GetData<GroupRule>("SELECT * FROM GroupRule WHERE id IN (SELECT group_role_id FROM GroupRule_Group WHERE tournament_group_id=" + dbTournamentGroups[0].Id + ");");
+                    categoryWrapper.SelectedRules = dataBaseHandler.Query<GroupRule>("SELECT * FROM GroupRule WHERE id IN (SELECT group_role_id FROM GroupRule_Group WHERE tournament_group_id=" + dbTournamentGroups[0].Id + ");");
 
-                    List<Subgroup> dbSubgroups = dataBaseHandler.GetData<Subgroup>("SELECT * FROM Subgroup WHERE group_id=" + dbTournamentGroups[0].Id + ";");
+                    List<Subgroup> dbSubgroups = dataBaseHandler.Query<Subgroup>("SELECT * FROM Subgroup WHERE group_id=" + dbTournamentGroups[0].Id + ";");
                     foreach (Subgroup dbSubgroup in dbSubgroups)
                     {
                         SubgroupWrapper subgroupWrapper = new SubgroupWrapper();
                         subgroupWrapper.Subgroup = dbSubgroup;
 
-                        List<Participant> dbParticipants = dataBaseHandler.GetData<Participant>("SELECT * FROM Participant WHERE id IN (SELECT participant_id FROM Subgroup_Participant WHERE subgroup_id=" + dbSubgroup.Id + ");");
+                        List<Participant> dbParticipants = dataBaseHandler.Query<Participant>("SELECT * FROM Participant WHERE id IN (SELECT participant_id FROM Subgroup_Participant WHERE subgroup_id=" + dbSubgroup.Id + ");");
                         foreach (Participant dbParticipant in dbParticipants)
                         {
                             ParticipantWrapper participantWrapper = new ParticipantWrapper();

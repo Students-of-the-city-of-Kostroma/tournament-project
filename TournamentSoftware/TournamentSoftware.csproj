@@ -104,6 +104,7 @@
     <Compile Include="DB Classes\Fighter.cs" />
     <Compile Include="DB Classes\FighterRoundResult.cs" />
     <Compile Include="DB Classes\FighterRoundResult_Punishment.cs" />
+    <Compile Include="DB Classes\FightSystem.cs" />
     <Compile Include="DB Classes\GroupRule_Group.cs" />
     <Compile Include="DB Classes\GroupRule.cs" />
     <Compile Include="DB Classes\Judge.cs" />

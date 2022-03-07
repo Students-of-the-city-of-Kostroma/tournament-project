@@ -30,7 +30,7 @@ namespace TournamentSoftware.wrapperClasses
         public BattleProtocolWrapper()
         {
             AvailableJudges = new ObservableCollection<Judge>();
-            List<Judge> availableJudges = dataBaseHandler.GetData<Judge>("SELECT * FROM Judge;");
+            List<Judge> availableJudges = dataBaseHandler.Query<Judge>("SELECT * FROM Judge;");
             availableJudges.ForEach((availableJudge) => AvailableJudges.Add(availableJudge));
 
             RoundResult = new ObservableCollection<RoundResultWrapper>();

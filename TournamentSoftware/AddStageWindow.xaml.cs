@@ -23,7 +23,8 @@ namespace TournamentSoftware
         public AddStageWindow()
         {
             InitializeComponent();
-            fightingSystemsCombobox.ItemsSource = fightingSystems;
+            fightingSystemsCombobox.ItemsSource = fightSystem;
+            fightingSystemsCombobox.DisplayMemberPath = "Name";
         }
 
         private void NumericOnly(object sender, TextCompositionEventArgs e)
