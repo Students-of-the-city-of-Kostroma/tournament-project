@@ -792,6 +792,13 @@ namespace TournamentSoftware
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if ((sender as TextBox).Text != "" && !int.TryParse((sender as TextBox).Text, out _))
+            {
+                (sender as TextBox).Text = "";
+                MessageBox.Show("Строка должна содержать только цифры!", "Ошибка");
+                return;
+            }
+
             if ((sender as TextBox).Text == "" || Convert.ToInt32((sender as TextBox).Text) < 1900 || Convert.ToInt32((sender as TextBox).Text) > DateTime.Now.Year - 13)
             {
                 (sender as TextBox).Background = (Brush)new BrushConverter().ConvertFrom("#FFFFDDDB");
