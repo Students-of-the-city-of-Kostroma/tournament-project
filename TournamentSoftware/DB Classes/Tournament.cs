@@ -1,10 +1,10 @@
 ﻿using System;
 using SQLite;
 
-namespace TournamentSoftware
+namespace TournamentSoftware.DB_Classes
 {
-    [Table("TournamentGrid")]
-    public class TournamentGrid
+    [Table("Tournament")]
+    public class Tournament
     {
         [Column("id"), PrimaryKey, AutoIncrement]
         public int Id { get; set; }

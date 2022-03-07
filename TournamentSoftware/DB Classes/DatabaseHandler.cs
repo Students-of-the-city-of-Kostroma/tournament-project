@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using SQLite;
 using TournamentSoftware.DB_Classes;
 
-namespace TournamentSoftware
+namespace TournamentSoftware.DB_Classes
 {
     public class DataBaseHandler
     {
@@ -15,17 +15,18 @@ namespace TournamentSoftware
 
             _db.CreateTable<Club>();
             _db.CreateTable<Participant>();
-            _db.CreateTable<TournamentGrid>();
+            _db.CreateTable<Tournament>();
             _db.CreateTable<Nomination>();
             _db.CreateTable<Category>();
             _db.CreateTable<GroupRule>();
-            _db.CreateTable<TournamentGroup>();
+            _db.CreateTable<Group>();
             _db.CreateTable<GroupRule_Group>();
             _db.CreateTable<Subgroup>();
             _db.CreateTable<Subgroup_Participant>();
             _db.CreateTable<Judge>();
             _db.CreateTable<FightSystem>();
             _db.CreateTable<Fighter>();
+            _db.CreateTable<Phase>();
             _db.CreateTable<BattleProtocol>();
             _db.CreateTable<Round>();
             _db.CreateTable<JudgeNote>();

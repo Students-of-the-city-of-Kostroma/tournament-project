@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using TournamentSoftware.DB_Classes;
 using static TournamentSoftware.TournamentData;
 
 namespace TournamentSoftware
@@ -42,20 +43,20 @@ namespace TournamentSoftware
 
         private void Apply(object sender, RoutedEventArgs e)
         {
-            if (fightingSystemsCombobox.SelectedValue.ToString() == "Круговая")
+            if ((fightingSystemsCombobox.SelectedValue as FightSystem).Name == "Круговая")
             {
                 if (!int.TryParse(rounds.Text, out int roundsCount))
                     MessageBox.Show("Введено некорректное количество кругов", "Ошибка");
                 else
                 {
                     TournamentGridWindow.roundsCount = roundsCount;
-                    TournamentGridWindow.fightingSystem = fightingSystemsCombobox.Text;
+                    TournamentGridWindow.selectFightSystem = fightingSystemsCombobox.SelectedValue as FightSystem;
                     Close();
                 }
             }
             else
             {
-                TournamentGridWindow.fightingSystem = fightingSystemsCombobox.Text;
+                TournamentGridWindow.selectFightSystem = fightingSystemsCombobox.SelectedValue as FightSystem;
                 Close();
             }
         }

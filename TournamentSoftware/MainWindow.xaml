@@ -79,10 +79,8 @@
                       HorizontalGridLinesBrush="White"
                       VerticalGridLinesBrush="White"
                       BorderBrush="#FF808C6C"
-                      BorderThickness="0,0,3,0">
-                <DataGrid.DataContext>
-                    <local:Participant/>
-                </DataGrid.DataContext>
+                      BorderThickness="0,0,3,0" 
+                      DataContext="Participant">
                 <DataGrid.Columns>
 
                     <DataGridTemplateColumn x:Name="checkboxCol"

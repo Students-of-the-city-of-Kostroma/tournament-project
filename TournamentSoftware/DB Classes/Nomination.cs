@@ -1,6 +1,6 @@
 ﻿using SQLite;
 
-namespace TournamentSoftware
+namespace TournamentSoftware.DB_Classes
 {
     [Table("Nomination")]
     public class Nomination

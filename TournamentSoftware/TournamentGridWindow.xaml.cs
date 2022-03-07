@@ -11,11 +11,11 @@ namespace TournamentSoftware
     public partial class TournamentGridWindow : Window
     {
         private bool isPanelOpen = true;
-        private string selectedNomination = "";
-        private string selectedCategory = "";
-        private string selectedSubgroup = "";
+        private Nomination selectedNomination = new Nomination();
+        private Category selectedCategory = new Category();
+        private Subgroup selectedSubgroup = new Subgroup();
         public static int roundsCount = 0;
-        public static string fightingSystem = "";
+        public static FightSystem selectFightSystem = new FightSystem();
         private int numberOfNextAddedPair = 0;
         private List<Button> categoryButtons = new List<Button>();
         private List<string> rools = new List<string>();
@@ -42,8 +42,8 @@ namespace TournamentSoftware
         {
             nominations.Clear();
             groups.Clear();
-           
-            List<Nomination> dbNominations = dataBaseHandler.Query<Nomination>("SELECT * FROM Nomination WHERE id IN (SELECT DISTINCT nomination_id FROM TournamentGroup WHERE tournament_grid_id=" + Tournament.Id + ");");
+
+            List<Nomination> dbNominations = dataBaseHandler.Query<Nomination>("SELECT * FROM Nomination WHERE id IN (SELECT DISTINCT nomination_id FROM TournamentGroup WHERE tournament_grid_id=" + TournamentData.Tournament.Id + ");");
             foreach (Nomination dbNomination in dbNominations)
             {
                 NominationWrapper nominationWrapper = new NominationWrapper();
@@ -52,13 +52,13 @@ namespace TournamentSoftware
 
                 GroupWrapper group = new GroupWrapper();
                 group.NominationWrapper.Nomination = dbNomination;
-                List<Category> dbCategorys = dataBaseHandler.Query<Category>("SELECT * FROM Category WHERE id IN (SELECT DISTINCT category_id FROM TournamentGroup WHERE tournament_grid_id=" + Tournament.Id + " AND nomination_id=" + dbNomination.Id + ");");
+                List<Category> dbCategorys = dataBaseHandler.Query<Category>("SELECT * FROM Category WHERE id IN (SELECT DISTINCT category_id FROM TournamentGroup WHERE tournament_grid_id=" + TournamentData.Tournament.Id + " AND nomination_id=" + dbNomination.Id + ");");
                 foreach (Category dbCategory in dbCategorys)
                 {
                     CategoryWrapper categoryWrapper = new CategoryWrapper();
                     categoryWrapper.Category = dbCategory;
 
-                    List<TournamentGroup> dbTournamentGroups = dataBaseHandler.Query<TournamentGroup>("SELECT * FROM TournamentGroup WHERE tournament_grid_id=" + Tournament.Id + " AND nomination_id=" + dbNomination.Id + " AND category_id=" + dbCategory.Id + ";");
+                    List<Group> dbTournamentGroups = dataBaseHandler.Query<Group>("SELECT * FROM TournamentGroup WHERE tournament_grid_id=" + TournamentData.Tournament.Id + " AND nomination_id=" + dbNomination.Id + " AND category_id=" + dbCategory.Id + ";");
 
                     categoryWrapper.SelectedRules = dataBaseHandler.Query<GroupRule>("SELECT * FROM GroupRule WHERE id IN (SELECT group_role_id FROM GroupRule_Group WHERE tournament_group_id=" + dbTournamentGroups[0].Id + ");");
 
@@ -93,10 +93,13 @@ namespace TournamentSoftware
             addStageButton.IsEnabled = false;
         }
 
-        private void AddStageWindow_Closed(object sender, System.EventArgs e)
+        private void AddStageWindow_Closed(object sender, EventArgs e)
         {
             addStageButton.IsEnabled = true;
-            if (fightingSystem.Equals("Круговая"))
+
+            dataBaseHandler.Query<Subgroup>("UPDATE Subgroup SET fight_system_id=" + selectFightSystem.Id + ";");
+
+            if (selectFightSystem.Name.Equals("Круговая"))
             {
                 if (roundsCount > 0)
                 {
@@ -104,7 +107,7 @@ namespace TournamentSoftware
                 }
                 roundsCount = 0;
             }
-            else if (fightingSystem.Equals("На вылет"))
+            else if (selectFightSystem.Name.Equals("На вылет"))
             {
                 if (battles.Count == 0)
                 {
@@ -113,7 +116,7 @@ namespace TournamentSoftware
                 battles.Clear();
                 roundsCount++;
                 numberOfNextAddedPair = 0;
-                foreach (GroupRule groupRule in GetCategoryFromNomination(selectedNomination, selectedCategory).SelectedRules)
+                foreach (GroupRule groupRule in GetCategoryFromNomination(selectedNomination.Name, selectedCategory.Name).SelectedRules)
                     rools.Add(groupRule.Name);
                 StagesFormation();
             }
@@ -218,8 +221,8 @@ namespace TournamentSoftware
 
         private List<BattleWrapper> PairsFromation()
         {
-            List<ParticipantWrapper> participants = GetCategoryFromNomination(selectedNomination, selectedCategory)
-                .GetParticipantsBySubgroup(selectedSubgroup);
+            List<ParticipantWrapper> participants = GetCategoryFromNomination(selectedNomination.Name, selectedCategory.Name)
+                .GetParticipantsBySubgroup(selectedSubgroup.Name);
             int pairsCount = CountPairs(participants);
             List<BattleWrapper> pairs = new List<BattleWrapper>();
 
@@ -268,8 +271,8 @@ namespace TournamentSoftware
         private Grid ParticipantsInSubgroup()
         {
             Grid participantsGrid = new Grid();
-            List<ParticipantWrapper> participants = GetCategoryFromNomination(selectedNomination, selectedCategory)
-                .GetParticipantsBySubgroup(selectedSubgroup);
+            List<ParticipantWrapper> participants = GetCategoryFromNomination(selectedNomination.Name, selectedCategory.Name)
+                .GetParticipantsBySubgroup(selectedSubgroup.Name);
             RowDefinition headerRow = new RowDefinition
             {
                 Height = new GridLength(70, GridUnitType.Pixel)
@@ -332,14 +335,14 @@ namespace TournamentSoftware
             };
             Label roundNumberLabel = new Label
             {
-                Content = (fightingSystem.Equals("Круговая") ? "Круг " : "Этап ") + roundNumber,
+                Content = (selectFightSystem.Name.Equals("Круговая") ? "Круг " : "Этап ") + roundNumber,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = 18,
             };
             Label fightingSystemLabel = new Label
             {
-                Content = "Система: " + fightingSystem,
+                Content = "Система: " + selectFightSystem.Name,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = 14,
@@ -436,7 +439,7 @@ namespace TournamentSoftware
             battleProtocolWindow.Show();
         }
 
-        private Grid RoundGrid(int roundNumber)
+        private Grid RoundGrid(int roundNumber, Phase phase)
         {
             Grid roundGrid = new Grid();
             RowDefinition headerRow = new RowDefinition
@@ -448,7 +451,7 @@ namespace TournamentSoftware
             roundGrid.Children.Add(header);
             Grid.SetRow(header, 0);
 
-            BattlesFormation(roundNumber);
+            BattlesFormation(roundNumber, phase);
             List<BattleWrapper> battleWrappers = battles[roundNumber];
             foreach (BattleWrapper battle in battleWrappers)
             {
@@ -466,11 +469,18 @@ namespace TournamentSoftware
 
         private void AddStage(int round)
         {
+            Phase phase = new Phase()
+            {
+                Number = round,
+                SubgroupId = selectedSubgroup.Id
+            };
+            dataBaseHandler.Insert(phase);
+
             ColumnDefinition column = new ColumnDefinition
             {
                 Width = new GridLength(200, GridUnitType.Pixel)
             };
-            Grid stage = RoundGrid(round);
+            Grid stage = RoundGrid(round, phase);
             tournamentGrid.ColumnDefinitions.Add(column);
             tournamentGrid.Children.Add(stage);
             Grid.SetColumn(stage, tournamentGrid.ColumnDefinitions.Count - 1);
@@ -481,14 +491,14 @@ namespace TournamentSoftware
             tournamentGrid.Children.Remove(addStageButton);
             tournamentGrid.ColumnDefinitions.RemoveAt(tournamentGrid.ColumnDefinitions.Count - 1);
             int lastRoundNumber = battles.Count;
-            if (fightingSystem.Equals("Круговая"))
+            if (selectFightSystem.Name.Equals("Круговая"))
             {
                 for (int i = 1; i <= roundsCount; i++)
                 {
                     AddStage(i + lastRoundNumber);
                 }
             }
-            else if (fightingSystem.Equals("На вылет"))
+            else if (selectFightSystem.Name.Equals("На вылет"))
             {
                 AddStage(roundsCount);
             }
@@ -507,12 +517,12 @@ namespace TournamentSoftware
             Grid.SetColumn(addStageButton, tournamentGrid.ColumnDefinitions.Count - 1);
         }
 
-        private void BattlesFormation(int roundNumber)
+        private void BattlesFormation(int roundNumber, Phase phase)
         {
-            if (fightingSystem.Equals("Круговая"))
+            if (selectFightSystem.Name.Equals("Круговая"))
             {
-                List<ParticipantWrapper> participants = GetCategoryFromNomination(selectedNomination, selectedCategory)
-                .GetParticipantsBySubgroup(selectedSubgroup);
+                List<ParticipantWrapper> participants = GetCategoryFromNomination(selectedNomination.Name, selectedCategory.Name)
+                .GetParticipantsBySubgroup(selectedSubgroup.Name);
                 List<BattleWrapper> battleWrappers = new List<BattleWrapper>();
                 for (int i = 0; i < participants.Count - 1; i++)
                 {
@@ -526,11 +536,25 @@ namespace TournamentSoftware
                 }
                 battles.Add(roundNumber, battleWrappers);
             }
-            else if (fightingSystem.Equals("На вылет"))
+            else if (selectFightSystem.Name.Equals("На вылет"))
             {
                 List<BattleWrapper> battleWrappers = PairsFromation();
                 battles.Add(roundsCount, battleWrappers);
             }
+
+            foreach (BattleWrapper battle in battles[roundNumber])
+            {
+                BattleProtocol battleProtocol = new BattleProtocol()
+                {
+                    Number = roundNumber,
+                    PhaseId = phase.Id,
+                    RedFighterId = battle.RedParticipant.Participant.Id,
+                    BlueFighterId = battle.BlueParticipant.Participant.Id,
+
+                };
+                dataBaseHandler.Insert(battleProtocol);
+            }
+            
         }
 
         private void HideInstrumentsPanel(object sender, RoutedEventArgs e)
@@ -555,7 +579,7 @@ namespace TournamentSoftware
                 {
                     Content = nominationName,
                     Margin = new Thickness(5),
-                    Tag = nomination
+                    Tag = nomination.Nomination
                 };
                 niminationButton.Click += SelectNomination;
                 nominationsStackPanel.Children.Add(niminationButton);
@@ -572,9 +596,9 @@ namespace TournamentSoftware
         private void SelectNomination(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            selectedNomination = ((NominationWrapper)button.Tag).Nomination.Name;
-            selectedCategory = "";
-            selectedSubgroup = "";
+            selectedNomination = (button.Tag as Nomination);
+            selectedCategory = null;
+            selectedSubgroup = null;
             CleanTournamentGrid();
             CreateCategoriesTabs();
         }
@@ -618,7 +642,7 @@ namespace TournamentSoftware
         private void SelectSubgroup(object sender, RoutedEventArgs e)
         {
             Button subgroupButton = sender as Button;
-            selectedSubgroup = subgroupButton.Content.ToString();
+            selectedSubgroup = subgroupButton.Tag as Subgroup;
             ColorSubgroupButtons(subgroupButton);
             ShowTournamentGrid();
         }
@@ -660,11 +684,11 @@ namespace TournamentSoftware
 
         private void CreateCategoriesTabs()
         {
-            selectedCategory = "";
+            selectedCategory = null;
             categoryButtons.Clear();
             categoryTabsGrid.Children.Clear();
             categoryTabsGrid.ColumnDefinitions.Clear();
-            List<CategoryWrapper> categoryNames = GetCategoriesFromNomination(selectedNomination);
+            List<CategoryWrapper> categoryNames = GetCategoriesFromNomination(selectedNomination.Name);
             foreach (CategoryWrapper category in categoryNames)
             {
                 Grid categoryGrid = (Grid)CategoryTab(category);
@@ -691,11 +715,11 @@ namespace TournamentSoftware
         private void SelectCategory(object sender, RoutedEventArgs e)
         {
             CleanTournamentGrid();
-            selectedSubgroup = "";
+            selectedSubgroup = null;
             Button categoryButton = sender as Button;
             Grid categoryTab = (Grid)categoryButton.Tag;
             categoryTab.RowDefinitions[1].Height = new GridLength(1, GridUnitType.Star);
-            selectedCategory = categoryButton.Content.ToString();
+            selectedCategory = categoryButton.Tag as Category;
 
             foreach (Button button in categoryButtons)
             {

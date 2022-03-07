@@ -28,9 +28,9 @@ namespace TournamentSoftware
         public static SolidColorBrush red = new SolidColorBrush(Color.FromRgb(255, 105, 97));
         public static SolidColorBrush blue = new SolidColorBrush(Color.FromRgb(174, 198, 207));
 
-        private static TournamentGrid tournament = new TournamentGrid();
+        private static Tournament tournament = new Tournament();
 
-        public static TournamentGrid Tournament 
+        public static Tournament Tournament 
         { 
             get { return tournament; } 
             set { tournament = value; } 

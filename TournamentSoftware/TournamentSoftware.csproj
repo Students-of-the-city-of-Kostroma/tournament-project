@@ -111,6 +111,7 @@
     <Compile Include="DB Classes\JudgeNote.cs" />
     <Compile Include="DB Classes\Nomination.cs" />
     <Compile Include="DB Classes\Participant.cs" />
+    <Compile Include="DB Classes\Phase.cs" />
     <Compile Include="DB Classes\Punishment.cs" />
     <Compile Include="DB Classes\Round.cs" />
     <Compile Include="DB Classes\Subgroup.cs" />

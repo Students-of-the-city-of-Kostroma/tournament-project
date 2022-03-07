@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using TournamentSoftware.DB_Classes;
 using static TournamentSoftware.TournamentData;
 
 namespace TournamentSoftware.wrapperClasses

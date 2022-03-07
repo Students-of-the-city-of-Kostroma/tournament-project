@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
+using TournamentSoftware.DB_Classes;
 using static TournamentSoftware.ApplicationResourcesPaths;
 using static TournamentSoftware.TournamentData;
 

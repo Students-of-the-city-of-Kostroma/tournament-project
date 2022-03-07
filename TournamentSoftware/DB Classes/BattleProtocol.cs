@@ -11,8 +11,8 @@ namespace TournamentSoftware.DB_Classes
         [Column("number")]
         public int Number { get; set; }
 
-        [Column("system")]
-        public string System { get; set; }
+        [Column("phase_id")]
+        public int PhaseId { get; set; }
 
         [Column("red_fighter_id"), Indexed]
         public int RedFighterId { get; set; }
