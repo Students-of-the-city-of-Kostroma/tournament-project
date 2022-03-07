@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TournamentSoftware.DB_Classes;
 
 namespace TournamentSoftware
 {

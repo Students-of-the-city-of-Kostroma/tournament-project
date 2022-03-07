@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using TournamentSoftware.DB_Classes;
 using static TournamentSoftware.TournamentData;
 
 namespace TournamentSoftware.wrapperClasses
@@ -30,7 +31,7 @@ namespace TournamentSoftware.wrapperClasses
         public BattleProtocolWrapper()
         {
             AvailableJudges = new ObservableCollection<Judge>();
-            List<Judge> availableJudges = dataBaseHandler.GetData<Judge>("SELECT * FROM Judge;");
+            List<Judge> availableJudges = dataBaseHandler.Query<Judge>("SELECT * FROM Judge;");
             availableJudges.ForEach((availableJudge) => AvailableJudges.Add(availableJudge));
 
             RoundResult = new ObservableCollection<RoundResultWrapper>();

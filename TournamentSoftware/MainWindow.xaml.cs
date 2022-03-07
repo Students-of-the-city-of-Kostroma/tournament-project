@@ -58,7 +58,7 @@ namespace TournamentSoftware
 
         private void LoadGroupRules()
         {
-            List<GroupRule> groupRules = dataBaseHandler.GetData<GroupRule>("SELECT * FROM GroupRule;");
+            List<GroupRule> groupRules = dataBaseHandler.Query<GroupRule>("SELECT * FROM GroupRule;");
             foreach (GroupRule groupRule in groupRules)
                 rules.Add(groupRule);
         }
@@ -678,31 +678,31 @@ namespace TournamentSoftware
 
         private void СreateTournamentGrid(object sender, RoutedEventArgs e)
         {
-            if (dataBaseHandler.GetData<TournamentGrid>("SELECT * FROM TournamentGrid WHERE name=\"" + TournamentNameTextBox.Text + "\";").Count != 0)
+            if (dataBaseHandler.Query<Tournament>("SELECT * FROM TournamentGrid WHERE name=\"" + TournamentNameTextBox.Text + "\";").Count != 0)
             {
                 MessageBox.Show("Имя турнира " + TournamentNameTextBox.Text + " неуникально.", "Ошибка");
                 return;
             }
-            TournamentGrid tournamentGrid = new TournamentGrid();
+            Tournament tournamentGrid = new Tournament();
             tournamentGrid.Name = TournamentNameTextBox.Text;
             tournamentGrid.Type = "type";
             tournamentGrid.Date = new DateTime();
-            dataBaseHandler.AddItem(tournamentGrid);
-            tournamentGrid = dataBaseHandler.GetData<TournamentGrid>("SELECT id FROM TournamentGrid WHERE name=\"" + tournamentGrid.Name + "\";")[0];
+            dataBaseHandler.Insert(tournamentGrid);
+            tournamentGrid = dataBaseHandler.Query<Tournament>("SELECT id FROM TournamentGrid WHERE name=\"" + tournamentGrid.Name + "\";")[0];
 
             // добавление участников
             for (int i = 0; i < participants.Count; i++)
             {
                 Club club = new Club();
-                if (dataBaseHandler.GetData<Club>("SELECT * FROM Club WHERE name=\"" + participants[i].Club + "\" AND city=\"" + participants[i].City + "\";").Count == 0)
+                if (dataBaseHandler.Query<Club>("SELECT * FROM Club WHERE name=\"" + participants[i].Club + "\" AND city=\"" + participants[i].City + "\";").Count == 0)
                 {
                     club.Name = participants[i].Club;
                     club.City = participants[i].City;
-                    dataBaseHandler.AddItem(club);
+                    dataBaseHandler.Insert(club);
                 }
-                club.Id = dataBaseHandler.GetData<Club>("SELECT * FROM Club WHERE name=\"" + participants[i].Club + "\" AND city=\"" + participants[i].City + "\";")[0].Id;
+                club.Id = dataBaseHandler.Query<Club>("SELECT * FROM Club WHERE name=\"" + participants[i].Club + "\" AND city=\"" + participants[i].City + "\";")[0].Id;
 
-                if (dataBaseHandler.GetData<Participant>("SELECT * FROM Participant WHERE surname=\"" + participants[i].Participant.Surname + "\" AND name=\"" + participants[i].Participant.Name + "\" AND date_of_birth=\"" + participants[i].Participant.DateOfBirth + "\";").Count != 0)
+                if (dataBaseHandler.Query<Participant>("SELECT * FROM Participant WHERE surname=\"" + participants[i].Participant.Surname + "\" AND name=\"" + participants[i].Participant.Name + "\" AND date_of_birth=\"" + participants[i].Participant.DateOfBirth + "\";").Count != 0)
                 {
                     continue;
                 }
@@ -719,47 +719,47 @@ namespace TournamentSoftware
                 participant.CommonRating = participants[i].Participant.CommonRating;
                 participant.ClubRating = participants[i].Participant.ClubRating;
                 participant.ClubId = club.Id;
-                dataBaseHandler.AddItem(participant);
+                dataBaseHandler.Insert(participant);
             }
 
             // номинации
             foreach (GroupWrapper groupWrapper in groups)
             {
                 Nomination nomination = new Nomination();
-                if (dataBaseHandler.GetData<Nomination>("SELECT * FROM Nomination WHERE name=\"" + groupWrapper.NominationWrapper.Nomination.Name + "\";").Count == 0)
+                if (dataBaseHandler.Query<Nomination>("SELECT * FROM Nomination WHERE name=\"" + groupWrapper.NominationWrapper.Nomination.Name + "\";").Count == 0)
                 {
                     nomination.Name = groupWrapper.NominationWrapper.Nomination.Name;
-                    dataBaseHandler.AddItem(nomination);
+                    dataBaseHandler.Insert(nomination);
                 }
-                nomination = dataBaseHandler.GetData<Nomination>("SELECT id FROM Nomination WHERE name=\"" + groupWrapper.NominationWrapper.Nomination.Name + "\";")[0];
+                nomination = dataBaseHandler.Query<Nomination>("SELECT id FROM Nomination WHERE name=\"" + groupWrapper.NominationWrapper.Nomination.Name + "\";")[0];
 
                 // категории
                 List<CategoryWrapper> categories = groupWrapper.Categories;
                 foreach (CategoryWrapper categoryWrapper in categories)
                 {
                     Category category = new Category();
-                    if (dataBaseHandler.GetData<Category>("SELECT * FROM Category WHERE name=\"" + categoryWrapper.Category.Name + "\";").Count == 0)
+                    if (dataBaseHandler.Query<Category>("SELECT * FROM Category WHERE name=\"" + categoryWrapper.Category.Name + "\";").Count == 0)
                     {
                         category.Name = categoryWrapper.Category.Name;
-                        dataBaseHandler.AddItem(category);
+                        dataBaseHandler.Insert(category);
                     }
-                    category = dataBaseHandler.GetData<Category>("SELECT * FROM Category WHERE name=\"" + categoryWrapper.Category.Name + "\";")[0];
+                    category = dataBaseHandler.Query<Category>("SELECT * FROM Category WHERE name=\"" + categoryWrapper.Category.Name + "\";")[0];
 
                     // добавление групп 
-                    TournamentGroup tournamentGroup = new TournamentGroup();
-                    tournamentGroup.TournamentGridId = tournamentGrid.Id;
+                    Group tournamentGroup = new Group();
+                    tournamentGroup.TournamentId = tournamentGrid.Id;
                     tournamentGroup.NominationId = nomination.Id;
                     tournamentGroup.CategoryId = category.Id;
-                    dataBaseHandler.AddItem(tournamentGroup);
-                    tournamentGroup = dataBaseHandler.GetData<TournamentGroup>("SELECT * FROM TournamentGroup WHERE tournament_grid_id=" + tournamentGroup.TournamentGridId + " AND nomination_id=" + tournamentGroup.NominationId + " AND category_id=" + tournamentGroup.CategoryId + ";")[0];
+                    dataBaseHandler.Insert(tournamentGroup);
+                    tournamentGroup = dataBaseHandler.Query<Group>("SELECT * FROM TournamentGroup WHERE tournament_grid_id=" + tournamentGroup.TournamentId + " AND nomination_id=" + tournamentGroup.NominationId + " AND category_id=" + tournamentGroup.CategoryId + ";")[0];
 
                     //привязка к группам правил
                     foreach (GroupRule groupRule in categoryWrapper.SelectedRules)
                     {
                         GroupRule_Group groupRule_Group = new GroupRule_Group();
-                        groupRule_Group.TournamentGroupId = tournamentGroup.Id;
+                        groupRule_Group.GroupId = tournamentGroup.Id;
                         groupRule_Group.GroupRoleId = groupRule.Id;
-                        dataBaseHandler.AddItem(groupRule_Group);
+                        dataBaseHandler.Insert(groupRule_Group);
                     }
 
                     // добавление подгрупп 
@@ -769,21 +769,24 @@ namespace TournamentSoftware
                         Subgroup subgroup = new Subgroup();
                         subgroup.Name = subgroupWrapper.Subgroup.Name;
                         subgroup.GroupId = tournamentGroup.Id;
-                        dataBaseHandler.AddItem(subgroup);
-                        subgroup = dataBaseHandler.GetData<Subgroup>("SELECT * FROM Subgroup WHERE name=\"" + subgroup.Name + "\" AND group_id=" + subgroup.GroupId + ";")[0];
+                        dataBaseHandler.Insert(subgroup);
+                        subgroup = dataBaseHandler.Query<Subgroup>("SELECT * FROM Subgroup WHERE name=\"" + subgroup.Name + "\" AND group_id=" + subgroup.GroupId + ";")[0];
 
                         foreach (ParticipantWrapper participantWrapper in subgroupWrapper.Participants)
                         {
                             Subgroup_Participant subgroup_participant = new Subgroup_Participant();
                             subgroup_participant.SubgroupId = subgroup.Id;
-                            subgroup_participant.ParticipantId = dataBaseHandler.GetData<Participant>("SELECT * FROM Participant WHERE surname=\"" + participantWrapper.Participant.Surname + "\" AND name=\"" + participantWrapper.Participant.Name + "\" AND date_of_birth=\"" + participantWrapper.Participant.DateOfBirth + "\";")[0].Id;
-                            dataBaseHandler.AddItem(subgroup_participant);
+                            subgroup_participant.ParticipantId = dataBaseHandler.Query<Participant>("SELECT * FROM Participant WHERE surname=\"" + participantWrapper.Participant.Surname + "\" AND name=\"" + participantWrapper.Participant.Name + "\" AND date_of_birth=\"" + participantWrapper.Participant.DateOfBirth + "\";")[0].Id;
+                            dataBaseHandler.Insert(subgroup_participant);
                         }
                     }
                 }
             }
 
-            Tournament = tournamentGrid;
+            TournamentData.Tournament = tournamentGrid;
+
+            List<FightSystem> dbFightSystems = dataBaseHandler.Query<FightSystem>("SELECT * FROM FightSystem;");
+            dbFightSystems.ForEach(dbFightSystem => fightSystem.Add(dbFightSystem));
 
             TournamentGridWindow tournamentGridWindow = new TournamentGridWindow();
             tournamentGridWindow.Show();

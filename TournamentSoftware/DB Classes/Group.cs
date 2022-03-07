@@ -1,15 +1,15 @@
 ﻿using SQLite;
 
-namespace TournamentSoftware
+namespace TournamentSoftware.DB_Classes
 {
     [Table("TournamentGroup")]
-    public class TournamentGroup
+    public class Group
     {
         [Column("id"), PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
-        [Column("tournament_grid_id"), Indexed]
-        public int TournamentGridId { get; set; }
+        [Column("tournament_id"), Indexed]
+        public int TournamentId { get; set; }
 
         [Column("nomination_id"), Indexed]
         public int NominationId { get; set; }

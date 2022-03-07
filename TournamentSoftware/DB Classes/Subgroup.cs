@@ -1,6 +1,6 @@
 ﻿using SQLite;
 
-namespace TournamentSoftware
+namespace TournamentSoftware.DB_Classes
 {
     [Table("Subgroup")]
     public class Subgroup
@@ -10,6 +10,9 @@ namespace TournamentSoftware
 
         [Column("name")]
         public string Name { get; set; }
+
+        [Column("fight_system_id")]
+        public int FightSystemId { get; set; }
 
         [Column("group_id"), Indexed]
         public int GroupId { get; set; }

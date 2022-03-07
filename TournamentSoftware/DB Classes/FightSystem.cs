@@ -2,8 +2,8 @@
 
 namespace TournamentSoftware.DB_Classes
 {
-    [Table("Nomination")]
-    public class Nomination
+    [Table("FightSystem")]
+    public class FightSystem
     {
         [Column("id"), PrimaryKey, AutoIncrement]
         public int Id { get; set; }

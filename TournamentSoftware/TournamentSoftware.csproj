@@ -104,12 +104,14 @@
     <Compile Include="DB Classes\Fighter.cs" />
     <Compile Include="DB Classes\FighterRoundResult.cs" />
     <Compile Include="DB Classes\FighterRoundResult_Punishment.cs" />
+    <Compile Include="DB Classes\FightSystem.cs" />
     <Compile Include="DB Classes\GroupRule_Group.cs" />
     <Compile Include="DB Classes\GroupRule.cs" />
     <Compile Include="DB Classes\Judge.cs" />
     <Compile Include="DB Classes\JudgeNote.cs" />
     <Compile Include="DB Classes\Nomination.cs" />
     <Compile Include="DB Classes\Participant.cs" />
+    <Compile Include="DB Classes\Phase.cs" />
     <Compile Include="DB Classes\Punishment.cs" />
     <Compile Include="DB Classes\Round.cs" />
     <Compile Include="DB Classes\Subgroup.cs" />

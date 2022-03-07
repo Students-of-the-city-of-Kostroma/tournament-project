@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
+using TournamentSoftware.DB_Classes;
 using TournamentSoftware.wrapperClasses;
 
 namespace TournamentSoftware

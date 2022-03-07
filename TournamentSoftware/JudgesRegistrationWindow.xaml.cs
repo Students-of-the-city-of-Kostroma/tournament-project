@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
+using TournamentSoftware.DB_Classes;
 using static TournamentSoftware.ApplicationResourcesPaths;
 using static TournamentSoftware.TournamentData;
 
@@ -114,16 +115,16 @@ namespace TournamentSoftware
                     Club club = new Club();
                     if (judgesList[i].Club != "" && judgesList[i].City != "")
                     {
-                        if (dataBaseHandler.GetData<Club>("SELECT * FROM Club WHERE name=\"" + judgesList[i].Club + "\" AND city=\"" + judgesList[i].City + "\";").Count == 0)
+                        if (dataBaseHandler.Query<Club>("SELECT * FROM Club WHERE name=\"" + judgesList[i].Club + "\" AND city=\"" + judgesList[i].City + "\";").Count == 0)
                         {
                             club.Name = judgesList[i].Club;
                             club.City = judgesList[i].City;
-                            dataBaseHandler.AddItem(club);
+                            dataBaseHandler.Insert(club);
                         }
-                        club = dataBaseHandler.GetData<Club>("SELECT * FROM Club WHERE name=\"" + judgesList[i].Club + "\" AND city=\"" + judgesList[i].City + "\";")[0];
+                        club = dataBaseHandler.Query<Club>("SELECT * FROM Club WHERE name=\"" + judgesList[i].Club + "\" AND city=\"" + judgesList[i].City + "\";")[0];
                     }
 
-                    if (dataBaseHandler.GetData<Judge>("SELECT * FROM Judge WHERE surname=\"" + judgesList[i].Surname + "\" AND name=\"" + judgesList[i].Name + "\";").Count == 0)
+                    if (dataBaseHandler.Query<Judge>("SELECT * FROM Judge WHERE surname=\"" + judgesList[i].Surname + "\" AND name=\"" + judgesList[i].Name + "\";").Count == 0)
                     {
                         Judge judge = new Judge();
                         judge.Surname = judgesList[i].Surname;
@@ -133,7 +134,7 @@ namespace TournamentSoftware
                         {
                             judge.ClubId = club.Id;
                         }
-                        dataBaseHandler.AddItem(judge);
+                        dataBaseHandler.Insert(judge);
                     }
                 }
             }
@@ -143,11 +144,11 @@ namespace TournamentSoftware
         {
             judgesList.Clear();
 
-            List<Judge> judges = dataBaseHandler.GetData<Judge>("SELECT * FROM Judge");
+            List<Judge> judges = dataBaseHandler.Query<Judge>("SELECT * FROM Judge");
             judges.ForEach(judge =>
             {
                 JudgeWrapper judgeWrapper = new JudgeWrapper { Name = judge.Name, Surname = judge.Surname, Patronymic = judge.Patronymic };
-                List<Club> club = dataBaseHandler.GetData<Club>("SELECT * FROM Club WHERE id=" + judge.ClubId + ";");
+                List<Club> club = dataBaseHandler.Query<Club>("SELECT * FROM Club WHERE id=" + judge.ClubId + ";");
                 if (club.Count != 0)
                 {
                     judgeWrapper.Club = club[0].Name;
