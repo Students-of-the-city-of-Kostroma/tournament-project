@@ -116,7 +116,6 @@
     <Compile Include="DB Classes\Punishment.cs" />
     <Compile Include="DB Classes\Round.cs" />
     <Compile Include="DB Classes\Subgroup.cs" />
-    <Compile Include="DB Classes\Subgroup_Participant.cs" />
     <Compile Include="DB Classes\Tournament.cs" />
     <Compile Include="sourceCode\ParticipantsReagistrator.cs" />
     <Compile Include="sourceCode\Subgrouping.cs" />

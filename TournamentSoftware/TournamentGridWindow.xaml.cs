@@ -68,7 +68,7 @@ namespace TournamentSoftware
                         SubgroupWrapper subgroupWrapper = new SubgroupWrapper();
                         subgroupWrapper.Subgroup = dbSubgroup;
 
-                        List<Participant> dbParticipants = dataBaseHandler.Query<Participant>("SELECT * FROM Participant WHERE id IN (SELECT participant_id FROM Subgroup_Participant WHERE subgroup_id=" + dbSubgroup.Id + ");");
+                        List<Participant> dbParticipants = dataBaseHandler.Query<Participant>("SELECT * FROM Participant WHERE id IN (SELECT participant_id FROM Fighter WHERE subgroup_id=" + dbSubgroup.Id + ");");
                         foreach (Participant dbParticipant in dbParticipants)
                         {
                             ParticipantWrapper participantWrapper = new ParticipantWrapper();

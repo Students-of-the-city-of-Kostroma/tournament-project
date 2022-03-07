@@ -20,8 +20,15 @@ namespace TournamentSoftware
         public BattleProtocolWindow(BattleProtocol battleProtocol)
         {
             InitializeComponent();
-            DataContext = new BattleProtocolWrapper();
-            fightersNamesLabel.Content += "Фамилия И. 1/ Фамилия И. 2";
+            DataContext = new BattleProtocolWrapper(battleProtocol);
+
+            for (int i = 0; i < (DataContext as BattleProtocolWrapper).FighterName.Length; i++)
+            {
+                fightersNamesLabel.Content += (DataContext as BattleProtocolWrapper).FighterName[i];
+                if (i < (DataContext as BattleProtocolWrapper).FighterName.Length - 1)
+                    fightersNamesLabel.Content += "/";
+            }
+            
             SwitchRound(1);
             addJudgeButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
         }
@@ -39,11 +46,10 @@ namespace TournamentSoftware
 
         private void addRoundButton_Click(object sender, RoutedEventArgs e)
         {
-            RoundResultWrapper newRoundResult = new RoundResultWrapper();
-            (DataContext as BattleProtocolWrapper).RoundResult.Add(newRoundResult);
+            (DataContext as BattleProtocolWrapper).AddRound();
             SwitchRound((DataContext as BattleProtocolWrapper).RoundResult.Count);
 
-            foreach (FighterRoundResultWrapper fighterRoundResult in newRoundResult.FighterRoundResult)
+            foreach (FighterRoundResultWrapper fighterRoundResult in (DataContext as BattleProtocolWrapper).RoundResult[(DataContext as BattleProtocolWrapper).RoundResult.Count - 1].FighterRoundResult)
                 for (int i = 0; i < (DataContext as BattleProtocolWrapper).SelectedJudges.Count; i++)
                     fighterRoundResult.JudgeScore.Add(0);
         }
