@@ -2,7 +2,7 @@
 
 namespace TournamentSoftware.DB_Classes
 {
-    [Table("TournamentGroup")]
+    [Table("Group")]
     public class Group
     {
         [Column("id"), PrimaryKey, AutoIncrement]

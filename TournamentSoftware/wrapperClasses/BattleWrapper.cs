@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TournamentSoftware.DB_Classes;
 
 namespace TournamentSoftware.wrapperClasses
 {
@@ -12,6 +13,12 @@ namespace TournamentSoftware.wrapperClasses
         private ParticipantWrapper blueParticipant;
 
         private bool winner;
+        private BattleProtocol battleProtocol = new BattleProtocol();
+        public BattleProtocol BattleProtocol
+        {
+            get { return battleProtocol; }
+            set { battleProtocol = value; }
+        }
 
         public ParticipantWrapper RedParticipant { get { return redParticipant; } set { redParticipant = value; } }
         public ParticipantWrapper BlueParticipant { get { return blueParticipant; } set { blueParticipant = value; } }

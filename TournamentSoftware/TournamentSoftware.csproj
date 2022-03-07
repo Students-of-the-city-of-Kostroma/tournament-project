@@ -105,6 +105,7 @@
     <Compile Include="DB Classes\FighterRoundResult.cs" />
     <Compile Include="DB Classes\FighterRoundResult_Punishment.cs" />
     <Compile Include="DB Classes\FightSystem.cs" />
+    <Compile Include="DB Classes\Group.cs" />
     <Compile Include="DB Classes\GroupRule_Group.cs" />
     <Compile Include="DB Classes\GroupRule.cs" />
     <Compile Include="DB Classes\Judge.cs" />
@@ -116,8 +117,7 @@
     <Compile Include="DB Classes\Round.cs" />
     <Compile Include="DB Classes\Subgroup.cs" />
     <Compile Include="DB Classes\Subgroup_Participant.cs" />
-    <Compile Include="DB Classes\TournamentGroup.cs" />
-    <Compile Include="DB Classes\TournamentGrid.cs" />
+    <Compile Include="DB Classes\Tournament.cs" />
     <Compile Include="sourceCode\ParticipantsReagistrator.cs" />
     <Compile Include="sourceCode\Subgrouping.cs" />
     <Compile Include="wrapperClasses\BattleProtocolWrapper.cs" />
