@@ -71,9 +71,9 @@ namespace TournamentSoftware
             set { total = value; OnPropertyChanged("Total"); }
         }
 
-        public FighterRoundResultWrapper()
+        public FighterRoundResultWrapper(string rowHeader)
         {
-            RowHeader = "Фамилия И.";
+            RowHeader = rowHeader;
             JudgeScore = new List<uint>();
             Score = 0;
             Difference = 0;

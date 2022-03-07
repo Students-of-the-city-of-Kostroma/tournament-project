@@ -10,11 +10,11 @@ namespace TournamentSoftware.wrapperClasses
     public class RoundResultWrapper
     {
         public ObservableCollection<FighterRoundResultWrapper> FighterRoundResult { get; private set; }
-        public RoundResultWrapper()
+        public RoundResultWrapper(string[] rowHeader)
         {
             FighterRoundResult = new ObservableCollection<FighterRoundResultWrapper>();
             for (int i = 0; i < 2; i++)
-                FighterRoundResult.Add(new FighterRoundResultWrapper());
+                FighterRoundResult.Add(new FighterRoundResultWrapper(rowHeader[i]));
         }
     }
 }

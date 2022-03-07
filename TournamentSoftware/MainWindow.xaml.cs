@@ -774,10 +774,10 @@ namespace TournamentSoftware
 
                         foreach (ParticipantWrapper participantWrapper in subgroupWrapper.Participants)
                         {
-                            Subgroup_Participant subgroup_participant = new Subgroup_Participant();
-                            subgroup_participant.SubgroupId = subgroup.Id;
-                            subgroup_participant.ParticipantId = dataBaseHandler.Query<Participant>("SELECT * FROM Participant WHERE surname=\"" + participantWrapper.Participant.Surname + "\" AND name=\"" + participantWrapper.Participant.Name + "\" AND date_of_birth=\"" + participantWrapper.Participant.DateOfBirth + "\";")[0].Id;
-                            dataBaseHandler.Insert(subgroup_participant);
+                            Fighter fighter = new Fighter();
+                            fighter.SubgroupId = subgroup.Id;
+                            fighter.ParticipantId = dataBaseHandler.Query<Participant>("SELECT * FROM Participant WHERE surname=\"" + participantWrapper.Participant.Surname + "\" AND name=\"" + participantWrapper.Participant.Name + "\" AND date_of_birth=\"" + participantWrapper.Participant.DateOfBirth + "\";")[0].Id;
+                            dataBaseHandler.Insert(fighter);
                         }
                     }
                 }

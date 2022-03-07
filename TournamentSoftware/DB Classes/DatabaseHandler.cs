@@ -22,7 +22,6 @@ namespace TournamentSoftware.DB_Classes
             _db.CreateTable<Group>();
             _db.CreateTable<GroupRule_Group>();
             _db.CreateTable<Subgroup>();
-            _db.CreateTable<Subgroup_Participant>();
             _db.CreateTable<Judge>();
             _db.CreateTable<FightSystem>();
             _db.CreateTable<Fighter>();
