@@ -124,7 +124,8 @@
                             <DataTemplate>
                                 <TextBox Text="{Binding Participant.Name, 
                                                 UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
-                                         BorderThickness="0" >
+                                         BorderThickness="0"
+                                         TextChanged="RemovingSpaces">
                                     <TextBox.Style>
                                         <Style TargetType="TextBox">
                                             <Setter Property="Background" Value="#FFF5F1DA"/>
@@ -145,7 +146,8 @@
                             <DataTemplate>
                                 <TextBox Text="{Binding Participant.Surname, 
                                                 UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
-                                         BorderThickness="0" >
+                                         BorderThickness="0" 
+                                         TextChanged="RemovingSpaces">
                                     <TextBox.Style>
                                         <Style TargetType="TextBox">
                                             <Setter Property="Background" Value="#FFF5F1DA"/>
@@ -166,7 +168,8 @@
                             <DataTemplate>
                                 <TextBox Text="{Binding Participant.Patronymic, 
                                                 UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
-                                         Background="#FFF5F1DA" BorderThickness="0" >
+                                         Background="#FFF5F1DA" BorderThickness="0" 
+                                         TextChanged="RemovingSpaces">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -177,7 +180,8 @@
                             <DataTemplate>
                                 <TextBox Text="{Binding Participant.Pseudonym, 
                                          UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
-                                         Background="#FFF5F1DA" BorderThickness="0" >
+                                         Background="#FFF5F1DA" BorderThickness="0" 
+                                         TextChanged="RemovingSpaces">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -251,7 +255,8 @@
                             <DataTemplate>
                                 <TextBox Text="{Binding Club,
                                                 UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
-                                         BorderThickness="0" >
+                                         BorderThickness="0" 
+                                         TextChanged="RemovingSpaces">
                                     <TextBox.Style>
                                         <Style TargetType="TextBox">
                                             <Setter Property="Background" Value="#FFF5F1DA"/>
@@ -272,7 +277,8 @@
                             <DataTemplate>
                                 <TextBox Text="{Binding City,
                                         UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}" 
-                                         BorderThickness="0" >
+                                         BorderThickness="0" 
+                                         TextChanged="RemovingSpaces">
                                     <TextBox.Style>
                                         <Style TargetType="TextBox">
                                             <Setter Property="Background" Value="#FFF5F1DA"/>
@@ -296,7 +302,8 @@
                                          PreviewTextInput="NumericOnly"
                                          MaxLength="3"
                                          Background="#FFF5F1DA"
-                                         BorderThickness="0" >
+                                         BorderThickness="0" 
+                                         TextChanged="RemovingSpaces">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -310,7 +317,8 @@
                                          PreviewTextInput="NumericOnly"
                                          MaxLength="3"
                                          Background="#FFF5F1DA"
-                                         BorderThickness="0" >
+                                         BorderThickness="0" 
+                                         TextChanged="RemovingSpaces">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -322,7 +330,8 @@
                                 <TextBox Text="{Binding Category,
                                         UpdateSourceTrigger = PropertyChanged, Mode=TwoWay}"
                                          PreviewTextInput="StringOnly"
-                                         BorderThickness="0" >
+                                         BorderThickness="0" 
+                                         TextChanged="RemovingSpaces">
                                     <TextBox.Style>
                                         <Style TargetType="TextBox">
                                             <Setter Property="Background" Value="#FFF5F1DA"/>
@@ -346,7 +355,8 @@
                                          PreviewTextInput="NumericOnly" 
                                          MaxLength="3" 
                                          Background="#FFF5F1DA" 
-                                         BorderThickness="0">
+                                         BorderThickness="0"
+                                         TextChanged="RemovingSpaces">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -360,7 +370,8 @@
                                          PreviewTextInput="NumericOnly" 
                                          MaxLength="3" 
                                          Background="#FFF5F1DA"
-                                         BorderThickness="0">
+                                         BorderThickness="0"
+                                         TextChanged="RemovingSpaces">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -434,7 +445,8 @@
                      FontSize="16"
                      LostFocus="TournamentNameTextBox_LostFocus"
                      BorderBrush="#FFF5F1DA" 
-                     BorderThickness="3,3,3,3"/>
+                     BorderThickness="3,3,3,3"
+                     TextChanged="RemovingSpaces"/>
             <Button x:Name="hideInstrumentPanelButton" 
                     Grid.Column="1" 
                     HorizontalAlignment="Left" 

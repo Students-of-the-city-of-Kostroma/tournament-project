@@ -809,5 +809,18 @@ namespace TournamentSoftware
         {
             subgroupsFormation.SaveSubgroup();
         }
+
+        private void RemovingSpaces(object sender, TextChangedEventArgs e)
+        {
+            var sd = sender as TextBox;
+            if (sd.Text == " ")
+                sd.Text = "";
+            else if (sd.Text.Length > 0)
+                if (sd.Text[0] == ' ' || sd.Text[sd.Text.Length - 1] == ' ')
+                {
+                    sd.Text = sd.Text.Trim(' ');
+                    sd.SelectionStart = sd.Text.Length;
+                }
+        }
     }
 }

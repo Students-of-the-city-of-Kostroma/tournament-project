@@ -115,7 +115,7 @@ namespace TournamentSoftware
         {
             foreach (NominationWrapper nomination in newNominations)
             {
-                string nominationName = nomination.Nomination.Name;
+                string nominationName = nomination.Nomination.Name.Trim(' ');
                 if (CheckNominationNameValid(nominationName) && !IsNominationExists(nominationName))
                 {
                     AddNominationToParticipants(nominationName);
