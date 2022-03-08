@@ -69,8 +69,11 @@
                     Height="30" Width="30"
                     RenderTransformOrigin="-0.337,0.468" 
                     Click="HideInstrumentPanel"
-                    Visibility="Hidden"/>
-
+                    Visibility="Hidden">
+                <Button.Background>
+                    <ImageBrush ImageSource="Images/TrigramForHeaven.png"/>
+                </Button.Background>
+            </Button>
         </Grid>
     </Grid>
 </Window>
