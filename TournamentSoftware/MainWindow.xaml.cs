@@ -795,6 +795,9 @@ namespace TournamentSoftware
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            (sender as TextBox).Text = string.Join("", (sender as TextBox).Text.Where(c => char.IsDigit(c)));
+            (sender as TextBox).SelectionStart = (sender as TextBox).Text.Length;
+
             if ((sender as TextBox).Text == "" || Convert.ToInt32((sender as TextBox).Text) < 1900 || Convert.ToInt32((sender as TextBox).Text) > DateTime.Now.Year - 13)
             {
                 (sender as TextBox).Background = (Brush)new BrushConverter().ConvertFrom("#FFFFDDDB");
