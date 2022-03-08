@@ -38,7 +38,7 @@
                     Width="35"
                     Height="35" Click="HideInstrumentsPanel">
                     <Button.Background>
-                        <ImageBrush ImageSource="/burger menu.png"/>
+                        <ImageBrush ImageSource="Images/TrigramForHeaven.png"/>
                     </Button.Background>
                 </Button>
                 <Grid x:Name="controlsGrid" Grid.Row="1" HorizontalAlignment="Stretch" 

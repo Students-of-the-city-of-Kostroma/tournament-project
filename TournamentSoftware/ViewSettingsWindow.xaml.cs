@@ -51,7 +51,7 @@ namespace TournamentSoftware
         {
             try
             {
-                mainWindowColumns.Single(column => column.Header == columnName).Visibility = visibility ? Visibility.Visible : Visibility.Hidden;
+                mainWindowColumns.Single(column => (string)column.Header == columnName).Visibility = visibility ? Visibility.Visible : Visibility.Hidden;
             }
             catch (Exception e)
             {
@@ -148,7 +148,7 @@ namespace TournamentSoftware
 
         private void RemoveColumn(string columnName)
         {
-            mainWindowColumns.Remove(mainWindowColumns.Single(column => column.Header == columnName));
+            mainWindowColumns.Remove(mainWindowColumns.Single(column => (string)column.Header == columnName));
         }
 
         private bool CheckNominationNameValid(string nominationName)

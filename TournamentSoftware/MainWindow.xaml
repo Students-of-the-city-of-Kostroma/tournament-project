@@ -31,7 +31,7 @@
                     Width="120" 
                     Click="GoTournament_Click">
                 <Button.Background>
-                    <ImageBrush ImageSource="/Arrow 3.png" Stretch="Uniform"/>
+                    <ImageBrush ImageSource="Images/RightwardsArrow.png" Stretch="Uniform"/>
                 </Button.Background>
             </Button>
             <Button x:Name="loadFromFile" 
@@ -449,7 +449,7 @@
                     </Style>
                 </Button.Resources>
                 <Button.Background>
-                    <ImageBrush ImageSource="/burger menu.png"/>
+                    <ImageBrush ImageSource="Images/TrigramForHeaven.png"/>
                 </Button.Background>
             </Button>
         </Grid >
